@@ -1,0 +1,13 @@
+# Offline pipeline test: no API calls (llm.mode: fake), first 3 questions of each split at 6K.
+run_name: letta_bundled_fake_6k
+method: letta_bundled
+data:
+  length: 6k
+  splits: [sh, mh]
+  max_questions: 3
+llm:
+  model: claude-haiku-5-5
+  mode: fake
+  answer_max_tokens: 16
+embedding_model: "hash:384"
+repeats: 1

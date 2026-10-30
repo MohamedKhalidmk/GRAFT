@@ -1,0 +1,11 @@
+Method,Family,FC-SH,FC-MH,Avg,Tokens / question,Memory build time (s),Query time (s),API cost ($),Questions (SH/MH),Repeats,Answer in retrieved (SH/MH)
+"Claude Haiku 5.5 (1M, full history)",Long-Context Agents,0.0,0.0,0.0,7352,0.2,0.00,0.004,3/3,1,
+BM25,Simple RAG Agents,0.0,0.0,0.0,6188,0.0,0.00,0.006,5/5,1,100/80
+HippoRAG-v2 (benchmark copy),Structure-Augmented RAG Agents,0.0,0.0,0.0,6737,5.9,0.02,0.011,3/3,1,
+HippoRAG-v2 (upstream),Structure-Augmented RAG Agents,0.0,0.0,0.0,6740,23.1,0.01,0.011,3/3,1,
+Mem0 (benchmark copy),Structure-Augmented RAG Agents,0.0,0.0,0.0,1645,2.2,0.01,0.007,3/3,1,
+Mem0 (upstream),Structure-Augmented RAG Agents,0.0,0.0,0.0,1709,6.6,0.12,0.005,3/3,1,
+MemGPT / Letta (benchmark copy),Agentic Memory Agents,0.0,0.0,0.0,10233,5.4,0.18,0.006,3/3,1,
+MemGPT / Letta (upstream),Agentic Memory Agents,0.0,0.0,0.0,10985,18.0,0.66,0.007,3/3,1,
+total-agent-memory (supersede),Agentic Memory Agents,0.0,0.0,0.0,474,8.2,0.68,0.000,3/3,1,
+SGAR (ours),Ours (structure-augmented + agentic),0.0,0.0,0.0,406,0.2,0.17,0.015,5/5,1,100/60

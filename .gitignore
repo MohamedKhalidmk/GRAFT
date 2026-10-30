@@ -1,0 +1,10 @@
+.venv/
+envs/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+results/runs/
+results/queues/
+results/checkpoints/
+configs/runs/ui/

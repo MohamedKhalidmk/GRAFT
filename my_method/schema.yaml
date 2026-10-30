@@ -1,0 +1,32 @@
+# SGAR graph schema: the structure the writer must follow. Edit this file to change the schema;
+# a FHIR-based clinical schema can replace it later without code changes.
+
+name: generic-facts
+description: >-
+  Atomic facts about named things. Each fact links a subject entity to an object entity through
+  one relation. A newer fact about the same subject and relation is a revision of the older one.
+
+node_types:
+  Entity:
+    description: a named person, place, organisation, work, concept or other thing
+    fields:
+      name: the entity's name exactly as written in the text
+  Fact:
+    description: one statement linking two entities
+    fields:
+      subject: name of the entity the fact is about
+      relation: short lowercase label for how the subject relates to the object (e.g. "place of birth")
+      object: name of the other entity
+    # stored on every Fact by the writer, never invented by the LLM
+    provenance: [chunk_id, arrival, serial, span]
+
+edge_types:
+  subject_of: {from: Entity, to: Fact, description: the entity is the fact's subject}
+  object_of: {from: Entity, to: Fact, description: the entity is the fact's object}
+  SUPERSEDES: {from: Fact, to: Fact, description: the newer fact replaces the older one}
+
+# Facts with equal values for these fields are versions of one fact (candidates for SUPERSEDE).
+revision_key: [subject, relation]
+
+# Optional closed list of relation labels. null = open: the writer names relations itself.
+relations: null

@@ -1,0 +1,6 @@
+[submodule "baselines/memoryagentbench"]
+	path = baselines/memoryagentbench
+	url = https://github.com/HUST-AI-HYZ/MemoryAgentBench
+[submodule "my_method/gnn/GOAt"]
+	path = my_method/gnn/GOAt
+	url = https://github.com/sluxsr/GOAt

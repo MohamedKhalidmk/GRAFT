@@ -1,0 +1,15 @@
+run_name: dryrun_long_context_128k_262k
+method: long_context_128k
+method_config: {}
+data:
+  length: 262k
+  splits:
+  - sh
+  - mh
+  max_questions: null
+llm:
+  model: claude-haiku-5-5
+  mode: fake
+  answer_max_tokens: 16
+embedding_model: hash:384
+repeats: 1

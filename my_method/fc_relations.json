@@ -1,0 +1,187 @@
+[
+  {
+    "id": "P6",
+    "label": "head of government",
+    "template": "The name of the current head of the {} government is"
+  },
+  {
+    "id": "P19",
+    "label": "place of birth",
+    "template": "{} was born in the city of"
+  },
+  {
+    "id": "P20",
+    "label": "place of death",
+    "template": "{} died in the city of"
+  },
+  {
+    "id": "P26",
+    "label": "spouse",
+    "template": "{} is married to"
+  },
+  {
+    "id": "P27",
+    "label": "country of citizenship",
+    "template": "{} is a citizen of"
+  },
+  {
+    "id": "P30",
+    "label": "continent",
+    "template": "{} is located in the continent of"
+  },
+  {
+    "id": "P35",
+    "label": "head of state",
+    "template": "The name of the current head of state in {} is"
+  },
+  {
+    "id": "P36",
+    "label": "capital",
+    "template": "The capital of {} is"
+  },
+  {
+    "id": "P37",
+    "label": "official language",
+    "template": "The official language of {} is"
+  },
+  {
+    "id": "P40",
+    "label": "child",
+    "template": "{}'s child is"
+  },
+  {
+    "id": "P50",
+    "label": "author",
+    "template": "The author of {} is"
+  },
+  {
+    "id": "P69",
+    "label": "educated at",
+    "template": "The univeristy where {} was educated is"
+  },
+  {
+    "id": "P106",
+    "label": "occupation",
+    "template": "{} works in the field of"
+  },
+  {
+    "id": "P108",
+    "label": "employer",
+    "template": "{} is employed by"
+  },
+  {
+    "id": "P112",
+    "label": "founded by",
+    "template": "{} was founded by"
+  },
+  {
+    "id": "P136",
+    "label": "genre",
+    "template": "The type of music that {} plays is"
+  },
+  {
+    "id": "P140",
+    "label": "religion or worldview",
+    "template": "{} is affiliated with the religion of"
+  },
+  {
+    "id": "P159",
+    "label": "headquarters location",
+    "template": "The headquarters of {} is located in the city of"
+  },
+  {
+    "id": "P169",
+    "label": "chief executive officer",
+    "template": "The chief executive officer of {} is"
+  },
+  {
+    "id": "P170",
+    "label": "creator",
+    "template": "{} was created by"
+  },
+  {
+    "id": "P175",
+    "label": "performer",
+    "template": "{} was performed by"
+  },
+  {
+    "id": "P176",
+    "label": "manufacturer",
+    "template": "The company that produced {} is"
+  },
+  {
+    "id": "P178",
+    "label": "developer",
+    "template": "{} was developed by"
+  },
+  {
+    "id": "P286",
+    "label": "head coach",
+    "template": "The head coach of {} is"
+  },
+  {
+    "id": "P364",
+    "label": "original language of film or TV show",
+    "template": "The original language of {} is"
+  },
+  {
+    "id": "P407",
+    "label": "language of work or name",
+    "template": "{} was written in the language of"
+  },
+  {
+    "id": "P413",
+    "label": "position played on team / speciality",
+    "template": "{} plays the position of"
+  },
+  {
+    "id": "P449",
+    "label": "original broadcaster",
+    "template": "The origianl broadcaster of {} is"
+  },
+  {
+    "id": "P488",
+    "label": "chairperson",
+    "template": "The chairperson of {} is"
+  },
+  {
+    "id": "P495",
+    "label": "country of origin",
+    "template": "{} was created in the country of"
+  },
+  {
+    "id": "P641",
+    "label": "sport",
+    "template": "{} is associated with the sport of"
+  },
+  {
+    "id": "P740",
+    "label": "location of formation",
+    "template": "{} was founded in the city of"
+  },
+  {
+    "id": "P800",
+    "label": "notable work",
+    "template": "{} is famous for"
+  },
+  {
+    "id": "P937",
+    "label": "work location",
+    "template": "{} worked in the city of"
+  },
+  {
+    "id": "P1037",
+    "label": "director / manager",
+    "template": "The director of {} is"
+  },
+  {
+    "id": "P1308",
+    "label": "officeholder",
+    "template": "The {} is"
+  },
+  {
+    "id": "P1412",
+    "label": "languages spoken, written or signed",
+    "template": "{} speaks the language of"
+  }
+]

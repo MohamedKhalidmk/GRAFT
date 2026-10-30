@@ -1,0 +1,19 @@
+Method,Family,FC-SH,FC-MH,Avg,Tokens / question,Memory build time (s),Query time (s),API cost ($),Questions (SH/MH),Repeats,Answer in retrieved (SH/MH)
+"Claude Haiku 5.5 (1M, full history)",Long-Context Agents,0.0,0.0,0.0,305940,0.4,0.01,30.595,100/100,1,
+Claude Haiku 5.5 (newest 128K),Long-Context Agents,0.0,0.0,0.0,121921,0.3,0.00,12.193,100/100,1,
+BM25,Simple RAG Agents,0.0,0.0,0.0,5985,0.1,0.00,0.120,100/100,1,91/32
+HippoRAG-v2 (benchmark copy),Structure-Augmented RAG Agents,0.0,0.0,0.0,6409,16.9,0.04,0.449,100/100,1,
+HippoRAG-v2 (upstream),Structure-Augmented RAG Agents,0.0,0.0,0.0,6398,16.9,0.03,0.449,100/100,1,
+Mem0 (benchmark copy),Structure-Augmented RAG Agents,0.0,0.0,0.0,2042,959.8,0.09,0.381,100/100,1,
+Mem0 (upstream),Structure-Augmented RAG Agents,0.0,0.0,0.0,1988,1323.6,0.80,0.196,100/100,1,
+MemGPT / Letta (benchmark copy),Agentic Memory Agents,0.0,0.0,0.0,46784,7.6,0.19,0.939,100/100,1,
+Letta server 0.16.8 (last MemGPT-lineage release),Agentic Memory Agents,0.0,0.0,0.0,25659,24.4,0.67,0.516,100/100,1,
+total-agent-memory (supersede),Agentic Memory Agents,0.0,0.0,0.0,489,301.0,0.64,0.010,100/100,1,
+"SGAR (ours) [gnn_checkpoint=results/checkpoints/gnn_bge_400w, max_facts=50, retrieval=gnn_goat, retrieval_workers=32]",Ours (structure-augmented + agentic),0.0,0.0,0.0,1399,15.4,0.42,0.638,100/100,1,98/57
+"SGAR (ours) [gnn_checkpoint=results/checkpoints/gnn_bge_400w, max_facts=50, retrieval=gnn_topk, retrieval_workers=32]",Ours (structure-augmented + agentic),0.0,0.0,0.0,1399,36.0,0.30,0.638,100/100,1,98/55
+"SGAR (ours) [gnn_checkpoint=results/checkpoints/gnn_bge_400w, max_facts=50, retrieval=ppr, retrieval_workers=32]",Ours (structure-augmented + agentic),0.0,0.0,0.0,1407,8.7,0.56,0.638,100/100,1,98/49
+"SGAR (ours) [gnn_checkpoint=results/checkpoints/gnn_bge_400w, retrieval=gnn_goat, retrieval_workers=32]",Ours (structure-augmented + agentic),0.0,0.0,0.0,4512,6.3,0.51,0.700,100/100,1,99/66
+"SGAR (ours) [gnn_checkpoint=results/checkpoints/gnn_bge_400w, retrieval=gnn_topk]",Ours (structure-augmented + agentic),0.0,0.0,0.0,4512,8.8,0.80,0.700,100/100,1,99/66
+SGAR (ours) [retrieval=gnn_goat],Ours (structure-augmented + agentic),0.0,0.0,0.0,6459,3.2,22.26,0.739,100/100,1,98/53
+SGAR (ours) [retrieval=gnn_topk],Ours (structure-augmented + agentic),0.0,0.0,0.0,6446,2.8,0.03,0.739,100/100,1,99/53
+SGAR (ours) [retrieval=ppr],Ours (structure-augmented + agentic),0.0,0.0,0.0,7286,3.1,0.08,0.755,100/100,1,99/68
