@@ -1,0 +1,18 @@
+run_name: exp_hipporag_real_mh_262k_ans256
+method: hipporag_bundled
+method_config:
+  cap_answer: true
+  json_openie: schema
+  shared_index: results/checkpoints/shared_graphs/hipporag_real_mh_262k_schema
+data:
+  length: 262k
+  splits:
+  - mh
+  chunk_size: 512
+  max_questions: null
+llm:
+  model: claude-haiku-5-5
+  mode: real
+  answer_max_tokens: 256
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1
