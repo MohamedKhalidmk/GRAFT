@@ -1,0 +1,22 @@
+{
+  "memory_build_time_s": 5229.823215007782,
+  "n_chunks": 537,
+  "graph": {
+    "entities": 10839,
+    "facts": 18088,
+    "supersedes_edges": 5994,
+    "current_facts": 12094
+  },
+  "writer": {
+    "ops": {
+      "ADD": 12094,
+      "MERGE": 70,
+      "SUPERSEDE": 5994,
+      "IGNORE": 156
+    },
+    "rejected": {},
+    "parse_failures": 1,
+    "writer_llm_calls": 1066
+  },
+  "graph_file": "/home/khaledmk/scratch/sgar/results/runs/exp_a_real_mh_262k_20261113-062554/repeat_0/memory/graph.json"
+}

@@ -1,0 +1,13 @@
+# RE-ANSWER (paid, answers only): same as bm25_real_mh_262k.yaml but the answer may use up to 256 tokens.
+# With 16 tokens Haiku 5.5 was often cut off before the answer (2026-11-13 run). Reuses the saved graph.
+run_name: exp_bm25_real_mh_262k_ans256
+method: bm25
+data:
+  length: 262k
+  splits: [mh]
+llm:
+  model: claude-haiku-5-5
+  mode: real
+  answer_max_tokens: 256
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1
