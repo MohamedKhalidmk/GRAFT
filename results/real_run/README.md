@@ -21,6 +21,8 @@ and `20261113-142941` (256 tokens), both reusing one HippoRAG index built at 13:
 (`hipporag_index_build/`). HippoRAG 2 cost **$1.30** in all, including five failed attempts (below),
 so the real runs together cost **$3.77**.
 
+A third HippoRAG 2 run gave its answers up to **2,048 tokens** (`hipporag_2048tok`, run `20261113-145119`, $0.07), as the paper did. No answer was cut off (longest 412 tokens) and it scored **14** (strict 14), the same as 15 at 256 tokens within noise. So the 256-token limit was not what held HippoRAG back. With it, all real runs cost **$3.84**.
+
 ## Variants
 
 | Folder prefix | Variant |
@@ -62,7 +64,7 @@ answer's final line, so a longer answer can't score by mentioning it while reaso
 | B · GNN + GOAt → PPR | 13 | 37 | 33 | 51 | 2,452 |
 | C · PPR → GNN + GOAt → short PPR | 17 | 38 | 36 | 51 | 2,439 |
 | D · extends synthetic starting graph | 22 | 37 | 36 | 44 | 2,443 |
-| HippoRAG 2 | 0 | 15 | 14 | not recorded | 5,653 |
+| HippoRAG 2 | 0 | 15 (2,048 tok: 14) | 14 | not recorded | 5,653 |
 | BM25 | 1 | 4 | 4 | 32 | 9,444 |
 
 At 16 tokens Haiku often starts with "Based on the knowledge pool…" and is cut off before the answer

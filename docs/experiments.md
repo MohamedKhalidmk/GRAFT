@@ -186,3 +186,8 @@ conversationally and the index came out empty); a graph-search crash falls back 
 dense retrieval (not needed in the final runs); and on the Mac the gateway now embeds on the CPU
 (Apple's GPU returned NaN and wrong vectors). HippoRAG cost $1.30 in all, failed attempts included;
 all real runs together cost **$3.77**.
+
+**With room to answer (2,048 tokens).** A third run gave HippoRAG 2's answers up to 2,048 tokens,
+HippoRAG's own default and what the paper used. No answer was cut off (longest 412 tokens), and it
+scored **14** (strict 14), the same as 15 at 256 tokens within noise. The answer limit was not what held
+it back; retrieval is. This run cost $0.07, so all real runs cost **$3.84**.
