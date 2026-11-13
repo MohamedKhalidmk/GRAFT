@@ -9,7 +9,7 @@
 # Train SGAR's GNN. No API calls. A 1g.10gb H100 slice is plenty for a 3-layer GCN plus a small
 # embedding model. Usage: sbatch scripts/fir/train_gnn.sbatch <source> <checkpoint name> [embedding model]
 set -euo pipefail
-source "$HOME/SGAR/scripts/fir/common.sh"
+source "$SLURM_SUBMIT_DIR/scripts/fir/common.sh"  # submit from the repo root
 export HF_HUB_OFFLINE=1
 .venv/bin/python -m my_method.gnn.train --source "${1:-synthetic}" --out "$RESULTS_DIR/checkpoints/${2:-gnn_default}" \
   --embedding-model "${3:-Qwen/Qwen3-Embedding-0.6B}" --synthetic-worlds 400 --questions-per-world 30 --epochs 30

@@ -88,6 +88,12 @@ def make_questions(store: GraphStore, rng: random.Random, n: int, p_multi_hop: f
     return examples
 
 
+def synthetic_start_graph(seed: int = 7, n_entities: int = 150, n_facts: int = 400) -> GraphStore:
+    """Experiment D's "synthetic starting graph": one made-up world (invented names, the schema's
+    relation labels, some revisions). A stand-in for a real ready-made graph."""
+    return build_world(random.Random(seed), n_entities, n_facts, p_revision=0.2)
+
+
 def synthetic_examples(seed: int, n_worlds: int, questions_per_world: int, n_entities: int = 150,
                        n_facts: int = 400, p_revision: float = 0.35, p_multi_hop: float = 0.5) -> list[list[Example]]:
     """One list of examples per world (split train/val by world, never within one)."""

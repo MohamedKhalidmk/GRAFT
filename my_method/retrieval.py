@@ -9,6 +9,14 @@
      gnn_topk  trained GNN scores nodes; the highest-scored facts are the region (ablation)
      ppr       Personalized PageRank over the whole graph, no GNN and no depth limit (ablation,
                as HippoRAG does it)
+     goat_ppr  experiment B: region WITHOUT PPR (the max_nodes nodes nearest the question's
+               entities, or the whole graph with region="full"); GNN + GOAt pick the nodes that
+               drive the top scores; PPR from those picks over the whole graph adds the facts
+               around them
+     ppr_goat_ppr  experiment C: PPR cuts the graph to max_nodes (as gnn_goat), GNN + GOAt pick
+               nodes, then a short second PPR (restart 0.5) from the picks inside that region
+   B and C rank: GOAt-picked facts first (by importance), then facts by the second PPR, then the
+   GNN's ranking to fill the budget.
    If no entity links, every mode falls back to embedding similarity over current facts.
 4. Latest-version rule: each fetched fact is replaced by its newest version; optionally the
    superseded versions are kept too, marked outdated.
@@ -18,14 +26,15 @@
 import re
 from dataclasses import dataclass, field
 
+import networkx as nx
 import numpy as np
 import torch
 
 from my_method.gnn.explain import edge_attributions
-from my_method.gnn.features import TextEmbedder, build_features, node_text, ppr_scores, select_subgraph
+from my_method.gnn.features import TextEmbedder, build_features, nearest_nodes, node_text, ppr_scores, select_subgraph
 from my_method.graph_store import GraphStore
 
-MODES = ("gnn_goat", "gnn_topk", "ppr")
+MODES = ("gnn_goat", "gnn_topk", "ppr", "goat_ppr", "ppr_goat_ppr")
 
 
 @dataclass
@@ -37,6 +46,8 @@ class RetrievalConfig:
     max_nodes: int = 400
     goat_targets: int = 3  # top-scored nodes whose predictions GOAt explains
     goat_topk: int = 12  # edges kept per explained node
+    region: str = "nearest"  # goat_ppr only: "nearest" (max_nodes nearest by hops) | "full" (whole graph)
+    expand_alpha: float = 0.5  # goat_ppr / ppr_goat_ppr: PageRank damping of the second walk (HippoRAG 2 uses 0.5)
 
 
 @dataclass
@@ -76,12 +87,22 @@ class Retriever:
         if self.cfg.mode == "ppr":
             return self._finish(self._ppr(linked), Region([], linked_entities=linked,
                                                           subgraph_nodes=self.store.g.number_of_nodes()))
-        nodes = select_subgraph(self.store, linked, self.cfg.max_nodes)
+        if self.cfg.mode == "goat_ppr":
+            nodes = (self.store.entities() + self.store.facts() if self.cfg.region == "full"
+                     else nearest_nodes(self.store, linked, self.cfg.max_nodes))
+            nodes = [n for n in linked if n in nodes] + [n for n in nodes if n not in linked]
+        else:
+            nodes = select_subgraph(self.store, linked, self.cfg.max_nodes)
         region = Region([], linked_entities=linked, subgraph_nodes=len(nodes))
         sub = build_features(self.store, nodes, linked, question, self.texts)
         with torch.no_grad():
             scores = self.model(sub.x, sub.edge_index)[:, 1].numpy()
-        ranked = self._goat(sub, scores) if self.cfg.mode == "gnn_goat" else self._by_score(nodes, scores)
+        if self.cfg.mode in ("goat_ppr", "ppr_goat_ppr"):
+            ranked = self._goat_then_ppr(sub, scores, whole_graph=self.cfg.mode == "goat_ppr")
+        elif self.cfg.mode == "gnn_goat":
+            ranked = self._goat(sub, scores)
+        else:
+            ranked = self._by_score(nodes, scores)
         return self._finish(ranked, region)
 
     # ---- ranking ----
@@ -112,6 +133,33 @@ class Retriever:
         ranked = sorted(importance, key=lambda n: -importance[n])
         rest = [n for n in self._by_score(sub.nodes, scores) if n not in importance]
         return ranked + rest  # GOAt's region first, then the GNN's ranking to fill the budget
+
+    def _goat_nodes(self, sub, scores: np.ndarray) -> dict[str, float]:
+        """Every node (entity or fact) GOAt finds behind the top scores, with its importance."""
+        importance: dict[str, float] = {}
+        if sub.edge_index.shape[1] == 0:
+            return {sub.nodes[t]: float(scores[t]) for t in np.argsort(-scores)[: self.cfg.goat_targets]}
+        edge_scores, edge_ids = edge_attributions(self.model, sub.x, sub.edge_index, self.cfg.goat_topk)
+        for target in np.argsort(-scores)[: self.cfg.goat_targets]:
+            node = sub.nodes[target]
+            importance[node] = max(importance.get(node, 0.0), float(scores[target]))
+            for score, edge in zip(edge_scores[target].tolist(), edge_ids[target].tolist()):
+                if score <= 0:
+                    continue
+                for end in sub.edge_index[:, edge].tolist():
+                    importance[sub.nodes[end]] = max(importance.get(sub.nodes[end], 0.0), score)
+        return importance
+
+    def _goat_then_ppr(self, sub, scores: np.ndarray, whole_graph: bool) -> list[str]:
+        """Experiments B and C: GOAt's picks, then a PPR walk from them, then the GNN's ranking."""
+        picks = self._goat_nodes(sub, scores)
+        graph = self.store.simple_graph() if whole_graph else self.store.simple_graph().subgraph(sub.nodes)
+        seeds = {n: w for n, w in picks.items() if n in graph and w > 0} or {sub.nodes[int(np.argmax(scores))]: 1.0}
+        rank = nx.pagerank(graph, alpha=self.cfg.expand_alpha, personalization=seeds)
+        picked = sorted((n for n in picks if self._is_fact(n)), key=lambda n: -picks[n])
+        walked = sorted((n for n in rank if n not in picks and self._is_fact(n)), key=lambda n: -rank[n])
+        rest = [n for n in self._by_score(sub.nodes, scores) if n not in picks and n not in rank]
+        return picked + walked + rest
 
     def _ppr(self, seeds: list[str]) -> list[str]:
         rank = ppr_scores(self.store, seeds)

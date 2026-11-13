@@ -173,9 +173,27 @@ below, and nothing that does not fit it.
 
 {schema}
 
-For each fact give subject, relation and object, the serial number the text gives the fact \
+{pattern}For each fact give subject, relation and object, the serial number the text gives the fact \
 (null if it has none), and span: the exact sentence the fact comes from.
 Return JSON only: {{"facts": [{{"subject": "...", "relation": "...", "object": "...", "serial": 12, "span": "..."}}]}}"""
+
+# Experiment D ("extend" mode): the writer starts from a ready-made graph and must follow its pattern.
+PATTERN_BLOCK = """The memory graph already exists; you only extend it. Follow its pattern: when a fact fits one \
+of the graph's relation labels below, use that label exactly, word for word. Name a new relation only \
+when none fits.
+Relation labels in the graph: {labels}
+Example facts already stored:
+{examples}
+
+"""
+
+
+def graph_pattern(store: GraphStore, n_examples: int = 6) -> str:
+    """The ready-made graph's relation vocabulary and a few stored facts, for the extraction prompt."""
+    labels = Counter(store.fact(f)["relation"] for f in store.facts())
+    examples = sorted(store.facts(), key=lambda f: store.fact(f)["provenance"]["arrival"])[:n_examples]
+    lines = "\n".join(f"- {store.fact(f)['subject']} | {store.fact(f)['relation']} | {store.fact(f)['object']}" for f in examples)
+    return PATTERN_BLOCK.format(labels=", ".join(label for label, _ in labels.most_common()), examples=lines)
 
 EXTRACT_FREE = """SGAR-EXTRACT free
 You are the memory writer of an agent. Read the text and store its knowledge as a graph, in \
@@ -216,10 +234,13 @@ def _serial(value) -> int | None:
 
 
 class LLMWriter:
-    def __init__(self, llm: ClaudeLLM, schema: Schema, mode: str, revisions: bool, max_tokens: int = 8192):
+    def __init__(self, llm: ClaudeLLM, schema: Schema, mode: str, revisions: bool, max_tokens: int = 8192,
+                 pattern: str = ""):
+        """pattern: graph_pattern() of a ready-made starting graph (experiment D), or "" (from scratch)."""
         assert mode in ("fixed", "free"), mode
         self.llm, self.schema, self.mode, self.revisions = llm, schema, mode, revisions
         self.max_tokens = max_tokens
+        self.pattern = pattern
         self.stats = WriterStats()
 
     def write_chunk(self, chunk_id: int, text: str, store: GraphStore) -> None:
@@ -237,7 +258,7 @@ class LLMWriter:
 
     def extract(self, text: str) -> list[NewFact]:
         if self.mode == "fixed":
-            reply = self._ask_json(EXTRACT_FIXED.format(schema=self.schema.describe()), text) or {}
+            reply = self._ask_json(EXTRACT_FIXED.format(schema=self.schema.describe(), pattern=self.pattern), text) or {}
             raw = [f for f in reply.get("facts", []) if isinstance(f, dict)]
         else:
             reply = self._ask_json(EXTRACT_FREE, text) or {}

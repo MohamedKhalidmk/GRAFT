@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --account=def-sylu_gpu
-#SBATCH --gres=gpu:nvidia_h100_80gb_hbm3_1g.10gb:1
+#SBATCH --gres=gpu:h100:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=24:00:00
@@ -11,6 +11,6 @@
 # exported in the submitting shell (sbatch passes the environment; the key is never written to disk).
 # Usage: sbatch scripts/fir/run_queue.sbatch configs/runs/a.yaml configs/runs/b.yaml ...
 set -euo pipefail
-source "$HOME/SGAR/scripts/fir/common.sh"
+source "$SLURM_SUBMIT_DIR/scripts/fir/common.sh"  # submit from the repo root
 export HF_HUB_OFFLINE=1
 .venv/bin/python -m eval.queue --name "slurm_${SLURM_JOB_ID}" "$@"

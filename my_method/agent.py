@@ -5,7 +5,10 @@ Config keys (defaults in eval/methods.py, all switchable in the UI):
     schema            "fixed" (schema.yaml) | "free" (the LLM invents the structure; ablation)
     schema_path       which schema file to use with "fixed"
     revisions         true: SUPERSEDE edges | false: append-only (ablation)
-    retrieval         "gnn_goat" | "gnn_topk" | "ppr"
+    shared_graph      path: load this graph instead of writing one (built and saved there on first use)
+    start_graph       "empty" (from scratch) | "synthetic" (experiment D: extend a synthetic starting graph)
+    retrieval         "gnn_goat" (A) | "goat_ppr" (B) | "ppr_goat_ppr" (C) | "gnn_topk" | "ppr"
+    region, expand_alpha   B / C only, see my_method/retrieval.py
     gnn_checkpoint    directory written by my_method.gnn.train (needed by the gnn_* modes)
     max_facts, max_tokens, include_outdated, goat_targets, goat_topk     read-phase budget
     writer_max_tokens output cap for the writer's extraction and decision calls
@@ -22,7 +25,7 @@ from baselines.claude_llm import ClaudeLLM
 from baselines.common.protocol import Gateway, Question, Task, run_agent
 from eval.methods import REPO
 from my_method.answer import answer
-from my_method.gnn.features import TextEmbedder
+from my_method.gnn.features import TextEmbedder, node_text
 from my_method.gnn.train import load_model
 from my_method.graph_store import GraphStore
 from my_method.retrieval import Region, RetrievalConfig, Retriever
@@ -51,22 +54,39 @@ class SGARAgent:
         self.work_dir = Path(config["work_dir"])
         self.work_dir.mkdir(parents=True, exist_ok=True)
         self.store = GraphStore()
+        pattern = ""
+        if config.get("start_graph", "empty") == "synthetic":  # experiment D: extend a ready-made graph
+            from my_method.gnn.data_synthetic import synthetic_start_graph
+            from my_method.writer import graph_pattern
+            self.store = synthetic_start_graph(config.get("start_graph_seed", 7))
+            pattern = graph_pattern(self.store)
         if config["writer"] == "rule":
             self.writer = RuleWriter(revisions=config["revisions"])
         else:
             schema = Schema.load(REPO / config["schema_path"])
-            self.writer = LLMWriter(self.llm, schema, config["schema"], config["revisions"], config["writer_max_tokens"])
+            self.writer = LLMWriter(self.llm, schema, config["schema"], config["revisions"], config["writer_max_tokens"],
+                                   pattern)
         self.texts = TextEmbedder(load_embedder(config["embedding_model"]))
         self.retriever: Retriever | None = None
         self.questions = task.questions
         self.regions: dict[int, Region] = {}
 
     def memorize(self, chunks: list[str]) -> dict:
+        shared = self.config.get("shared_graph")  # one built graph reused by several read variants
+        shared = REPO / shared if shared else None
+        if shared and Path(shared).exists():
+            self.store = GraphStore.load(shared)
+            print(f"[sgar] reusing graph {shared}: {self.store.stats()}", flush=True)
+            self.retriever = self._make_retriever()
+            return {"graph": self.store.stats(), "writer": {"reused_graph": str(shared)}, "graph_file": str(shared)}
         for chunk_id, chunk in enumerate(chunks):
             self.writer.write_chunk(chunk_id, chunk, self.store)
             if chunk_id % 50 == 0:
                 print(f"[sgar] chunk {chunk_id + 1}/{len(chunks)}: {self.store.stats()}", flush=True)
         self.store.save(self.work_dir / "graph.json")
+        if shared:
+            Path(shared).parent.mkdir(parents=True, exist_ok=True)
+            self.store.save(shared)
         self.retriever = self._make_retriever()
         return {"graph": self.store.stats(), "writer": self.writer.stats.as_dict(),
                 "graph_file": str(self.work_dir / "graph.json")}
@@ -74,7 +94,8 @@ class SGARAgent:
     def _make_retriever(self) -> Retriever:
         c = self.config
         cfg = RetrievalConfig(mode=c["retrieval"], max_facts=c["max_facts"], max_tokens=c["max_tokens"],
-                              include_outdated=c["include_outdated"], goat_targets=c["goat_targets"], goat_topk=c["goat_topk"])
+                              include_outdated=c["include_outdated"], goat_targets=c["goat_targets"], goat_topk=c["goat_topk"],
+                              region=c.get("region", "nearest"), expand_alpha=c.get("expand_alpha", 0.5))
         model = None
         if cfg.mode != "ppr":
             model, gnn_cfg = load_model(REPO / c["gnn_checkpoint"])
@@ -89,6 +110,9 @@ class SGARAgent:
         global _worker_retriever
         _worker_retriever = self.retriever
         texts = [question_text(q.query) for q in self.questions]
+        # Embed every node and question here, in the parent: workers are forked, and a forked process
+        # cannot use CUDA. With everything cached, workers only read vectors.
+        self.texts.embed_texts([node_text(self.store, n) for n in self.store.g.nodes] + texts)
         with multiprocessing.get_context("fork").Pool(workers) as pool:
             regions = pool.map(_retrieve_in_worker, texts, chunksize=1)
         self.regions = {q.q_index: r for q, r in zip(self.questions, regions)}
