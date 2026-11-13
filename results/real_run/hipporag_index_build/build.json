@@ -1,0 +1,9 @@
+{
+  "memory_build_time_s": 327.65654492378235,
+  "n_chunks": 537,
+  "n_passages": 537,
+  "n_entities": 10843,
+  "n_facts": 18333,
+  "graph_nodes": 11380,
+  "graph_edges": 1164673
+}

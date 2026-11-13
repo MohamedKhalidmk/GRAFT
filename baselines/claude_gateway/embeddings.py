@@ -8,6 +8,9 @@ import hashlib
 import math
 import re
 
+import sys
+import threading
+
 import numpy as np
 
 
@@ -36,12 +39,22 @@ class SentenceTransformerEmbedder:
     def __init__(self, model_name: str):
         from sentence_transformers import SentenceTransformer
         self.name = model_name
-        self.model = SentenceTransformer(model_name, trust_remote_code=True)
+        # Apple's GPU backend (MPS) returned NaN and wrong vectors for this model (2026-11-13), so on
+        # macOS it runs on the CPU; elsewhere sentence-transformers picks the device (CUDA on Fir).
+        device = "cpu" if sys.platform == "darwin" else None
+        self.model = SentenceTransformer(model_name, trust_remote_code=True, device=device)
         self.dim = self.model.get_sentence_embedding_dimension()
+        self._lock = threading.Lock()
 
     def embed(self, texts: list[str]) -> np.ndarray:
-        return self.model.encode(texts, batch_size=32, normalize_embeddings=True,
-                                 convert_to_numpy=True).astype(np.float32)
+        # The gateway serves requests on several threads; concurrent encode() calls on one model gave
+        # NaN vectors on Apple GPUs (HippoRAG run, 2026-11-13), so batches are encoded one at a time.
+        with self._lock:
+            out = self.model.encode(texts, batch_size=32, normalize_embeddings=True,
+                                    convert_to_numpy=True).astype(np.float32)
+        if not np.isfinite(out).all():
+            raise ValueError("embedding model returned NaN or inf vectors")
+        return out
 
 
 def load_embedder(spec: str):

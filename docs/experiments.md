@@ -158,3 +158,31 @@ answer (after "Answer:").
   times, but the model rarely resolves it from them.
 
 Run folders on Fir: `~/scratch/sgar/results/runs/exp_*_real_mh_262k_ans256_*`.
+
+### HippoRAG 2 baseline, real run (same conditions)
+
+Run on the Mac on 2026-11-13 with the same model (Claude Haiku 5.5), embedding model (bge-small),
+100 MH questions, top 10 passages and answer limits (16 and 256 tokens). It uses the benchmark's bundled
+HippoRAG copy, with its answer capped like every other method (`cap_answer`). Configs:
+`configs/runs/exp/hipporag_real_mh_262k*.yaml`. Raw answers: `results/real_run/hipporag_*`.
+
+| | 16 tokens | 256 tokens | Tokens / question | Answers cut off (16 / 256) |
+|---|---|---|---|---|
+| HippoRAG 2 | 0 | **15** (strict 14) | about 5,700 | 97 / 49 |
+| GRAFT A, B, C | 13–17 | **37–38** | about 2,450 | 58–66 / 0–1 |
+| BM25 | 1 | 4 | about 9,400 | 84 / 4 |
+
+**Beside the paper** (MemoryAgentBench Table 3, FC-MH): HippoRAG 2 gets 5 and BM25 gets 3 there.
+Our 0 at 16 tokens is not comparable: the paper never capped HippoRAG's answer (up to 2,048 tokens),
+and its answer prompt writes "Thought:" first, so 16 tokens never reach the answer. Our 15 at 256
+tokens is higher than the paper's 5 mainly because of the model (Claude Haiku 5.5 vs GPT-4o-mini; in
+the paper's own table GPT-5-mini gets 28 on MH while most GPT-4o-mini methods get 2 to 7), despite a
+much smaller embedding model (bge-small vs NV-Embed-v2) and 49 answers still cut off at 256 tokens.
+One run of 100 questions is about ±4. The fair comparison is across our own rows.
+
+**What it took to run HippoRAG with Claude** (details in `results/real_run/README.md`): its extraction
+calls use Claude's structured output (Claude otherwise answered the dialogue-shaped chunks
+conversationally and the index came out empty); a graph-search crash falls back to HippoRAG's own
+dense retrieval (not needed in the final runs); and on the Mac the gateway now embeds on the CPU
+(Apple's GPU returned NaN and wrong vectors). HippoRAG cost $1.30 in all, failed attempts included;
+all real runs together cost **$3.77**.

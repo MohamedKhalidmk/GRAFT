@@ -61,6 +61,11 @@ def openai_to_anthropic(body: dict, model: str) -> tuple[dict, list[str]]:
     }
     if system_parts:
         params["system"] = "\n\n".join(p for p in system_parts if p)
+    if response_format.get("type") == "json_schema" and response_format.get("json_schema", {}).get("strict"):
+        # OpenAI's strict mode guarantees schema-valid JSON; Claude's native structured output is
+        # the faithful equivalent (the written instruction above alone is only a request)
+        params["output_config"] = {"format": {"type": "json_schema",
+                                              "schema": response_format["json_schema"]["schema"]}}
     if body.get("stop"):
         stop = body["stop"]
         params["stop_sequences"] = [stop] if isinstance(stop, str) else list(stop)
