@@ -130,3 +130,69 @@ def test_registry_configs_are_valid():
     from eval.methods import METHODS
     for path in (REPO / "configs" / "runs").glob("*.yaml"):
         assert yaml.safe_load(path.read_text())["method"] in METHODS, path
+
+
+def test_nearest_nodes_is_breadth_first_and_capped():
+    from my_method.gnn.features import nearest_nodes
+    store = GraphStore()
+    for i in range(30):
+        store.add_fact("Hub", "linked to", f"Leaf {i}", Provenance(0, store.take_arrival(), None, f"hub {i}"))
+    nodes = nearest_nodes(store, ["e:hub"], 10)
+    assert nodes[0] == "e:hub" and len(nodes) == 10
+    assert all(store.fact(n)["type"] == "Fact" for n in nodes[1:])  # hop 1 = the hub's facts
+
+
+@pytest.mark.parametrize("mode,region", [("goat_ppr", "nearest"), ("goat_ppr", "full"), ("ppr_goat_ppr", "nearest")])
+def test_experiment_b_and_c_modes_return_newest_facts(mode, region):
+    """B and C run end to end with an untrained GCN, and the latest-version rule still applies."""
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = GraphStore()
+    old = store.add_fact("Pee Wee King", "country of citizenship", "United States", Provenance(0, store.take_arrival(), 1, "1. a"))
+    new = store.add_fact("Pee Wee King", "country of citizenship", "France", Provenance(1, store.take_arrival(), 2, "2. b"))
+    store.supersede(new, old)
+    store.add_fact("France", "official language", "Hebrew", Provenance(2, store.take_arrival(), 3, "3. c"))
+    for i in range(20):
+        store.add_fact(f"Person {i}", "country of citizenship", "France", Provenance(3, store.take_arrival(), 10 + i, f"x {i}"))
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    cfg = RetrievalConfig(mode=mode, region=region, max_nodes=12, max_facts=10)
+    region_ = Retriever(store, cfg, texts, model).retrieve("What language does Pee Wee King's country speak?")
+    assert region_.linked_entities == ["e:pee wee king"] and region_.facts
+    assert old not in region_.facts  # superseded versions are swapped for the newest
+    assert region_.subgraph_nodes == (store.g.number_of_nodes() if region == "full" else 12)
+
+
+def test_extend_mode_starts_from_synthetic_graph_and_prompts_its_pattern():
+    """Experiment D: the writer starts from the synthetic graph and the prompt lists its relations."""
+    from my_method.gnn.data_synthetic import synthetic_start_graph
+    from my_method.schema import Schema
+    from my_method.writer import EXTRACT_FIXED, LLMWriter, graph_pattern
+    seed = synthetic_start_graph()
+    assert seed.stats()["facts"] > 100 and seed.stats()["supersedes_edges"] > 0
+    pattern = graph_pattern(seed)
+    assert "country of citizenship" in pattern or "official language" in pattern
+
+    class Echo:  # records the system prompt instead of calling Claude
+        def complete(self, system, user, max_tokens):
+            self.system = system
+            return type("R", (), {"text": '{"facts": []}'})()
+    llm = Echo()
+    LLMWriter(llm, Schema.load(), "fixed", True, pattern=pattern).extract("1. A is a citizen of B.")
+    assert llm.system.startswith("SGAR-EXTRACT fixed") and "you only extend it" in llm.system
+    assert "you only extend it" not in EXTRACT_FIXED.format(schema="s", pattern="")
+
+
+def test_shared_graph_is_built_once_then_loaded(tmp_path):
+    from baselines.common.protocol import Task
+    from my_method.agent import SGARAgent
+    cfg = {"model": "claude-haiku-5-5", "writer": "rule", "revisions": True, "embedding_model": "hash:16",
+           "work_dir": str(tmp_path / "w"), "retrieval": "ppr", "max_facts": 5, "max_tokens": 5120,
+           "include_outdated": False, "goat_targets": 3, "goat_topk": 12, "shared_graph": str(tmp_path / "g.json")}
+    gw = type("G", (), {"anthropic_base_url": "http://unused"})()
+    task = Task(sub_datasets=["factconsolidation_mh_6k"], chunk_size=512, chunks=["1. A is a citizen of B."], questions=[])
+    first = SGARAgent(cfg, gw, task).memorize(task.chunks)
+    second = SGARAgent(cfg, gw, task).memorize(["2. A is a citizen of C."])
+    assert first["graph"]["facts"] == 1 and second["writer"] == {"reused_graph": str(tmp_path / "g.json")}

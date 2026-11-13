@@ -1,0 +1,11 @@
+variant,name,answer_max_tokens,slurm_job,folder,questions,score_substring_exact_match,score_strict_final_line,answer_reached_model,cut_off_at_limit,tokens_per_question,answer_cost_usd_per_question,build_cost_usd,run_cost_usd
+a,A · PPR → GNN + GOAt (current),16,3787840,a_16tok,100,15,15,51,65,2395,0.000245,1.0355,1.0599
+b,B · GNN + GOAt (400 nearest) → PPR,16,3787840,b_16tok,100,13,13,51,66,2397,0.000245,0.0,0.0245
+c,C · PPR → GNN + GOAt → short PPR,16,3787840,c_16tok,100,17,17,51,58,2388,0.000244,0.0,0.0244
+d_extend,D · extends the synthetic starting graph,16,3787840,d_extend_16tok,100,22,22,44,49,2393,0.000244,1.0398,1.0642
+bm25,BM25 (top chunks),16,3787840,bm25_16tok,100,1,1,32,84,9363,0.000942,0.0,0.0942
+a,A · PPR → GNN + GOAt (current),256,3845944,a_256tok,100,37,36,51,0,2455,0.000275,0.0,0.0275
+b,B · GNN + GOAt (400 nearest) → PPR,256,3845944,b_256tok,100,37,33,51,0,2452,0.000272,0.0,0.0272
+c,C · PPR → GNN + GOAt → short PPR,256,3845944,c_256tok,100,38,36,51,1,2439,0.000269,0.0,0.0269
+d_extend,D · extends the synthetic starting graph,256,3845944,d_extend_256tok,100,37,36,44,0,2443,0.000269,0.0,0.0269
+bm25,BM25 (top chunks),256,3845944,bm25_256tok,100,4,4,32,4,9444,0.000982,0.0,0.0982

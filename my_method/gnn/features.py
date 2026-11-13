@@ -48,7 +48,7 @@ class TextEmbedder:
         self.index: dict[str, int] = {}  # text -> row of table(), filled by ids()
 
     def embed_one(self, text: str) -> np.ndarray:
-        return self.embedder.embed([text])[0]
+        return self.embed_texts([text])[0]  # cached, so forked workers never touch the GPU model
 
     def ids(self, texts: list[str]) -> list[int]:
         """Row numbers of these texts in table(); lets training graphs share one embedding table."""
@@ -79,6 +79,24 @@ def select_subgraph(store: GraphStore, seeds: list[str], max_nodes: int) -> list
     rank = ppr_scores(store, seeds)
     rest = sorted((n for n in rank if n not in seeds), key=lambda n: -rank[n])
     return (seeds + rest)[:max_nodes]
+
+
+def nearest_nodes(store: GraphStore, seeds: list[str], max_nodes: int) -> list[str]:
+    """The max_nodes nodes closest to the seeds by hop count (breadth-first), seeds first. No PPR:
+    the region experiment B uses, so the GNN, not PageRank, decides what matters."""
+    g = store.simple_graph()
+    seen = [s for s in dict.fromkeys(seeds) if s in g]
+    frontier, found = list(seen), set(seen)
+    while frontier and len(seen) < max_nodes:
+        nxt = []
+        for node in frontier:
+            for nb in sorted(g.neighbors(node)):
+                if nb not in found:
+                    found.add(nb)
+                    seen.append(nb)
+                    nxt.append(nb)
+        frontier = nxt
+    return seen[:max_nodes]
 
 
 @dataclass

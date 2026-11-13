@@ -1,0 +1,20 @@
+# Experiment D, fake mode, code-path check only: the LLM EXTENDS a ready-made graph (the "synthetic starting graph":
+# one made-up world, invented names, the schema's relation labels) instead of building from scratch.
+# Everything else as variant A. The from-scratch arm of D is exp_a_real_mh_262k (same graph build).
+run_name: exp_d_extend_fake_mh_262k
+method: sgar
+method_config:
+  retrieval: gnn_goat
+  max_facts: 50
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  start_graph: synthetic
+data:
+  length: 262k
+  splits: [mh]
+llm:
+  model: claude-haiku-5-5
+  mode: fake
+  answer_max_tokens: 16
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1
