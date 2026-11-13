@@ -11,3 +11,4 @@ c,C · PPR → GNN + GOAt → short PPR,256,3845944,c_256tok,100,38,36,51,1,2439
 d_extend,D · extends the synthetic starting graph,256,3845944,d_extend_256tok,100,37,36,44,0,2443,0.000269,0.0,0.0269
 hipporag,"HippoRAG 2 (benchmark copy, top 10 passages)",256,local Mac run 20261113-142941,hipporag_256tok,100,15,14,,49,5653,0.000648,0.0,0.0648
 bm25,BM25 (top chunks),256,3845944,bm25_256tok,100,4,4,32,4,9444,0.000982,0.0,0.0982
+hipporag,"HippoRAG 2 (benchmark copy, top 10 passages)",2048,local Mac run 20261113-145119,hipporag_2048tok,100,14,14,,0,6236,0.000723,0.0,0.0723

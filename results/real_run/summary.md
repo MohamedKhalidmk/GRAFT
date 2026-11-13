@@ -24,6 +24,12 @@ Generated from the per-question files in this folder. Score = the benchmark's su
 | HippoRAG 2 (benchmark copy, top 10 passages) | 15 | 14 |  | 49 | 5,653 | $0.000648 | $0.0648 |
 | BM25 (top chunks) | 4 | 4 | 32 | 4 | 9,444 | $0.000982 | $0.0982 |
 
-API spend for these 12 runs: **$2.60**. Not included: the HippoRAG 2 index build ($0.58, hipporag_index_build/) and the failed HippoRAG attempts (see README).
+### Answer limit 2048 tokens (HippoRAG 2 only, on the Mac; the paper did not cap HippoRAG)
+
+| Variant | Score | Strict (final line) | Answer reached the model | Cut off | Tokens / question | Answer cost / question | Run cost |
+|---|---|---|---|---|---|---|---|
+| HippoRAG 2 (benchmark copy, top 10 passages) | 14 | 14 |  | 0 | 6,236 | $0.000723 | $0.0723 |
+
+API spend for these 13 runs: **$2.67**. Not included: the HippoRAG 2 index build ($0.58, hipporag_index_build/) and the failed HippoRAG attempts (see README).
 
 HippoRAG 2's 'cut off' counts answers that stopped exactly at the limit, from its API log (usage.jsonl), since its per-question rows do not carry the stop reason. 'Answer reached the model' is blank for HippoRAG 2: its retrieved passages are not recorded per question.
