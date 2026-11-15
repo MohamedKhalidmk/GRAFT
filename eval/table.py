@@ -30,7 +30,7 @@ def results_dir() -> Path:
 
 def latest_summaries(length: str, mode: str) -> dict[tuple[str, str], dict]:
     """(method key, variant) -> summary of its most recent finished run at this length and mode.
-    A variant is a method run with settings changed from its defaults (e.g. an SGAR ablation)."""
+    A variant is a method run with settings changed from its defaults (e.g. an GRAFT ablation)."""
     found: dict[tuple[str, str], tuple[float, dict]] = {}
     for path in (results_dir() / "runs").glob("*/summary.json"):
         s = json.loads(path.read_text())
@@ -66,7 +66,7 @@ def row_for(s: dict) -> dict:
 
 def our_rows(length: str, mode: str) -> list[dict]:
     summaries = latest_summaries(length, mode)
-    keys = sorted(summaries, key=lambda k: (FAMILY_ORDER.index(METHODS[k[0]].family), list(METHODS).index(k[0]), k[1]))
+    keys = sorted(summaries, key=lambda k: (FAMILY_ORDER.index(METHODS[k[0]].family), list(METHODS).index(METHODS[k[0]].key), k[1]))
     return [row_for(summaries[k]) for k in keys]
 
 

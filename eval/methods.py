@@ -36,7 +36,18 @@ LONG_CONTEXT, SIMPLE_RAG, STRUCTURE_RAG, AGENTIC, OURS = (
     "Long-Context Agents", "Simple RAG Agents", "Structure-Augmented RAG Agents",
     "Agentic Memory Agents", "Ours (structure-augmented + agentic)")
 
-METHODS: dict[str, MethodSpec] = {m.key: m for m in [
+class _Methods(dict):
+    """Method table that also accepts old keys (the method was called SGAR during development)."""
+    ALIASES = {"sgar": "graft"}
+
+    def __getitem__(self, key):
+        return super().__getitem__(self.ALIASES.get(key, key))
+
+    def __contains__(self, key):
+        return super().__contains__(self.ALIASES.get(key, key))
+
+
+METHODS: dict[str, MethodSpec] = _Methods({m.key: m for m in [
     MethodSpec("long_context", "Claude Haiku 5.5 (1M, full history)", LONG_CONTEXT,
                "baselines.long_context.agent", "core", "Long_context_agent", 512,
                {"truncate_to_tokens": None}, paper_row="GPT-4o-mini (128K)"),
@@ -68,10 +79,10 @@ METHODS: dict[str, MethodSpec] = {m.key: m for m in [
                "baselines.total_agent_memory.agent", "total-agent-memory",
                "Agentic_memory_total_agent_memory", 512,
                {"retrieve_num": 10, "tam_supersede": True, "tam_show_recorded": True}, optional=True),
-    MethodSpec("sgar", "SGAR (ours)", OURS, "my_method.agent", "core", "Structure_rag_sgar", 512, {
+    MethodSpec("graft", "GRAFT (ours)", OURS, "my_method.agent", "core", "Structure_rag_sgar", 512, {
         "writer": "llm", "schema": "fixed", "schema_path": "my_method/schema.yaml", "revisions": True,
         "retrieval": "gnn_goat", "gnn_checkpoint": "results/checkpoints/gnn_default",
         # 5120 tokens = what BM25 and HippoRAG hand the model (top 10 chunks of 512 tokens)
         "max_facts": 300, "max_tokens": 5120, "include_outdated": False, "goat_targets": 3, "goat_topk": 12,
         "writer_max_tokens": 8192}),
-]}
+]})

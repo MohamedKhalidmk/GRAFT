@@ -1,7 +1,7 @@
 # Experiment A: PPR picks 400 nodes, then GNN + GOAt (the current method). Fake LLM: measures whether the answer reached the model.
 # Same split, budget and checkpoint for A, B, C: 262K, SH + MH (100 each), 50 facts, gnn_bge_400w.
 run_name: exp_a_fake_262k
-method: sgar
+method: graft
 method_config:
   retrieval: gnn_goat
   max_facts: 50

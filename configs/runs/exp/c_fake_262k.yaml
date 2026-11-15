@@ -1,7 +1,7 @@
 # Experiment C: PPR cuts to 400, GNN + GOAt, then a short second PPR from the picks. Fake LLM: measures whether the answer reached the model.
 # Same split, budget and checkpoint for A, B, C: 262K, SH + MH (100 each), 50 facts, gnn_bge_400w.
 run_name: exp_c_fake_262k
-method: sgar
+method: graft
 method_config:
   retrieval: ppr_goat_ppr
   max_facts: 50

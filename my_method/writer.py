@@ -1,4 +1,4 @@
-"""SGAR write phase: read a chunk, extract facts, decide ADD / MERGE / SUPERSEDE / IGNORE for each.
+"""GRAFT write phase: read a chunk, extract facts, decide ADD / MERGE / SUPERSEDE / IGNORE for each.
 
 Two writers share one decision-applying step:
 - LLMWriter (the method): Claude extracts facts (constrained by the schema, or free-form for the

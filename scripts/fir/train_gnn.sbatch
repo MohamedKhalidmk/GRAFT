@@ -4,9 +4,9 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --time=03:00:00
-#SBATCH --job-name=sgar-gnn
+#SBATCH --job-name=graft-gnn
 #SBATCH --output=%x-%j.out
-# Train SGAR's GNN. No API calls. A 1g.10gb H100 slice is plenty for a 3-layer GCN plus a small
+# Train GRAFT's GNN. No API calls. A 1g.10gb H100 slice is plenty for a 3-layer GCN plus a small
 # embedding model. Usage: sbatch scripts/fir/train_gnn.sbatch <source> <checkpoint name> [embedding model]
 set -euo pipefail
 source "$SLURM_SUBMIT_DIR/scripts/fir/common.sh"  # submit from the repo root

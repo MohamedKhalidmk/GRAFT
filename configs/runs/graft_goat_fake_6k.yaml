@@ -1,6 +1,6 @@
-# Offline pipeline test of SGAR (retrieval: gnn_goat); no API calls.
-run_name: sgar_goat_fake_6k
-method: sgar
+# Offline pipeline test of GRAFT (retrieval: gnn_goat); no API calls.
+run_name: graft_goat_fake_6k
+method: graft
 method_config:
   retrieval: gnn_goat
 data:

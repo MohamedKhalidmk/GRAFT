@@ -104,7 +104,7 @@ def test_sh_and_mh_share_one_context():
 
 
 @pytest.mark.parametrize("config", ["bm25_fake_6k", "long_context_fake_6k", "long_context_128k_fake_6k",
-                                    "sgar_ppr_fake_6k", "sgar_goat_fake_6k"])
+                                    "graft_ppr_fake_6k", "graft_goat_fake_6k"])
 def test_fake_run_end_to_end(config, tmp_path, monkeypatch):
     if "goat" in config and not (REPO / "results/checkpoints/gnn_default/model.pt").exists():
         pytest.skip("no GNN checkpoint at results/checkpoints/gnn_default")
@@ -187,12 +187,12 @@ def test_extend_mode_starts_from_synthetic_graph_and_prompts_its_pattern():
 
 def test_shared_graph_is_built_once_then_loaded(tmp_path):
     from baselines.common.protocol import Task
-    from my_method.agent import SGARAgent
+    from my_method.agent import GraftAgent
     cfg = {"model": "claude-haiku-5-5", "writer": "rule", "revisions": True, "embedding_model": "hash:16",
            "work_dir": str(tmp_path / "w"), "retrieval": "ppr", "max_facts": 5, "max_tokens": 5120,
            "include_outdated": False, "goat_targets": 3, "goat_topk": 12, "shared_graph": str(tmp_path / "g.json")}
     gw = type("G", (), {"anthropic_base_url": "http://unused"})()
     task = Task(sub_datasets=["factconsolidation_mh_6k"], chunk_size=512, chunks=["1. A is a citizen of B."], questions=[])
-    first = SGARAgent(cfg, gw, task).memorize(task.chunks)
-    second = SGARAgent(cfg, gw, task).memorize(["2. A is a citizen of C."])
+    first = GraftAgent(cfg, gw, task).memorize(task.chunks)
+    second = GraftAgent(cfg, gw, task).memorize(["2. A is a citizen of C."])
     assert first["graph"]["facts"] == 1 and second["writer"] == {"reused_graph": str(tmp_path / "g.json")}

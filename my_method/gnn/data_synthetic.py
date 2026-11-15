@@ -4,7 +4,7 @@ Each world is a stream of numbered fact sentences about invented entities (rando
 so no real entity from MQuAKE / FactConsolidation can appear), using the 37 relation templates.
 A share of facts are later revised: a newer sentence gives the same subject and relation a new
 object. The stream is written into a GraphStore with the rule writer (revisions on), exactly the
-structure SGAR builds, and questions are asked about the *current* state:
+structure GRAFT builds, and questions are asked about the *current* state:
     single-hop: "<template filled with the subject> ___?"           answer: newest object
     multi-hop:  "Starting from S, follow: rel1, then rel2. Which entity?"  answer: end of the chain
 Only relation templates are shared with the benchmark; facts, entities and question wording are not.

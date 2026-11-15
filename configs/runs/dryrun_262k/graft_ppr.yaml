@@ -1,5 +1,5 @@
-run_name: dryrun_sgar_ppr_262k
-method: sgar
+run_name: dryrun_graft_ppr_262k
+method: graft
 method_config:
   retrieval: ppr
 data:

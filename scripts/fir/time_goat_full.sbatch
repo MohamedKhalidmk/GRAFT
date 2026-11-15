@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=120G
 #SBATCH --time=06:00:00
-#SBATCH --job-name=sgar-goat-full
+#SBATCH --job-name=graft-goat-full
 #SBATCH --output=%x-%j.out
 # Time GOAt on the whole 262K graph for one question, on CPU (as the method runs it) and on the GPU.
 # Submit from the repo root: cd ~/projects/def-sylu/khaledmk/SGAR && sbatch scripts/fir/time_goat_full.sbatch

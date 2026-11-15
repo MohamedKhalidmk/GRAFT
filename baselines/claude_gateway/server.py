@@ -92,7 +92,7 @@ def make_handler(gw: Gateway):
         def do_GET(self):
             path = self.path.split("?")[0].rstrip("/")
             if path in ("/v1/models", "/models"):
-                self._reply(200, {"object": "list", "data": [{"id": gw.model, "object": "model", "owned_by": "sgar"}]})
+                self._reply(200, {"object": "list", "data": [{"id": gw.model, "object": "model", "owned_by": "graft"}]})
             elif path == "/health":
                 self._reply(200, {"ok": True})
             else:

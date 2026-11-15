@@ -2,7 +2,7 @@
 # one made-up world, invented names, the schema's relation labels) instead of building from scratch.
 # Everything else as variant A. The from-scratch arm of D is exp_a_real_mh_262k (same graph build).
 run_name: exp_d_extend_real_mh_262k
-method: sgar
+method: graft
 method_config:
   retrieval: gnn_goat
   max_facts: 50

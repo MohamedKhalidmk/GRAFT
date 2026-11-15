@@ -1,4 +1,4 @@
-"""Run GOAt's `gcn_explain` on SGAR's trained GCN_NC for one question subgraph.
+"""Run GOAt's `gcn_explain` on GRAFT's trained GCN_NC for one question subgraph.
 
 GOAt reads the model's per-layer activations from forward hooks and its weights by parameter
 name, exactly as GOAt's own node-classification driver (gcn_nc.py `main`) sets them up. We

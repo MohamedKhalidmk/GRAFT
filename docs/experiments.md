@@ -1,4 +1,4 @@
-# SGAR experiments: read order (A, B, C) and starting graph (D)
+# GRAFT experiments: read order (A, B, C) and starting graph (D)
 
 All runs use FactConsolidation from MemoryAgentBench at 262K tokens (537 chunks of 512 tokens),
 the same GNN checkpoint (`results/checkpoints/gnn_bge_400w`, BAAI/bge-small-en-v1.5 embeddings),
@@ -120,7 +120,7 @@ is fair, but the absolute numbers understate every method.
   starting graph helps retrieval. The writer kept the same shape either way (about 12,000 current
   facts, about 5,900 revisions).
 - **BM25.** Raw chunks put the answer in front of the model 32 times but the model almost never
-  answered within 16 tokens (84 cut off, 1 correct), at four times SGAR's tokens. SGAR's short facts
+  answered within 16 tokens (84 cut off, 1 correct), at four times GRAFT's tokens. GRAFT's short facts
   are both cheaper and easier for the model to answer from.
 
 Run folders on Fir: `~/scratch/sgar/results/runs/exp_{a,b,c,bm25,d_extend}_real_mh_262k_*`.
@@ -146,7 +146,7 @@ answer (after "Answer:").
 
 **What it means.**
 
-- With room to answer, every SGAR variant scores 37–38, more than double the 16-token scores. The
+- With room to answer, every GRAFT variant scores 37–38, more than double the 16-token scores. The
   strict score is within 1–4 of it, so the gain is real answers, not lucky mentions.
 - **Read order (A, B, C) and starting graph (D) do not differ** once answers are not cut off. The
   16-token gaps (13 to 22) came from how often the answer was cut off, not from retrieval. C's

@@ -2,7 +2,7 @@
 #SBATCH --account=def-sylu_cpu
 #SBATCH --time=00:05:00
 #SBATCH --mem=1G
-#SBATCH --job-name=sgar-net
+#SBATCH --job-name=graft-net
 #SBATCH --output=%x-%j.out
 # Real runs call the Anthropic API from the compute node. This only checks reachability
 # (an unauthenticated request; no key is sent, nothing is billed).

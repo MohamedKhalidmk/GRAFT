@@ -1,4 +1,4 @@
-"""SGAR as a bench method: write phase over the chunk stream, then read + answer per question.
+"""GRAFT as a bench method: write phase over the chunk stream, then read + answer per question.
 
 Config keys (defaults in eval/methods.py, all switchable in the UI):
     writer            "llm" (the method) | "rule" (FactConsolidation template parser; ablation)
@@ -46,7 +46,7 @@ def question_text(query: str) -> str:
     return query.rsplit("Based on the provided Knowledge Pool,", 1)[-1].rsplit("Answer:", 1)[0].strip()
 
 
-class SGARAgent:
+class GraftAgent:
     def __init__(self, config: dict, gateway: Gateway, task: Task):
         self.config = config
         self.llm = ClaudeLLM(gateway.anthropic_base_url, config["model"])
@@ -76,13 +76,13 @@ class SGARAgent:
         shared = REPO / shared if shared else None
         if shared and Path(shared).exists():
             self.store = GraphStore.load(shared)
-            print(f"[sgar] reusing graph {shared}: {self.store.stats()}", flush=True)
+            print(f"[graft] reusing graph {shared}: {self.store.stats()}", flush=True)
             self.retriever = self._make_retriever()
             return {"graph": self.store.stats(), "writer": {"reused_graph": str(shared)}, "graph_file": str(shared)}
         for chunk_id, chunk in enumerate(chunks):
             self.writer.write_chunk(chunk_id, chunk, self.store)
             if chunk_id % 50 == 0:
-                print(f"[sgar] chunk {chunk_id + 1}/{len(chunks)}: {self.store.stats()}", flush=True)
+                print(f"[graft] chunk {chunk_id + 1}/{len(chunks)}: {self.store.stats()}", flush=True)
         self.store.save(self.work_dir / "graph.json")
         if shared:
             Path(shared).parent.mkdir(parents=True, exist_ok=True)
@@ -129,5 +129,7 @@ class SGARAgent:
                            "subgraph_nodes": region.subgraph_nodes, "fallback": region.fallback}
 
 
+SGARAgent = GraftAgent  # old name, kept for older scripts
+
 if __name__ == "__main__":
-    run_agent(SGARAgent)
+    run_agent(GraftAgent)

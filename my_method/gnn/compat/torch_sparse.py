@@ -8,7 +8,7 @@ class SparseTensor:  # only used in isinstance() checks
 
 
 def _unavailable(*args, **kwargs):
-    raise NotImplementedError("torch_sparse is not installed; SGAR uses dense edge_index tensors only")
+    raise NotImplementedError("torch_sparse is not installed; GRAFT uses dense edge_index tensors only")
 
 
 fill_diag = matmul = mul = sum = _unavailable

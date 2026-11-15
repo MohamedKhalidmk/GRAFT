@@ -1,4 +1,4 @@
-# SGAR graph schema: the structure the writer must follow. Edit this file to change the schema;
+# GRAFT graph schema: the structure the writer must follow. Edit this file to change the schema;
 # a FHIR-based clinical schema can replace it later without code changes.
 
 name: generic-facts
