@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=64G
 #SBATCH --time=02:00:00
-#SBATCH --job-name=sgar-cpu
+#SBATCH --job-name=graft-cpu
 #SBATCH --output=%x-%j.out
 # Run a queue of fake-mode configs on CPUs. GOAt is per-question CPU work, so set
 # method_config.retrieval_workers to about --cpus-per-task; a GPU would not speed it up.

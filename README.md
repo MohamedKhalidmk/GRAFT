@@ -1,9 +1,13 @@
-# SGAR test bench
+# GRAFT test bench
 
-Revision-aware graph memory (SGAR, ours) vs. memory systems from MemoryAgentBench, on the
+Revision-aware graph memory (GRAFT, ours) vs. memory systems from MemoryAgentBench, on the
 Selective Forgetting task: FactConsolidation-SH and -MH. Every method answers with
 **Claude Haiku 5.5** (`claude-haiku-5-5`). Results are laid out like the paper's Table 3, with
 the paper's own numbers as a separate reference block.
+
+GRAFT was called SGAR during development. Files under `results/`, the cluster folders, the writer's
+prompt headers (`SGAR-EXTRACT`, `SGAR-OPS`) and the benchmark agent name `Structure_rag_sgar` keep the
+old name so the recorded runs stay reproducible; configs that say `method: sgar` still run.
 
 Paper: Hu, Wang & McAuley, *Evaluating Memory in LLM Agents via Incremental Multi-Turn
 Interactions* (MemoryAgentBench), ICLR 2026, arXiv 2507.05257.
@@ -11,7 +15,7 @@ Interactions* (MemoryAgentBench), ICLR 2026, arXiv 2507.05257.
 ## Quick start
 
 ```bash
-git clone --recurse-submodules <this repo> && cd SGAR
+git clone --recurse-submodules <this repo> && cd GRAFT
 bash scripts/setup_envs.sh                     # core .venv + one env per third-party baseline
 .venv/bin/python -m data.paper_reference       # paper's Table 3 -> results/paper_table3.csv
 .venv/bin/python -m my_method.gnn.train --source synthetic --out results/checkpoints/gnn_default
@@ -66,14 +70,14 @@ Everything else, including every test, runs offline in **fake mode** (below).
 | `letta_bundled` / `_upstream` | MemGPT / Letta | Agentic | benchmark's copy (Letta 0.7.0) / Letta server 0.16.8 | current PyPI `letta` is Letta Code, not MemGPT |
 | `total_agent_memory` | total-agent-memory (supersede) | Agentic, optional | benchmark's handler + PyPI 14.5.1 | supersede-style prior work |
 | `knowl` | Knowl (supersede) | Agentic, optional | benchmark's handler + Knowl v5.6.0 | needs `scripts/setup/knowl.sh` (Node build) |
-| `sgar` | SGAR (ours) | Ours | `my_method/` | variants below |
+| `graft` | GRAFT (ours) | Ours | `my_method/` | variants below |
 
 Each adapter's module docstring lists every deviation from the benchmark's handling of that
 system. The common ones: Claude instead of GPT-4o-mini through the gateway; the shared embedding
 model instead of OpenAI's (TAM and Knowl keep their own internal embedders, which define those
 systems); all state inside the run's folder.
 
-## SGAR (`my_method/`)
+## GRAFT (`my_method/`)
 
 | File | Role |
 |---|---|
@@ -111,16 +115,16 @@ path (no `__init__.py`, so Python merges them) instead of editing GOAt.
 ## Fake mode
 
 `llm.mode: fake` starts the gateway with `--fake`: no request leaves the machine. Replies come
-from `baselines/claude_gateway/fake_rules/` (one module per prompt family: SGAR's writer, Mem0's
+from `baselines/claude_gateway/fake_rules/` (one module per prompt family: GRAFT's writer, Mem0's
 extraction/update, HippoRAG's NER/triples/filter/QA, Letta's tool loop, the FC answer), in the
 shape each system parses, so every code path runs. Accuracy in fake mode is meaningless; token
 counts approximate a real run's input side (used for the UI's cost estimate). The
 "answer in retrieved" column is real even in fake mode for methods that report their retrieved
-memory (BM25, SGAR): it checks whether the gold answer reached the answering model.
+memory (BM25, GRAFT): it checks whether the gold answer reached the answering model.
 
 ## Control panel (`ui/app.py`)
 
-**Run**: tick baselines, add SGAR variants, choose length / questions / repeats / embedding
+**Run**: tick baselines, add GRAFT variants, choose length / questions / repeats / embedding
 model / answer cap, Fake or Real. Real requires the key in the environment, a fake-mode cost
 estimate of the exact selection, and an approval tick. Live progress and logs.
 **Train GNN**: data source and sizes, live loss and validation chart.
@@ -136,7 +140,7 @@ estimate of the exact selection, and an approval tick. Live progress and logs.
 Code lives in `~/SGAR` because this account has no `~/projects` link yet. `common.sh` loads the `arrow`
 module and the venv uses `--system-site-packages`, because pip cannot install pyarrow on the cluster.
 
-Tested on Fir: setup, GNN training, and fake-mode runs of SGAR. Not tested on Fir: `run_queue.sbatch`,
+Tested on Fir: setup, GNN training, and fake-mode runs of GRAFT. Not tested on Fir: `run_queue.sbatch`,
 `check_internet.sbatch`, the third-party baseline environments, and anything calling the real API.
 Importing the embedding library takes minutes on Fir's disks, so the runner waits up to 30 minutes for
 the gateway.

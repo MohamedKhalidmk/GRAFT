@@ -1,4 +1,4 @@
-"""SGAR writer prompts (my_method/writer.py): extraction and ADD/MERGE/SUPERSEDE/IGNORE decisions.
+"""GRAFT writer prompts (my_method/writer.py): extraction and ADD/MERGE/SUPERSEDE/IGNORE decisions.
 
 Extraction replies come from the rule writer's FactConsolidation template parser, so the offline
 graph has realistic structure. Decisions: same subject and relation as a stored or earlier fact ->

@@ -1,8 +1,9 @@
 # One check of the bge-small GNN at 262K: all questions, fake LLM (no API calls).
-run_name: sgar_topk_bge_262k
-method: sgar
+run_name: graft_goat_bge_262k
+method: graft
 method_config:
-  retrieval: gnn_topk
+  retrieval: gnn_goat
+  retrieval_workers: 32
   gnn_checkpoint: results/checkpoints/gnn_bge_400w
 data:
   length: 262k

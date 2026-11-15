@@ -1,6 +1,6 @@
-# Offline pipeline test of SGAR (retrieval: ppr); no API calls.
-run_name: sgar_ppr_fake_6k
-method: sgar
+# Offline pipeline test of GRAFT (retrieval: ppr); no API calls.
+run_name: graft_ppr_fake_6k
+method: graft
 method_config:
   retrieval: ppr
 data:

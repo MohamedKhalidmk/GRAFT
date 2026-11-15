@@ -1,7 +1,7 @@
-run_name: dryrun_sgar_gnn_topk_262k
-method: sgar
+run_name: dryrun_graft_gnn_goat_262k
+method: graft
 method_config:
-  retrieval: gnn_topk
+  retrieval: gnn_goat
 data:
   length: 262k
   splits:

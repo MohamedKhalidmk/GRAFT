@@ -1,4 +1,4 @@
-# Core environment (.venv): runner, gateway, BM25, long context, SGAR, UI.
+# Core environment (.venv): runner, gateway, BM25, long context, GRAFT, UI.
 # Each third-party baseline has its own environment: see scripts/setup/.
 altair==6.3.0
 anthropic==2.3.0

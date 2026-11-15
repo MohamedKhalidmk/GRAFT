@@ -1,8 +1,8 @@
 # Does the GNN's choice matter? 50-fact limit, so ranking decides what reaches the model. Fake LLM.
-run_name: sgar_topk_budget50_262k
-method: sgar
+run_name: graft_goat_budget50_262k
+method: graft
 method_config:
-  retrieval: gnn_topk
+  retrieval: gnn_goat
   max_facts: 50
   retrieval_workers: 32
   gnn_checkpoint: results/checkpoints/gnn_bge_400w

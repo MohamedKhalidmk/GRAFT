@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=24:00:00
-#SBATCH --job-name=sgar-runs
+#SBATCH --job-name=graft-runs
 #SBATCH --output=%x-%j.out
 # Run a queue of run configs (the GPU serves the shared embedding model; HippoRAG with NV-Embed-v2
 # needs the full H100: use --gres=gpu:h100:1 for that). Real-mode configs need ANTHROPIC_API_KEY

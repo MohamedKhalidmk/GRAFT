@@ -1,9 +1,9 @@
-"""SGAR control panel.
+"""GRAFT control panel.
 
     .venv/bin/streamlit run ui/app.py
 
 Tabs:
-    Run      tick methods and SGAR variants, set data and LLM mode, estimate cost, run a queue, watch logs
+    Run      tick methods and GRAFT variants, set data and LLM mode, estimate cost, run a queue, watch logs
     Train    train the GNN (synthetic / SubgraphRAG data) with a live loss and validation chart
     Results  the results table (ours + the paper's reference block) for any length and LLM mode
     Runs     every saved run with its exact config; re-run any of them
@@ -38,16 +38,16 @@ MODEL = "claude-haiku-5-5"
 EMBEDDINGS = ["hash:384", "BAAI/bge-small-en-v1.5", "Qwen/Qwen3-Embedding-0.6B"]
 FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif'
 
-st.set_page_config(page_title="SGAR test bench", layout="wide")
+st.set_page_config(page_title="GRAFT test bench", layout="wide")
 st.markdown(f"""<style>
 html, body, [class*="css"], .stApp, .stMarkdown, .stButton button, table, th, td, code, pre {{
     font-family: {FONT} !important; }}
 .stApp {{ background-color: #F5F5F5; color: #303841; }}
-.sgar-topbar {{ display: flex; align-items: center; justify-content: space-between; background: #FFFFFF;
+.graft-topbar {{ display: flex; align-items: center; justify-content: space-between; background: #FFFFFF;
     border: 1px solid #E5E5E5; border-radius: 10px; padding: 14px 24px; margin-bottom: 16px; }}
-.sgar-topbar .brand {{ font-weight: 700; font-size: 20px; }}
-.sgar-topbar .mode-fake {{ color: #1E7B4F; font-weight: 600; }}
-.sgar-topbar .mode-real {{ color: #FF5722; font-weight: 700; }}
+.graft-topbar .brand {{ font-weight: 700; font-size: 20px; }}
+.graft-topbar .mode-fake {{ color: #1E7B4F; font-weight: 600; }}
+.graft-topbar .mode-real {{ color: #FF5722; font-weight: 700; }}
 </style>""", unsafe_allow_html=True)
 
 
@@ -114,9 +114,9 @@ def queue_cost(name: str) -> float:
 
 # ---------------------------------------------------------------------------- run tab
 
-def sgar_variant_form() -> None:
-    st.markdown("**SGAR variants** (add as many as you want to compare)")
-    defaults = METHODS["sgar"].defaults
+def graft_variant_form() -> None:
+    st.markdown("**GRAFT variants** (add as many as you want to compare)")
+    defaults = METHODS["graft"].defaults
     c1, c2, c3 = st.columns(3)
     writer = c1.selectbox("Writer", ["llm", "rule"], help="rule = FactConsolidation template parser (ablation)")
     schema = c1.selectbox("Schema", ["fixed", "free"], disabled=writer == "rule")
@@ -129,7 +129,7 @@ def sgar_variant_form() -> None:
     max_facts = c3.number_input("Max facts fetched", 1, 2000, defaults["max_facts"])
     max_tokens = c3.number_input("Max tokens fetched", 100, 20000, defaults["max_tokens"], step=100)
     include_outdated = c2.toggle("Also show outdated versions", value=False)
-    if st.button("Add this SGAR variant"):
+    if st.button("Add this GRAFT variant"):
         variant = {k: v for k, v in {
             "writer": writer, "schema": schema, "revisions": revisions, "retrieval": retrieval,
             "max_facts": int(max_facts), "max_tokens": int(max_tokens), "include_outdated": include_outdated,
@@ -172,15 +172,15 @@ def run_tab() -> None:
                            help=None if ready else f"environment missing: run scripts/setup/{spec.env}.sh"):
                 chosen.append(key)
     st.divider()
-    sgar_variant_form()
+    graft_variant_form()
 
     configs = [make_config(m, {}, length, max_q, repeats, mode, embedding, answer_cap, "ui") for m in chosen]
-    configs += [make_config("sgar", v, length, max_q, repeats, mode, embedding, answer_cap, "ui")
+    configs += [make_config("graft", v, length, max_q, repeats, mode, embedding, answer_cap, "ui")
                 for v in st.session_state.variants]
     st.divider()
     st.subheader(f"Queue: {len(configs)} run(s)")
     if not configs:
-        st.info("Tick at least one baseline or add an SGAR variant.")
+        st.info("Tick at least one baseline or add an GRAFT variant.")
         return
     key = selection_key(configs)
     stamp = time.strftime("%Y%m%d-%H%M%S")
@@ -337,7 +337,7 @@ for name, value in {"variants": [], "estimates": {}}.items():
 
 mode_html = ('<span class="mode-real">REAL API KEY PRESENT</span>' if os.environ.get("ANTHROPIC_API_KEY")
              else '<span class="mode-fake">offline: no API key in environment</span>')
-st.markdown(f'<div class="sgar-topbar"><div class="brand">SGAR test bench</div><div>{mode_html}</div></div>',
+st.markdown(f'<div class="graft-topbar"><div class="brand">GRAFT test bench</div><div>{mode_html}</div></div>',
             unsafe_allow_html=True)
 tab_run, tab_train, tab_results, tab_runs = st.tabs(["Run", "Train GNN", "Results", "Runs"])
 with tab_run:

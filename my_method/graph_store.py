@@ -1,4 +1,4 @@
-"""The SGAR memory graph: Entity and Fact nodes, subject_of / object_of / SUPERSEDES edges.
+"""The GRAFT memory graph: Entity and Fact nodes, subject_of / object_of / SUPERSEDES edges.
 
 Stored as a NetworkX MultiDiGraph and saved as node-link JSON, so it is easy to inspect.
 Superseded facts are never deleted: a SUPERSEDES edge points from the newer fact to the older.

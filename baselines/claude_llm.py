@@ -1,4 +1,4 @@
-"""Claude client for our own methods (long context, BM25, SGAR). Calls go through the gateway,
+"""Claude client for our own methods (long context, BM25, GRAFT). Calls go through the gateway,
 which forwards them to the Anthropic API (or the fake backend) and logs tokens and cost.
 
 Differences from the benchmark's own Claude path (agent.py `_query_claude`), all deliberate:

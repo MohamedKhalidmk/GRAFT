@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=08:00:00
-#SBATCH --job-name=sgar-real
+#SBATCH --job-name=graft-real
 #SBATCH --output=%x-%j.out
 # PAID runs with a cost guard: runs the given configs one after another (eval.queue) and every
 # minute adds up cost_usd from this job's usage logs; past COST_CAP_USD (default 15) it stops.

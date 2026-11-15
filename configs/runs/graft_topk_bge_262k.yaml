@@ -1,10 +1,8 @@
-# Does the GNN's choice matter? 50-fact limit, so ranking decides what reaches the model. Fake LLM.
-run_name: sgar_goat_budget50_262k
-method: sgar
+# One check of the bge-small GNN at 262K: all questions, fake LLM (no API calls).
+run_name: graft_topk_bge_262k
+method: graft
 method_config:
-  retrieval: gnn_goat
-  max_facts: 50
-  retrieval_workers: 32
+  retrieval: gnn_topk
   gnn_checkpoint: results/checkpoints/gnn_bge_400w
 data:
   length: 262k

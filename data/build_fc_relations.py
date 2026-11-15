@@ -3,7 +3,7 @@
 FactConsolidation's facts are MQuAKE-CF's cloze templates filled with a subject and an object
 (e.g. "{} is a citizen of" + "Germany"). This script reads the templates and their Wikidata labels
 from MQuAKE-CF so nothing is typed by hand. Only relation *templates* are kept: no facts, entities
-or questions, so nothing about the test answers reaches SGAR.
+or questions, so nothing about the test answers reaches GRAFT.
 
 Used by the rule-based writer (an ablation and the fake-LLM extractor) and the synthetic GNN
 training-data generator.

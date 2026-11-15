@@ -1,6 +1,6 @@
 # Does the GNN's choice matter? 50-fact limit, so ranking decides what reaches the model. Fake LLM.
-run_name: sgar_ppr_budget50_262k
-method: sgar
+run_name: graft_ppr_budget50_262k
+method: graft
 method_config:
   retrieval: ppr
   max_facts: 50
