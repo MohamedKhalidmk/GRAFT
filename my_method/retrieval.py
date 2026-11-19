@@ -30,6 +30,7 @@ import networkx as nx
 import numpy as np
 import torch
 
+from my_method.gnn.eig import eig_edge_attributions
 from my_method.gnn.explain import edge_attributions
 from my_method.gnn.features import TextEmbedder, build_features, nearest_nodes, node_text, ppr_scores, select_subgraph
 from my_method.graph_store import GraphStore
@@ -48,6 +49,7 @@ class RetrievalConfig:
     goat_topk: int = 12  # edges kept per explained node
     region: str = "nearest"  # goat_ppr only: "nearest" (max_nodes nearest by hops) | "full" (whole graph)
     expand_alpha: float = 0.5  # goat_ppr / ppr_goat_ppr: PageRank damping of the second walk (HippoRAG 2 uses 0.5)
+    explainer: str = "goat"  # edge attribution in every GOAt step: "goat" (GOAt, ICLR 2024) | "eig" (EiG-Search, ICML 2024)
 
 
 @dataclass
@@ -114,11 +116,17 @@ class Retriever:
         order = np.argsort(-scores)
         return [nodes[i] for i in order if self._is_fact(nodes[i])]
 
+    def _attributions(self, sub):
+        """Per node, its goat_topk most important edges, by the configured explainer."""
+        if self.cfg.explainer == "eig":
+            return eig_edge_attributions(self.model, sub.x, sub.edge_index, self.cfg.goat_topk)
+        return edge_attributions(self.model, sub.x, sub.edge_index, self.cfg.goat_topk)
+
     def _goat(self, sub, scores: np.ndarray) -> list[str]:
         """Facts touched by the edges GOAt finds most important for the top-scored nodes."""
         if sub.edge_index.shape[1] == 0:
             return self._by_score(sub.nodes, scores)
-        edge_scores, edge_ids = edge_attributions(self.model, sub.x, sub.edge_index, self.cfg.goat_topk)
+        edge_scores, edge_ids = self._attributions(sub)
         importance: dict[str, float] = {}
         for target in np.argsort(-scores)[: self.cfg.goat_targets]:
             if self._is_fact(sub.nodes[target]):
@@ -139,7 +147,7 @@ class Retriever:
         importance: dict[str, float] = {}
         if sub.edge_index.shape[1] == 0:
             return {sub.nodes[t]: float(scores[t]) for t in np.argsort(-scores)[: self.cfg.goat_targets]}
-        edge_scores, edge_ids = edge_attributions(self.model, sub.x, sub.edge_index, self.cfg.goat_topk)
+        edge_scores, edge_ids = self._attributions(sub)
         for target in np.argsort(-scores)[: self.cfg.goat_targets]:
             node = sub.nodes[target]
             importance[node] = max(importance.get(node, 0.0), float(scores[target]))

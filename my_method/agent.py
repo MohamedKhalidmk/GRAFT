@@ -9,6 +9,7 @@ Config keys (defaults in eval/methods.py, all switchable in the UI):
     start_graph       "empty" (from scratch) | "synthetic" (experiment D: extend a synthetic starting graph)
     retrieval         "gnn_goat" (A) | "goat_ppr" (B) | "ppr_goat_ppr" (C) | "gnn_topk" | "ppr"
     region, expand_alpha   B / C only, see my_method/retrieval.py
+    explainer         edge attribution: "goat" (default) | "eig" (EiG-Search)
     gnn_checkpoint    directory written by my_method.gnn.train (needed by the gnn_* modes)
     max_facts, max_tokens, include_outdated, goat_targets, goat_topk     read-phase budget
     writer_max_tokens output cap for the writer's extraction and decision calls
@@ -95,7 +96,8 @@ class GraftAgent:
         c = self.config
         cfg = RetrievalConfig(mode=c["retrieval"], max_facts=c["max_facts"], max_tokens=c["max_tokens"],
                               include_outdated=c["include_outdated"], goat_targets=c["goat_targets"], goat_topk=c["goat_topk"],
-                              region=c.get("region", "nearest"), expand_alpha=c.get("expand_alpha", 0.5))
+                              region=c.get("region", "nearest"), expand_alpha=c.get("expand_alpha", 0.5),
+                              explainer=c.get("explainer", "goat"))
         model = None
         if cfg.mode != "ppr":
             model, gnn_cfg = load_model(REPO / c["gnn_checkpoint"])
