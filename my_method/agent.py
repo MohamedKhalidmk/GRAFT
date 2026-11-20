@@ -204,6 +204,20 @@ class GraftAgent:
         with multiprocessing.get_context("fork").Pool(workers) as pool:
             regions = pool.map(_retrieve_in_worker, texts, chunksize=1)
         self.regions = {q.q_index: r for q, r in zip(self.questions, regions)}
+        self._check_regions(list(self.regions.values()), final=True)
+
+    def _check_regions(self, regions: list, final: bool) -> None:
+        """Stop the run before (more) answer calls when most questions get no facts: a broken retrieval
+        must not spend a whole run. Limit: method_config.max_empty_share (default 0.5); judged on all
+        questions after parallel retrieval, or from the 10th question on when retrieving one at a time."""
+        if not regions or (not final and len(regions) < 10):
+            return
+        empty = sum(not r.facts for r in regions)
+        limit = self.config.get("max_empty_share", 0.5)
+        if empty / len(regions) > limit:
+            raise RuntimeError(f"retrieval check failed: {empty} of {len(regions)} questions got no facts "
+                               f"(limit {limit:.0%}); stopping before answering. Subgraph sizes: "
+                               f"{sorted({r.subgraph_nodes for r in regions})[:5]}")
 
     def _link_question(self, question: str, names: list[str]) -> dict:
         """Top 10 graph entities (base and documents) by name embedding per name; one Haiku call picks one or "new"."""
@@ -259,7 +273,11 @@ class GraftAgent:
             self._retrieve_all(workers)
         if not self.regions and self.retriever.cfg.query_graph:
             self._prepare_query_graphs([question_text(question.query)])
-        region = self.regions.get(question.q_index) or self.retriever.retrieve(question_text(question.query))
+        region = self.regions.get(question.q_index)
+        if region is None:
+            region = self.retriever.retrieve(question_text(question.query))
+            self._seen_regions = getattr(self, "_seen_regions", []) + [region]
+            self._check_regions(self._seen_regions, final=False)
         call, memory = answer(self.llm, self.store, region, question.query, self.sub_dataset,
                               self.config["answer_max_tokens"])
         return call.text, {"stop_reason": call.stop_reason, "retrieved_text": memory,

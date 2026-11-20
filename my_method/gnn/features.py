@@ -66,10 +66,24 @@ class TextEmbedder:
         return np.stack([self.cache[t] for t in texts]) if texts else np.zeros((0, self.dim), np.float32)
 
 
+PPR_MAX_L1 = 0.1  # largest total change between PageRank steps accepted as converged
+
+
+def pagerank(graph: nx.Graph, personalization: dict, alpha: float = 0.85) -> dict[str, float]:
+    """nx.pagerank with a stop rule that holds on big graphs. NetworkX stops when the total (L1) change
+    between steps is below N * tol; with tol = 1e-6 that bound passes 1 once N is over ~1M nodes, and the
+    change after one step is already below it, so on the full T-REx graph (1.58M nodes) it stopped after
+    a single step: the scores were still the uniform start spread one hop, hubs on top, seeds' facts
+    nowhere. Here the bound is min(N * 1e-6, PPR_MAX_L1): unchanged on every graph up to 100,000 nodes
+    (all runs before full T-REx), 0.1 above that (18 to 32 steps; 98 to 100% of the converged top 400)."""
+    tol = min(1e-6, PPR_MAX_L1 / max(graph.number_of_nodes(), 1))
+    return nx.pagerank(graph, alpha=alpha, personalization=personalization, tol=tol, max_iter=1000)
+
+
 def ppr_scores(store: GraphStore, seeds: list[str]) -> dict[str, float]:
     """Personalized PageRank from the seeds over the whole graph. A walker splits its steps across
     a node's links, so hubs (a country linked to 1,000 facts) pass on little to each neighbour."""
-    return nx.pagerank(store.simple_graph(), personalization={s: 1.0 for s in seeds})
+    return pagerank(store.simple_graph(), {s: 1.0 for s in seeds})
 
 
 def select_subgraph(store: GraphStore, seeds: list[str], max_nodes: int) -> list[str]:

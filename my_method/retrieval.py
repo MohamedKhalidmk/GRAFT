@@ -35,7 +35,7 @@ import torch
 
 from my_method.gnn.eig import eig_edge_attributions
 from my_method.gnn.explain import edge_attributions
-from my_method.gnn.features import TextEmbedder, build_features, nearest_nodes, node_text, ppr_scores, select_subgraph
+from my_method.gnn.features import TextEmbedder, build_features, nearest_nodes, node_text, pagerank, ppr_scores, select_subgraph
 from my_method.graph_store import GraphStore, entity_id, norm
 
 MODES = ("gnn_goat", "gnn_topk", "ppr", "goat_ppr", "ppr_goat_ppr", "embed")
@@ -326,7 +326,7 @@ class Retriever:
         picks = self._goat_nodes(sub, scores)
         graph = self.store.simple_graph() if whole_graph else self.store.simple_graph().subgraph(sub.nodes)
         seeds = {n: w for n, w in picks.items() if n in graph and w > 0} or {sub.nodes[int(np.argmax(scores))]: 1.0}
-        rank = nx.pagerank(graph, alpha=self.cfg.expand_alpha, personalization=seeds)
+        rank = pagerank(graph, seeds, alpha=self.cfg.expand_alpha)
         picked = sorted((n for n in picks if self._is_fact(n)), key=lambda n: -picks[n])
         walked = sorted((n for n in rank if n not in picks and self._is_fact(n)), key=lambda n: -rank[n])
         rest = [n for n in self._by_score(sub.nodes, scores) if n not in picks and n not in rank]
