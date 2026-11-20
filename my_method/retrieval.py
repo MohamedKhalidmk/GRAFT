@@ -63,6 +63,7 @@ class Region:
     outdated: set[str] = field(default_factory=set)
     linked_entities: list[str] = field(default_factory=list)
     subgraph_nodes: int = 0
+    subgraph_facts: list[str] = field(default_factory=list)  # every fact in the GNN's subgraph (before ranking and budget)
     fallback: bool = False
     sources: list[str] = field(default_factory=list)  # per fact in `facts`: "graph", "embed" or "both" (hybrid / embed)
 
@@ -118,7 +119,8 @@ class Retriever:
             nodes = [n for n in linked if n in nodes] + [n for n in nodes if n not in linked]
         else:
             nodes = select_subgraph(self.store, linked, self.cfg.max_nodes)
-        region = Region([], linked_entities=linked, subgraph_nodes=len(nodes))
+        region = Region([], linked_entities=linked, subgraph_nodes=len(nodes),
+                        subgraph_facts=[n for n in nodes if self._is_fact(n)])
         sub = build_features(self.store, nodes, linked, question, self.texts)
         with torch.no_grad():
             scores = self.model(sub.x, sub.edge_index)[:, 1].numpy()

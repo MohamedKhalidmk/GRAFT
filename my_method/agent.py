@@ -105,7 +105,8 @@ class GraftAgent:
             if gnn_cfg["embedding_model"] != c["embedding_model"]:
                 raise ValueError(f"GNN was trained with embeddings {gnn_cfg['embedding_model']}, "
                                  f"this run uses {c['embedding_model']}")
-            cfg.max_nodes = gnn_cfg["max_nodes"]
+            # the GNN's training size, unless the run sets max_nodes (larger subgraphs than the GNN was trained on)
+            cfg.max_nodes = c.get("max_nodes", gnn_cfg["max_nodes"])
         return Retriever(self.store, cfg, self.texts, model)
 
     def _retrieve_all(self, workers: int) -> None:
@@ -130,6 +131,7 @@ class GraftAgent:
         return call.text, {"stop_reason": call.stop_reason, "retrieved_text": memory,
                            "linked_entities": region.linked_entities, "region_facts": len(region.facts),
                            "subgraph_nodes": region.subgraph_nodes, "fallback": region.fallback,
+                           "subgraph_text": "\n".join(self.store.fact(f)["provenance"]["span"] for f in region.subgraph_facts),
                            "fact_sources": region.sources}
 
 

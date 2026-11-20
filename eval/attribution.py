@@ -30,7 +30,11 @@ def main() -> None:
         rows = [json.loads(l) for f in sorted(Path(run).glob("repeat_*/scored.jsonl")) for l in open(f)]
         c = Counter(classify(r) for r in rows)
         n = len(rows)
-        print(f"{Path(run).name}: n={n} gold_in_retrieved={sum(bool(r.get('answer_in_retrieved')) for r in rows)}",
+        sub = [r["answer_in_subgraph"] for r in rows if "answer_in_subgraph" in r]
+        q = [r["query_time_s"] for r in rows if r.get("query_time_s") is not None]
+        print(f"{Path(run).name}: n={n} gold_in_subgraph={sum(sub) if sub else 'n/a'} "
+              f"gold_in_retrieved={sum(bool(r.get('answer_in_retrieved')) for r in rows)} "
+              f"query_s_mean={sum(q) / len(q):.2f}" if q else "",
               {k: c[k] for k in ("only_graph", "only_embed", "both", "neither", "only_across_facts")})
 
 

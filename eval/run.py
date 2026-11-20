@@ -123,6 +123,8 @@ def score_repeat(repeat_dir: Path, golds) -> dict:
             if p and "retrieved_text" in p:
                 row["answer_in_retrieved"] = answer_in_text(g.answers, p["retrieved_text"])
                 row["retrieved_text"] = p["retrieved_text"]
+            if p and "subgraph_text" in p:  # is the gold answer anywhere in the subgraph? (text not kept: too large)
+                row["answer_in_subgraph"] = answer_in_text(g.answers, p["subgraph_text"])
             if p and p.get("fact_sources"):
                 row["fact_sources"] = p["fact_sources"]  # aligned with the "Memory i" blocks of retrieved_text
             rows.append(row)
