@@ -41,6 +41,37 @@ class RealBackend:
         return self.client.messages.create(**params).model_dump(mode="json")
 
 
+class OpenAIBackend:
+    """A local OpenAI-compatible server (vLLM serving Qwen) behind the Claude Messages interface: every GRAFT call
+    (writer, linker, question parse, answer) keeps its prompt, only the model changes. Thinking off, greedy."""
+
+    def __init__(self, base_url: str, model: str):
+        from openai import OpenAI
+        self.client = OpenAI(base_url=base_url, api_key="EMPTY", max_retries=3, timeout=3600)
+        self.served = model
+
+    @staticmethod
+    def _text(content) -> str:
+        if isinstance(content, str):
+            return content
+        return "".join(b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text")
+
+    def create(self, params: dict) -> dict:
+        msgs = []
+        if params.get("system"):
+            msgs.append({"role": "system", "content": self._text(params["system"])})
+        msgs += [{"role": m["role"], "content": self._text(m["content"])} for m in params["messages"]]
+        r = self.client.chat.completions.create(model=self.served, messages=msgs, max_tokens=params["max_tokens"],
+                                                temperature=0.0,
+                                                extra_body={"chat_template_kwargs": {"enable_thinking": False}})
+        c = r.choices[0]
+        return {"id": r.id, "type": "message", "role": "assistant", "model": self.served,
+                "content": [{"type": "text", "text": c.message.content or ""}],
+                "stop_reason": "max_tokens" if c.finish_reason == "length" else "end_turn", "stop_sequence": None,
+                "usage": {"input_tokens": r.usage.prompt_tokens, "output_tokens": r.usage.completion_tokens,
+                          "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0}}
+
+
 class Gateway:
     def __init__(self, model: str, backend, embedder, usage_log: str):
         self.model = model
@@ -145,13 +176,16 @@ def main() -> None:
     parser.add_argument("--embedding-model", required=True)
     parser.add_argument("--usage-log", required=True)
     parser.add_argument("--fake", action="store_true", help="never call the Anthropic API")
+    parser.add_argument("--openai-base-url", default=None,
+                        help="answer with a local OpenAI-compatible server (vLLM) instead of Claude, e.g. http://127.0.0.1:8000/v1")
     args = parser.parse_args()
 
-    backend = FakeBackend() if args.fake else RealBackend()
+    backend = FakeBackend() if args.fake else OpenAIBackend(args.openai_base_url, args.model) if args.openai_base_url \
+        else RealBackend()
     gw = Gateway(args.model, backend, load_embedder(args.embedding_model), args.usage_log)
     server = ThreadingHTTPServer(("127.0.0.1", args.port), make_handler(gw))
     print(f"[gateway] READY on 127.0.0.1:{args.port} model={args.model} "
-          f"embeddings={gw.embedder.name} mode={'FAKE' if args.fake else 'REAL'}", flush=True)
+          f"embeddings={gw.embedder.name} mode={'FAKE' if args.fake else 'LOCAL ' + args.openai_base_url if args.openai_base_url else 'REAL'}", flush=True)
     server.serve_forever()
 
 
