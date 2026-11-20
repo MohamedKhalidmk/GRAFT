@@ -55,6 +55,7 @@ class RetrievalConfig:
     explainer: str = "goat"  # edge attribution in every GOAt step: "goat" (GOAt, ICLR 2024) | "eig" (EiG-Search, ICML 2024)
     link_embed_k: int = 0  # also link the k entities closest to the question by embedding (0 = exact match only)
     hybrid: bool = False  # interleave the mode's ranking with embedding search over all current facts
+    hybrid_k: int = 0  # instead: the mode's top (max_facts - k) facts, then the top k embedding facts not yet included
 
 
 @dataclass
@@ -133,7 +134,14 @@ class Retriever:
         return self._finish(self._merge(question, ranked), region)
 
     def _merge(self, question: str, ranked: list[str]) -> list[str]:
-        """hybrid: one fact from the mode's ranking, then one from embedding search, in turn; duplicates dropped."""
+        """hybrid: one fact from the mode's ranking, then one from embedding search, in turn; duplicates dropped.
+        hybrid_k: the ranking's top (max_facts - k), then the top k embedding facts not already among them."""
+        if self.cfg.hybrid_k > 0:
+            head = ranked[: max(self.cfg.max_facts - self.cfg.hybrid_k, 0)]
+            have = set(head) | {self.store.current(f) for f in head}
+            extra = [f for f in self._similar_facts(question) if f not in have][: self.cfg.hybrid_k]
+            self._merge_info = ("topk", set(head), set(extra))
+            return head + extra + [f for f in ranked[len(head):] if f not in extra]
         if not self.cfg.hybrid:
             return ranked
         similar = self._similar_facts(question)
@@ -242,7 +250,10 @@ class Retriever:
         region.facts = chosen + outdated
         region.outdated = set(outdated)
         info = getattr(self, "_merge_info", None)
-        if info and picked:
+        if info and picked and info[0] == "topk":
+            _, g, e = info
+            region.sources = [("embed" if f in e else "graph") for f in picked] + [""] * len(outdated)
+        elif info and picked:
             graph, similar, rounds = info
             cut = max(rounds[f] for f in picked) + 1  # both lists were walked this far before the budget ran out
             g, e = set(graph[:cut]), set(similar[:cut])

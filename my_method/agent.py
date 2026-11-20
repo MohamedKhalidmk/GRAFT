@@ -98,7 +98,7 @@ class GraftAgent:
                               include_outdated=c["include_outdated"], goat_targets=c["goat_targets"], goat_topk=c["goat_topk"],
                               region=c.get("region", "nearest"), expand_alpha=c.get("expand_alpha", 0.5),
                               explainer=c.get("explainer", "goat"), link_embed_k=c.get("link_embed_k", 0),
-                              hybrid=c.get("hybrid", False))
+                              hybrid=c.get("hybrid", False), hybrid_k=c.get("hybrid_k", 0))
         model = None
         if cfg.mode not in ("ppr", "embed"):
             model, gnn_cfg = load_model(REPO / c["gnn_checkpoint"])

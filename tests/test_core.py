@@ -253,3 +253,20 @@ def test_hybrid_labels_sources_and_embed_mode_needs_no_gnn():
     assert classify(row) == "only_graph"
     row["fact_sources"] = ["both", "embed"]
     assert classify(row) == "both"
+
+
+def test_hybrid_k_keeps_graph_head_and_adds_k_new_embedding_facts():
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    r = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, hybrid_k=2, explainer="eig"), texts, model)
+    r._similar_facts = lambda q: ["f:a", "f:x", "f:y", "f:z"]
+    merged = r._merge("q", ["f:a", "f:b", "f:c", "f:d", "f:e", "f:f"])
+    assert merged[:4] == ["f:a", "f:b", "f:c", "f:d"] and merged[4:6] == ["f:x", "f:y"]  # f:a already in the head
+    region = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, hybrid_k=2, explainer="eig"),
+                       texts, model).retrieve("What language does Pee Wee King's country speak?")
+    assert len(region.facts) <= 6 and len(region.sources) == len(region.facts) and set(region.sources) <= {"graph", "embed"}

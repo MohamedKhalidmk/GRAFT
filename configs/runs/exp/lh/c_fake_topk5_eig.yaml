@@ -1,0 +1,20 @@
+# FREE CHECK (fake LLM): mode C, EiG, 400 nodes; the graph's top 45 facts, then the top 5 embedding facts not already included (same 50-fact budget).
+run_name: exp_c_fake_mh_262k_topk5_eig
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  explainer: eig
+  hybrid_k: 5
+  max_facts: 50
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+data:
+  length: 262k
+  splits: [mh]
+llm:
+  model: claude-haiku-5-5
+  mode: fake
+  answer_max_tokens: 256
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1
