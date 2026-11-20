@@ -66,6 +66,11 @@ def start_gateway(cfg: dict, usage_log: Path, log) -> tuple[subprocess.Popen, st
            "--usage-log", str(usage_log)]
     if cfg["llm"]["mode"] == "fake":
         cmd.append("--fake")
+    elif cfg["llm"]["mode"] == "local":  # a local OpenAI-compatible server (vLLM serving Qwen), started by the job
+        url = os.environ.get("GRAFT_OPENAI_BASE_URL")
+        if not url:
+            raise SystemExit("llm.mode is 'local' but GRAFT_OPENAI_BASE_URL is not set")
+        cmd += ["--openai-base-url", url]
     elif not os.environ.get("ANTHROPIC_API_KEY"):
         raise SystemExit("llm.mode is 'real' but ANTHROPIC_API_KEY is not set")
     proc = subprocess.Popen(cmd, cwd=REPO, env=_env(), stdout=log, stderr=subprocess.STDOUT)
