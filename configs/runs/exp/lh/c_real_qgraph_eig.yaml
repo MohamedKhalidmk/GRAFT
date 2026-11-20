@@ -17,4 +17,4 @@ llm:
   mode: real
   answer_max_tokens: 256
 embedding_model: BAAI/bge-small-en-v1.5
-repeats: 1
+repeats: 3

@@ -295,3 +295,29 @@ def test_question_graph_is_attached_used_and_removed():
     assert store.g.number_of_nodes() == nodes_before and store.g.number_of_edges() == edges_before
     assert store.simple_graph().number_of_nodes() == simple_before
     assert not any(str(n).startswith(("q:", "qf:")) for n in store.g)
+
+
+def test_question_graph_needs_no_embedding_after_prepare():
+    """Workers are forked and cannot embed: after prepare_queries, retrieval must only read cached vectors."""
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    q = "What language does Pee Wee King's country speak?"
+    texts.embed_texts([n if not n.startswith(("e:", "f:")) else __import__("my_method.gnn.features", fromlist=["node_text"]).node_text(store, n)
+                       for n in store.g.nodes] + [q])  # what the agent embeds before forking
+    r = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, explainer="eig", query_graph=True),
+                  texts, model)
+    r.prepare_queries([q], lambda question: [("Pee Wee King", "Country Of Citizenship", "?A"),
+                                              ("?A", "official language", "?B"), ("Unknown Person", "spouse", "?A")])
+
+    class NoEmbed:
+        dim = texts.dim
+        def embed(self, batch):
+            raise AssertionError(f"embedding after prepare: {batch}")
+    texts.embedder = NoEmbed()
+    region = r.retrieve(q)
+    assert region.facts

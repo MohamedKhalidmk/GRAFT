@@ -187,8 +187,12 @@ class Retriever:
         with ThreadPoolExecutor(8) as pool:
             for q, edges in zip(todo, pool.map(parse, todo)):
                 self.query_graphs[q] = edges
-        names = {x for edges in self.query_graphs.values() for s, _, o in edges for x in (s, o) if not x.startswith("?")}
-        self.texts.embed_texts(sorted(names) + [f"{s} {r} {o}" for edges in self.query_graphs.values() for s, r, o in edges])
+        # exactly the texts node_text() will produce for these question graphs (forked workers cannot embed):
+        # every entity name, placeholders included, and each fact as "subject relation object" with the relation
+        # normalised as the graph stores it
+        names = {x for edges in self.query_graphs.values() for s, _, o in edges for x in (s, o)}
+        facts = [f"{s} {norm(r)} {o}" for edges in self.query_graphs.values() for s, r, o in edges]
+        self.texts.embed_texts(sorted(names) + facts)
         self._entity_matrix()
 
     def _entity_matrix(self):
