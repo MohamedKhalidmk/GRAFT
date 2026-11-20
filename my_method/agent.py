@@ -109,6 +109,24 @@ class GraftAgent:
         self.questions = task.questions
         self.regions: dict[int, Region] = {}
 
+    def _writer_state(self) -> dict:
+        st = getattr(self.writer, "stats", None)
+        linker = getattr(self.writer, "linker", None)
+        return {"ops": dict(st.ops) if st else {}, "rejected": dict(st.rejected) if st else {},
+                "parse_failures": st.parse_failures if st else 0, "llm_calls": st.llm_calls if st else 0,
+                "linking": dict(st.linking) if st else {},
+                "link_cache": linker.cache if linker else {}, "link_log": linker.log if linker else []}
+
+    def _restore_writer(self, meta: dict) -> None:
+        from collections import Counter
+        st = getattr(self.writer, "stats", None)
+        if st is not None:
+            st.ops, st.rejected, st.linking = Counter(meta["ops"]), Counter(meta["rejected"]), Counter(meta["linking"])
+            st.parse_failures, st.llm_calls = meta["parse_failures"], meta["llm_calls"]
+        linker = getattr(self.writer, "linker", None)
+        if linker is not None:
+            linker.cache, linker.log = meta["link_cache"], meta["link_log"]
+
     def memorize(self, chunks: list[str]) -> dict:
         shared = self.config.get("shared_graph")  # one built graph reused by several read variants
         shared = REPO / shared if shared else None
@@ -117,12 +135,28 @@ class GraftAgent:
             print(f"[graft] reusing graph {shared}: {self.store.stats()}", flush=True)
             self.retriever = self._make_retriever()
             return {"graph": self.store.stats(), "writer": {"reused_graph": str(shared)}, "graph_file": str(shared)}
-        for chunk_id, chunk in enumerate(chunks):
-            self.writer.write_chunk(chunk_id, chunk, self.store)
+        # checkpoints (shared builds): the partial graph and the writer's state every `checkpoint_every` chunks, so a
+        # job cut off by its time limit resumes from the last checkpoint instead of starting over
+        every = self.config.get("checkpoint_every", 75)
+        ck = Path(str(shared) + ".partial.json") if shared else None
+        ck_meta = Path(str(shared) + ".partial.meta.json") if shared else None
+        start = 0
+        if ck and ck.exists() and ck_meta.exists():
+            meta = json.loads(ck_meta.read_text())
+            self.store = GraphStore.load(ck)
+            start = meta["next_chunk"]
+            self._restore_writer(meta)
+            print(f"[graft] resuming from checkpoint at chunk {start}: {self.store.stats()}", flush=True)
+        for chunk_id in range(start, len(chunks)):
+            self.writer.write_chunk(chunk_id, chunks[chunk_id], self.store)
             if getattr(self.writer, "linker", None) is not None and chunk_id % 50 == 0:
                 print(f"[graft] linking so far: {dict(self.writer.stats.linking)}", flush=True)
             if chunk_id % 50 == 0:
                 print(f"[graft] chunk {chunk_id + 1}/{len(chunks)}: {self.store.stats()}", flush=True)
+            if ck and every and (chunk_id + 1) % every == 0 and chunk_id + 1 < len(chunks):
+                self.store.save(ck)
+                ck_meta.write_text(json.dumps({"next_chunk": chunk_id + 1, **self._writer_state()}))
+                print(f"[graft] checkpoint saved after chunk {chunk_id + 1}", flush=True)
         self.store.save(self.work_dir / "graph.json")
         linker = getattr(self.writer, "linker", None)
         if linker is not None:  # every linking decision, next to the graph (and with the shared copy)
@@ -133,6 +167,8 @@ class GraftAgent:
             self.store.save(shared)
             if linker is not None:
                 Path(str(shared) + ".linking.jsonl").write_text((self.work_dir / "entity_linking.jsonl").read_text())
+            for p in (Path(str(shared) + ".partial.json"), Path(str(shared) + ".partial.meta.json")):
+                p.unlink(missing_ok=True)  # the finished graph replaces the checkpoint
         self.retriever = self._make_retriever()
         return {"graph": self.store.stats(), "writer": self.writer.stats.as_dict(),
                 "graph_file": str(self.work_dir / "graph.json")}

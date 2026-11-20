@@ -22,6 +22,7 @@ import argparse
 import json
 import os
 import socket
+import shutil
 import statistics
 import subprocess
 import sys
@@ -168,13 +169,26 @@ def summarize(cfg: dict, repeats: list[dict]) -> dict:
 def run(config_path: str) -> Path:
     cfg = load_config(config_path)
     spec = METHODS[cfg["method"]]
-    out = Path(os.environ.get("RESULTS_DIR", REPO / "results")) / "runs" / f"{cfg['run_name']}_{time.strftime('%Y%m%d-%H%M%S')}"
-    out.mkdir(parents=True)
+    runs_dir = Path(os.environ.get("RESULTS_DIR", REPO / "results")) / "runs"
+    # resume: the newest unfinished run of this config (no summary.json, same config) is continued, keeping its
+    # finished repeats; otherwise a new run folder
+    unfinished = [d for d in sorted(runs_dir.glob(f"{cfg['run_name']}_2*")) if not (d / "summary.json").exists()
+                  and (d / "config.yaml").exists() and yaml.safe_load((d / "config.yaml").read_text()) == cfg]
+    out = unfinished[-1] if unfinished else runs_dir / f"{cfg['run_name']}_{time.strftime('%Y%m%d-%H%M%S')}"
+    out.mkdir(parents=True, exist_ok=True)
     (out / "config.yaml").write_text(yaml.safe_dump(cfg, sort_keys=False))
     repeats = []
     with open(out / "run.log", "a", buffering=1) as log:
         for k in range(cfg["repeats"]):
             repeat_dir = out / f"repeat_{k}"
+            if (repeat_dir / "scored.jsonl").exists():  # finished before a cut-off: rescore its saved predictions
+                d = cfg["data"]
+                _, golds = build_task(d["length"], d["splits"], d["chunk_size"], spec.agent_name, d["max_questions"])
+                repeats.append(score_repeat(repeat_dir, golds))
+                log.write(f"[runner] repeat {k}: kept from the earlier attempt\n")
+                continue
+            if repeat_dir.exists():  # an unfinished repeat starts over (its build resumes from the graph checkpoint)
+                shutil.rmtree(repeat_dir)
             repeat_dir.mkdir()
             d = cfg["data"]
             task, golds = build_task(d["length"], d["splits"], d["chunk_size"], spec.agent_name, d["max_questions"])

@@ -377,3 +377,36 @@ def test_question_layer_uses_llm_links_not_the_embedding_threshold():
     r2.prepare_queries([q], lambda question: [("PWK", "country of citizenship", "?A")])
     r2.prepare_query_links([q], lambda question, names: {"PWK": None})  # Haiku said "new": no threshold fallback
     assert r2.retrieve(q).query_graph["matched"] == []
+
+
+def test_build_resumes_from_checkpoint_after_a_cut_off(tmp_path):
+    """A build cut off mid-way resumes from the last checkpoint: earlier chunks are not written again."""
+    from baselines.common.protocol import Task
+    from my_method.agent import GraftAgent
+    cfg = {"model": "claude-haiku-5-5", "writer": "rule", "revisions": True, "embedding_model": "hash:16",
+           "work_dir": str(tmp_path / "w"), "retrieval": "ppr", "max_facts": 5, "max_tokens": 5120,
+           "include_outdated": False, "goat_targets": 3, "goat_topk": 12, "shared_graph": str(tmp_path / "g.json"),
+           "checkpoint_every": 2}
+    gw = type("G", (), {"anthropic_base_url": "http://unused"})()
+    chunks = [f"{i + 1}. Person {i} is a citizen of Country {i}." for i in range(5)]
+    task = Task(sub_datasets=["factconsolidation_mh_6k"], chunk_size=512, chunks=chunks, questions=[])
+    agent = GraftAgent(cfg, gw, task)
+    seen = []
+    real = agent.writer.write_chunk
+
+    def crash_at_4(chunk_id, text, store):
+        if chunk_id == 4:
+            raise TimeoutError("job time limit")
+        seen.append(chunk_id)
+        real(chunk_id, text, store)
+    agent.writer.write_chunk = crash_at_4
+    with pytest.raises(TimeoutError):
+        agent.memorize(chunks)
+    assert (tmp_path / "g.json.partial.json").exists() and seen == [0, 1, 2, 3]
+    agent2 = GraftAgent(cfg, gw, task)
+    seen2 = []
+    real2 = agent2.writer.write_chunk
+    agent2.writer.write_chunk = lambda c, t, s: (seen2.append(c), real2(c, t, s))
+    info = agent2.memorize(chunks)
+    assert seen2 == [4] and info["graph"]["facts"] == 5  # only the unwritten chunk; all 5 facts present
+    assert not (tmp_path / "g.json.partial.json").exists()  # checkpoint removed once the graph is saved
