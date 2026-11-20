@@ -72,14 +72,16 @@ def trex_triples(trex_dir: str, top_relations: int, max_facts: int) -> list[tupl
     cols = ["relation", "head", "tail", "title", "text"]
     tables = [pq.read_table(f, columns=cols) for f in sorted(glob.glob(f"{trex_dir}/*.parquet"))]
     rows = [r for t in tables for r in zip(*(t.column(c).to_pylist() for c in cols))]
-    rel = Counter(r[0] for r in rows)
-    keep_rel = {r for r, _ in rel.most_common(top_relations)}
-    rows = [r for r in rows if r[0] in keep_rel and r[1] and r[2] and r[1] != r[2]]
+    # columns: relation (a Wikidata property id), head, tail. Labels: the English Wikidata labels of T-REx's most
+    # common properties (my_method/wikidata_property_labels.json, fetched once from the Wikidata API), in frequency order
+    labels = json.loads((Path(__file__).parent / "wikidata_property_labels.json").read_text())
+    keep_rel = list(labels)[:top_relations]
+    rows = [(labels[r[0]], r[1], r[2], r[3], r[4]) for r in rows if r[0] in keep_rel and r[1] and r[2] and r[1] != r[2]]
     deg = Counter(x for r in rows for x in (r[1], r[2]))
     rank = {e: i for i, (e, _) in enumerate(deg.most_common())}
     rows.sort(key=lambda r: max(rank[r[1]], rank[r[2]]))  # both endpoints among the most-linked
     seen, out = set(), []
-    for h, r, t, title, text in rows:
+    for r, h, t, title, text in rows:  # rows are (relation, head, tail, title, text)
         key = (norm(h), norm(r), norm(t))
         if key in seen:
             continue
@@ -105,7 +107,7 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=20261120)
     ap.add_argument("--source", choices=["rog", "trex"], default="rog")
     ap.add_argument("--trex-dir", default=None)
-    ap.add_argument("--top-relations", type=int, default=50)
+    ap.add_argument("--top-relations", type=int, default=45, help="T-REx's most common properties (labels file holds 45)")
     a = ap.parse_args()
 
     task = json.loads(Path(a.exclude_task).read_text())
@@ -162,7 +164,7 @@ def main() -> None:
             store.g.nodes[e].setdefault("layer", "base")
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     store.save(a.out)
-    report.update(kept=len(kept), relations=len({r for _, r, _ in kept}), **{f"graph_{k}": v for k, v in store.stats().items()},
+    report.update(kept=len(kept), relations=len({t[1] for t in kept}), **{f"graph_{k}": v for k, v in store.stats().items()},
                   question_topic_entities=len(topic))
     Path(a.out + ".report.json").write_text(json.dumps(report, indent=1))
     print(json.dumps(report))
