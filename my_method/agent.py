@@ -144,7 +144,8 @@ class GraftAgent:
                               region=c.get("region", "nearest"), expand_alpha=c.get("expand_alpha", 0.5),
                               explainer=c.get("explainer", "goat"), link_embed_k=c.get("link_embed_k", 0),
                               hybrid=c.get("hybrid", False), hybrid_k=c.get("hybrid_k", 0),
-                              query_graph=c.get("query_graph", False), query_match_min=c.get("query_match_min", 0.85))
+                              query_graph=c.get("query_graph", False), query_match_min=c.get("query_match_min", 0.85),
+                              query_linking=c.get("query_linking", "embedding"))
         model = None
         if cfg.mode not in ("ppr", "embed"):
             model, gnn_cfg = load_model(REPO / c["gnn_checkpoint"])
@@ -168,12 +169,53 @@ class GraftAgent:
             regions = pool.map(_retrieve_in_worker, texts, chunksize=1)
         self.regions = {q.q_index: r for q, r in zip(self.questions, regions)}
 
+    def _link_question(self, question: str, names: list[str]) -> dict:
+        """Top 10 graph entities (base and documents) by name embedding per name; one Haiku call picks one or "new"."""
+        import numpy as np
+        from my_method.writer import LINK_PROMPT, parse_json
+        r = self.retriever
+        ids, vecs = r._entity_matrix()
+        qv = self.texts.embed_texts(names)
+        qv = qv / (np.linalg.norm(qv, axis=1, keepdims=True) + 1e-8)
+        top = np.argsort(-(qv @ vecs.T), axis=1)[:, :10]
+        lines, cands = [], {}
+        for i, n in enumerate(names):
+            cands[f"N{i + 1}"] = [ids[j] for j in top[i]]
+            lines.append(f"N{i + 1}: {n}   [from the question: {question}]")
+            for c, e in enumerate(cands[f"N{i + 1}"]):
+                fs = self.store.facts_of_entity(e)
+                ex = self.store.fact(fs[0]) if fs else None
+                desc = f"{self.store.fact(e)['name']}" + (f"  (e.g. {ex['subject']} | {ex['relation']} | {ex['object']})" if ex else "")
+                lines.append(f"    c{c + 1}: {desc}")
+        reply = {}
+        for _ in range(2):
+            try:
+                reply = parse_json(self.llm.complete(LINK_PROMPT, "\n".join(lines), 1024).text)
+                break
+            except (ValueError, KeyError):
+                continue
+        chosen = {str(x.get("name")): str(x.get("match", "new")) for x in reply.get("links", []) if isinstance(x, dict)}
+        out = {}
+        for i, n in enumerate(names):
+            m = chosen.get(f"N{i + 1}", "new")
+            pick = cands[f"N{i + 1}"][int(m[1:]) - 1] if m.startswith("c") and m[1:].isdigit() and 1 <= int(m[1:]) <= 10 else None
+            out[n] = pick
+            self.query_link_log.append({"question": question, "name": n, "candidates": [self.store.fact(e)["name"] for e in cands[f"N{i + 1}"]],
+                                        "choice": m, "matched": pick})
+        return out
+
     def _prepare_query_graphs(self, texts: list[str]) -> None:
         """query_graph option: parse the questions with Haiku here, in the parent, before workers fork."""
         if not self.retriever.cfg.query_graph:
             return
         schema = Schema.load(REPO / self.config["schema_path"]).describe()
         self.retriever.prepare_queries(texts, lambda q: parse_question_graph(self.llm, schema, q))
+        if self.retriever.cfg.query_linking == "llm":  # link question entities into the graph the way the writer does
+            self.query_link_log = getattr(self, "query_link_log", [])
+            self.retriever.prepare_query_links(texts, self._link_question)
+            with open(self.work_dir / "query_linking.jsonl", "a") as f:  # every question-entity linking decision
+                f.writelines(json.dumps(d, ensure_ascii=False) + "\n" for d in self.query_link_log)
+            self.query_link_log = []
 
     def answer(self, question: Question) -> tuple[str, dict]:
         workers = self.config.get("retrieval_workers", 1)

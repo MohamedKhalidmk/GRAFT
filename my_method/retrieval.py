@@ -58,6 +58,7 @@ class RetrievalConfig:
     hybrid_k: int = 0  # instead: the mode's top (max_facts - k) facts, then the top k embedding facts not yet included
     query_graph: bool = False  # Haiku turns the question into schema nodes/edges, attached for this question only
     query_match_min: float = 0.85  # name-embedding cosine needed to match a question entity to a graph entity
+    query_linking: str = "embedding"  # "embedding" (cosine >= query_match_min) | "llm" (Haiku picks among the top 10)
 
 
 @dataclass
@@ -178,6 +179,17 @@ class Retriever:
 
     # ---- question graph (query_graph option) ----
 
+    def prepare_query_links(self, questions: list[str], link) -> None:
+        """query_linking="llm": for each question's named entities, link(question, names) -> {name: entity id or None}.
+        Runs in the parent after prepare_queries; results are read by workers."""
+        self.query_links = getattr(self, "query_links", {})
+        from concurrent.futures import ThreadPoolExecutor
+        todo = [q for q in questions if q not in self.query_links]
+        names = {q: sorted({x for s, _, o in self.query_graphs.get(q, []) for x in (s, o) if not x.startswith("?")}) for q in todo}
+        with ThreadPoolExecutor(8) as pool:
+            for q, m in zip(todo, pool.map(lambda q: link(q, names[q]) if names[q] else {}, todo)):
+                self.query_links[q] = m
+
     def prepare_queries(self, questions: list[str], parse) -> None:
         """Parent process, before workers fork: parse every question (parse(q) -> [(subject, relation, object)])
         and embed every text the question graphs will need, so workers only read cached vectors."""
@@ -225,7 +237,12 @@ class Retriever:
         def node_for(name: str) -> str:
             if name in node_of:
                 return node_of[name]
-            m = None if name.startswith("?") else self._match_entity(name)
+            if name.startswith("?"):
+                m = None
+            elif self.cfg.query_linking == "llm":
+                m = getattr(self, "query_links", {}).get(question, {}).get(name)
+            else:
+                m = self._match_entity(name)
             if m:
                 matched.append(m)
                 node_of[name] = m

@@ -356,3 +356,24 @@ def test_entity_linker_maps_names_to_base_entities_and_logs():
     out2 = linker.link(1, [NewFact("USA", "head of state", "Somebody", 2, "2. USA ...")], base)
     assert out2[0].subject == "United States of America" and len(calls) == 2  # USA cached; only "Somebody" asked
     assert {d["name"] for d in linker.log} == {"USA", "Elvish", "Somebody"}
+
+
+def test_question_layer_uses_llm_links_not_the_embedding_threshold():
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    q = "What language does Pee Wee King's country speak?"
+    cfg = RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, explainer="eig", query_graph=True,
+                          query_linking="llm", query_match_min=0.0)
+    r = Retriever(store, cfg, texts, model)
+    r.prepare_queries([q], lambda question: [("PWK", "country of citizenship", "?A")])
+    r.prepare_query_links([q], lambda question, names: {"PWK": "e:pee wee king"})
+    assert r.retrieve(q).query_graph["matched"] == ["e:pee wee king"]
+    r2 = Retriever(store, cfg, texts, model)
+    r2.prepare_queries([q], lambda question: [("PWK", "country of citizenship", "?A")])
+    r2.prepare_query_links([q], lambda question, names: {"PWK": None})  # Haiku said "new": no threshold fallback
+    assert r2.retrieve(q).query_graph["matched"] == []
