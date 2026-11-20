@@ -1,4 +1,6 @@
-"""GRAFT layer 1: a base graph built beforehand from general outside data, in GRAFT's schema.
+"""GRAFT layer 1: a base graph built beforehand from general outside data, in GRAFT's schema (--source rog: RoG
+Freebase triples; --source trex: a general Wikidata slice from T-REx, chosen without the benchmark: most common
+relations, most-linked entities, provenance span = the aligned Wikipedia sentence).
 
     python -m my_method.base_graph --out results/checkpoints/base_graphs/rog_base.json \
         --exclude-task results/runs/<any FactConsolidation run>/repeat_0/task.json \
@@ -61,6 +63,33 @@ def outside_triples(limit_per_set: int) -> list[tuple[str, str, str]]:
     return out
 
 
+def trex_triples(trex_dir: str, top_relations: int, max_facts: int) -> list[tuple[str, str, str, str, str]]:
+    """General Wikidata slice from T-REx's plain-file export (relbert/t_rex parquet: relation, head, tail, title, text),
+    chosen without the benchmark: the top_relations most common relations, then the triples whose two entities are
+    both among the most-linked entities (by triple count), up to max_facts. Returns (head, relation, tail, title, text)."""
+    import glob
+    import pyarrow.parquet as pq
+    cols = ["relation", "head", "tail", "title", "text"]
+    tables = [pq.read_table(f, columns=cols) for f in sorted(glob.glob(f"{trex_dir}/*.parquet"))]
+    rows = [r for t in tables for r in zip(*(t.column(c).to_pylist() for c in cols))]
+    rel = Counter(r[0] for r in rows)
+    keep_rel = {r for r, _ in rel.most_common(top_relations)}
+    rows = [r for r in rows if r[0] in keep_rel and r[1] and r[2] and r[1] != r[2]]
+    deg = Counter(x for r in rows for x in (r[1], r[2]))
+    rank = {e: i for i, (e, _) in enumerate(deg.most_common())}
+    rows.sort(key=lambda r: max(rank[r[1]], rank[r[2]]))  # both endpoints among the most-linked
+    seen, out = set(), []
+    for h, r, t, title, text in rows:
+        key = (norm(h), norm(r), norm(t))
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append((h, r, t, title or "", text or ""))
+        if len(out) >= max_facts * 1.2:  # headroom for the leakage drops
+            break
+    return out
+
+
 def ngrams(text: str, n: int = 13) -> set:
     w = re.findall(r"[a-z0-9]+", text.lower())
     return {tuple(w[i:i + n]) for i in range(len(w) - n + 1)}
@@ -74,6 +103,9 @@ def main() -> None:
     ap.add_argument("--max-facts", type=int, default=20000)
     ap.add_argument("--limit-per-set", type=int, default=1500)
     ap.add_argument("--seed", type=int, default=20261120)
+    ap.add_argument("--source", choices=["rog", "trex"], default="rog")
+    ap.add_argument("--trex-dir", default=None)
+    ap.add_argument("--top-relations", type=int, default=50)
     a = ap.parse_args()
 
     task = json.loads(Path(a.exclude_task).read_text())
@@ -86,35 +118,45 @@ def main() -> None:
     topic = {norm(docs.fact(e)["name"]) for e, w in names if len(w.strip()) >= 3 and any(w in q for q in q_words)}
     q_grams = set().union(*(ngrams(q) for q in questions))
 
-    triples = outside_triples(a.limit_per_set)
+    if a.source == "trex":
+        triples = trex_triples(a.trex_dir, a.top_relations, a.max_facts)
+        author, source = "Wikidata via T-REx (relbert/t_rex, Wikipedia-aligned)", "outside_kg_wikidata"
+    else:
+        triples = [(h, r, o, "", "") for h, r, o in outside_triples(a.limit_per_set)]
+        author, source = AUTHOR, "outside_kg"
     report = Counter(outside=len(triples))
     kept = []
-    for h, r, o in triples:
+    for h, r, o, title, text in triples:
         if (norm(h), norm(r), norm(o)) in doc_facts:
             report["dropped_same_as_document_fact"] += 1
         elif norm(h) in topic or norm(o) in topic:
             report["dropped_question_topic_entity"] += 1
-        elif ngrams(f"{h} {r} {o}") & q_grams:
+        elif ngrams(f"{h} {r} {o}") & q_grams or (text and ngrams(text) & q_grams):
             report["dropped_13gram_with_question"] += 1
         else:
-            kept.append((h, r, o))
+            kept.append((h, r, o, title, text))
 
     rng = np.random.default_rng(a.seed)
     if len(kept) > a.max_facts:
-        kept = [kept[i] for i in sorted(rng.choice(len(kept), a.max_facts, replace=False))]
+        if a.source == "trex":  # already ordered most-linked first: keep the top, no sampling
+            kept = kept[: a.max_facts]
+        else:
+            kept = [kept[i] for i in sorted(rng.choice(len(kept), a.max_facts, replace=False))]
 
     from baselines.claude_gateway.embeddings import load_embedder
     emb = load_embedder("BAAI/bge-small-en-v1.5")
     qv = np.asarray(emb.embed(questions))
-    fv = np.concatenate([np.asarray(emb.embed([f"{h} {r} {o}" for h, r, o in kept[i:i + 512]])) for i in range(0, len(kept), 512)])
+    fv = np.concatenate([np.asarray(emb.embed([f"{h} {r} {o}" for h, r, o, _, _ in kept[i:i + 512]])) for i in range(0, len(kept), 512)])
     near = (fv @ qv.T).max(1) >= 0.95
     report["dropped_embedding_cosine_0.95"] = int(near.sum())
     kept = [t for t, bad in zip(kept, near) if not bad]
 
     store = GraphStore()
-    for i, (h, r, o) in enumerate(kept):
-        node = store.add_fact(h, r, o, Provenance(chunk_id=-1, arrival=store.take_arrival(), serial=None, span=f"{h} {r} {o}."),
-                              author=AUTHOR, source="outside_kg", asserted_at=i, verification="unverified", layer="base")
+    for i, (h, r, o, title, text) in enumerate(kept):
+        span = (text.strip()[:400] if text else f"{h} {r} {o}.")
+        node = store.add_fact(h, r, o, Provenance(chunk_id=-1, arrival=store.take_arrival(), serial=None, span=span),
+                              author=author, source=source, source_title=title, asserted_at=i, verification="unverified",
+                              layer="base")
         for e in (entity_id(h), entity_id(o)):
             store.g.nodes[e].setdefault("key", {"system": "name", "value": norm(store.g.nodes[e]["name"])})
             store.g.nodes[e].setdefault("layer", "base")
