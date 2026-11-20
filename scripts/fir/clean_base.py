@@ -6,8 +6,10 @@ An entity is junk when its name is ONE word (or no word) and that word is:
   number    digits only ("1990", "2") or a number word (one ... twenty, hundred, thousand, million, first ... tenth)
   punct     no letter or digit at all ("-", "&")
   generic   a word written in lower case in at least --generic-df of the base's own Wikipedia sentences (the T-REx
-            provenance spans): an everyday word ("new", "film", "city"), not a name (names like "France" are
-            capitalised, so they never count)
+            provenance spans). REPORTED ONLY, never dropped: on T-REx these are Wikidata concepts that are real
+            answers (footballer, politician, village, jazz: occupation, position, genre), 130K facts.
+Not junk either: ALL-CAPS names (abbreviations: OR, IN, CAN) and NLTK's contraction fragments (Ain, Don, ...),
+which are real places and names.
 Multi-word names ("The Who", "Take That") are never junk. Only base entities are candidates; one that document facts
 use is kept and reported (dropping it would change the documents). For each dropped entity its base facts go too
 (a fact without its subject or object means nothing), with every edge touching them. Writes BASE<suffix>.json,
@@ -17,6 +19,7 @@ from collections import Counter
 from pathlib import Path
 from my_method.graph_store import STOPWORDS, GraphStore
 
+FRAGMENTS = set("s t d ll m o re ve y ain don ma".split())  # NLTK's contraction pieces: "Ain", "Don" are real names
 NUMBER_WORDS = set("""zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen
 seventeen eighteen nineteen twenty thirty forty fifty sixty seventy eighty ninety hundred thousand million billion
 first second third fourth fifth sixth seventh eighth ninth tenth""".split())
@@ -38,7 +41,8 @@ def category(name):
     if len(w) > 1:
         return None
     w = w[0]
-    if w in STOPWORDS:
+    letters = re.sub(r"[^A-Za-z]", "", name)
+    if w in STOPWORDS and w not in FRAGMENTS and not (letters.isupper() and len(letters) > 1):
         return "stopword"
     if w.isdigit() or w in NUMBER_WORDS:
         return "number"
@@ -47,7 +51,7 @@ def category(name):
     return None
 
 def drop_plan(store):
-    junk, kept_doc = {}, {}
+    junk, kept_doc, generic = {}, {}, {}
     for e in store.entities():
         d = store.fact(e)
         if d.get("layer") != "base":
@@ -55,11 +59,14 @@ def drop_plan(store):
         c = category(d["name"])
         if not c:
             continue
+        if c == "generic":  # reported, not dropped
+            generic[e] = (c, d["name"], len(store.facts_of_entity(e)), 0)
+            continue
         fs = store.facts_of_entity(e)
         doc = [f for f in fs if store.fact(f).get("layer") != "base"]
         (kept_doc if doc else junk)[e] = (c, d["name"], len(fs), len(doc))
     gone_facts = {f for e in junk for f in store.facts_of_entity(e) if store.fact(f).get("layer") == "base"}
-    return junk, kept_doc, gone_facts
+    return junk, kept_doc, gone_facts, generic
 
 def apply(store, junk, gone_facts):
     nodes = set(junk) | gone_facts
@@ -79,11 +86,13 @@ def apply(store, junk, gone_facts):
 report = {"rule": {"generic_df": a.generic_df, "sentences": n_sent}}
 for label, path in (("base", a.base), ("shared", a.shared)):
     store = base if label == "base" else GraphStore.load(path)
-    junk, kept_doc, gone = drop_plan(store)
+    junk, kept_doc, gone, generic = drop_plan(store)
     top = sorted(junk.items(), key=lambda kv: -kv[1][2])
     report[label] = {"by_category": dict(Counter(v[0] for v in junk.values())),
                      "facts_by_category": dict(sum((Counter({v[0]: v[2]}) for v in junk.values()), Counter())),
-                     "top_by_facts": [(v[1], v[0], v[2]) for _, v in top[:40]],
+                     "top_by_facts": [(v[1], v[0], v[2]) for _, v in top[:60]],
+                     "all_dropped": sorted((v[1], v[0], v[2]) for v in junk.values()),
+                     "generic_reported_not_dropped": sorted(((v[1], v[2]) for v in generic.values()), key=lambda x: -x[1]),
                      "kept_because_documents_use_them": [(v[1], v[0], v[2], v[3]) for v in kept_doc.values()],
                      **apply(store, junk, gone)}
     out = Path(path).with_name(Path(path).stem + a.suffix + ".json")
