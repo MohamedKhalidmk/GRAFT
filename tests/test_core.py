@@ -270,3 +270,28 @@ def test_hybrid_k_keeps_graph_head_and_adds_k_new_embedding_facts():
     region = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, hybrid_k=2, explainer="eig"),
                        texts, model).retrieve("What language does Pee Wee King's country speak?")
     assert len(region.facts) <= 6 and len(region.sources) == len(region.facts) and set(region.sources) <= {"graph", "embed"}
+
+
+def test_question_graph_is_attached_used_and_removed():
+    """query_graph: parsed edges become temporary nodes linked through matched entities; they seed PPR and enter the
+    GNN subgraph, never appear among retrieved facts, and leave the graph unchanged afterwards."""
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    nodes_before, edges_before = store.g.number_of_nodes(), store.g.number_of_edges()
+    simple_before = store.simple_graph().number_of_nodes()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    q = "What language does Pee Wee King's country speak?"
+    r = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, explainer="eig", query_graph=True),
+                  texts, model)
+    r.prepare_queries([q], lambda question: [("Pee Wee King", "country of citizenship", "?A"),
+                                              ("?A", "official language", "?B")])
+    region = r.retrieve(q)
+    assert region.query_graph["matched"] == ["e:pee wee king"]
+    assert region.facts and not any(f.startswith("qf:") for f in region.facts)
+    assert store.g.number_of_nodes() == nodes_before and store.g.number_of_edges() == edges_before
+    assert store.simple_graph().number_of_nodes() == simple_before
+    assert not any(str(n).startswith(("q:", "qf:")) for n in store.g)

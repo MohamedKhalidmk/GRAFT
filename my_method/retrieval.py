@@ -36,7 +36,7 @@ import torch
 from my_method.gnn.eig import eig_edge_attributions
 from my_method.gnn.explain import edge_attributions
 from my_method.gnn.features import TextEmbedder, build_features, nearest_nodes, node_text, ppr_scores, select_subgraph
-from my_method.graph_store import GraphStore
+from my_method.graph_store import GraphStore, entity_id, norm
 
 MODES = ("gnn_goat", "gnn_topk", "ppr", "goat_ppr", "ppr_goat_ppr", "embed")
 
@@ -56,6 +56,8 @@ class RetrievalConfig:
     link_embed_k: int = 0  # also link the k entities closest to the question by embedding (0 = exact match only)
     hybrid: bool = False  # interleave the mode's ranking with embedding search over all current facts
     hybrid_k: int = 0  # instead: the mode's top (max_facts - k) facts, then the top k embedding facts not yet included
+    query_graph: bool = False  # Haiku turns the question into schema nodes/edges, attached for this question only
+    query_match_min: float = 0.85  # name-embedding cosine needed to match a question entity to a graph entity
 
 
 @dataclass
@@ -67,6 +69,7 @@ class Region:
     subgraph_facts: list[str] = field(default_factory=list)  # every fact in the GNN's subgraph (before ranking and budget)
     fallback: bool = False
     sources: list[str] = field(default_factory=list)  # per fact in `facts`: "graph", "embed" or "both" (hybrid / embed)
+    query_graph: dict = field(default_factory=dict)  # query_graph option: the parsed edges and matched entities
 
 
 def _words(text: str) -> str:
@@ -103,13 +106,25 @@ class Retriever:
         return exact + extra[: self.cfg.link_embed_k]
 
     def retrieve(self, question: str) -> Region:
+        if not self.cfg.query_graph:
+            return self._retrieve(question)
+        added, matched, qfacts = self._attach_query(question)
+        try:
+            region = self._retrieve(question, extra_seeds=matched + qfacts, extra_entities=matched)
+            region.query_graph = {"edges": [list(e) for e in self.query_graphs.get(question, [])], "matched": matched}
+            return region
+        finally:
+            self._detach_query(added)
+
+    def _retrieve(self, question: str, extra_seeds: list[str] = (), extra_entities: list[str] = ()) -> Region:
         self._merge_info = None
         if self.cfg.mode == "embed":  # baseline: plain embedding search over all current facts, same budget
             region = self._finish(self._similar_facts(question), Region([]))
             region.sources = ["embed"] * len(region.facts)
             return region
-        linked = self.link(question)
-        if not linked:
+        linked = list(dict.fromkeys(self.link(question) + list(extra_entities)))
+        seeds = list(dict.fromkeys(linked + list(extra_seeds)))
+        if not seeds:
             return self._finish(self._similar_facts(question), Region([], fallback=True))
         if self.cfg.mode == "ppr":
             return self._finish(self._merge(question, self._ppr(linked)),
@@ -119,7 +134,7 @@ class Retriever:
                      else nearest_nodes(self.store, linked, self.cfg.max_nodes))
             nodes = [n for n in linked if n in nodes] + [n for n in nodes if n not in linked]
         else:
-            nodes = select_subgraph(self.store, linked, self.cfg.max_nodes)
+            nodes = select_subgraph(self.store, seeds, self.cfg.max_nodes)
         region = Region([], linked_entities=linked, subgraph_nodes=len(nodes),
                         subgraph_facts=[n for n in nodes if self._is_fact(n)])
         sub = build_features(self.store, nodes, linked, question, self.texts)
@@ -158,7 +173,86 @@ class Retriever:
     # ---- ranking ----
 
     def _is_fact(self, node: str) -> bool:
-        return self.store.fact(node)["type"] == "Fact"
+        d = self.store.fact(node)
+        return d["type"] == "Fact" and not d.get("query")  # question-graph facts are never retrieved
+
+    # ---- question graph (query_graph option) ----
+
+    def prepare_queries(self, questions: list[str], parse) -> None:
+        """Parent process, before workers fork: parse every question (parse(q) -> [(subject, relation, object)])
+        and embed every text the question graphs will need, so workers only read cached vectors."""
+        self.query_graphs = getattr(self, "query_graphs", {})
+        from concurrent.futures import ThreadPoolExecutor
+        todo = [q for q in dict.fromkeys(questions) if q not in self.query_graphs]
+        with ThreadPoolExecutor(8) as pool:
+            for q, edges in zip(todo, pool.map(parse, todo)):
+                self.query_graphs[q] = edges
+        names = {x for edges in self.query_graphs.values() for s, _, o in edges for x in (s, o) if not x.startswith("?")}
+        self.texts.embed_texts(sorted(names) + [f"{s} {r} {o}" for edges in self.query_graphs.values() for s, r, o in edges])
+        self._entity_matrix()
+
+    def _entity_matrix(self):
+        if getattr(self, "_ent_norm", None) is None:
+            ids = self.store.entities()
+            vecs = self.texts.embed_texts([node_text(self.store, e) for e in ids]) if ids else np.zeros((0, self.texts.dim))
+            vecs = vecs / (np.linalg.norm(vecs, axis=1, keepdims=True) + 1e-8)
+            self._ent_norm = (ids, vecs)
+        return self._ent_norm
+
+    def _match_entity(self, name: str) -> str | None:
+        exact = entity_id(name)
+        if exact in self.store.g and self.store.fact(exact)["type"] == "Entity":
+            return exact
+        ids, vecs = self._entity_matrix()
+        if not ids:
+            return None
+        v = self.texts.embed_one(name)
+        sims = vecs @ (v / (np.linalg.norm(v) + 1e-8))
+        i = int(np.argmax(sims))
+        return ids[i] if sims[i] >= self.cfg.query_match_min else None
+
+    def _attach_query(self, question: str) -> tuple[list[str], list[str], list[str]]:
+        """Add this question's graph: matched entities are reused, unknowns (?X) and unmatched names become
+        temporary entity nodes, each edge a temporary fact node. Returns (added nodes, matched entities, query facts)."""
+        edges = getattr(self, "query_graphs", {}).get(question) or []
+        g, simple = self.store.g, self.store.simple_graph()
+        added, matched, qfacts, node_of = [], [], [], {}
+
+        def node_for(name: str) -> str:
+            if name in node_of:
+                return node_of[name]
+            m = None if name.startswith("?") else self._match_entity(name)
+            if m:
+                matched.append(m)
+                node_of[name] = m
+                return m
+            n = f"q:{norm(name)}"
+            if n not in g:
+                g.add_node(n, type="Entity", name=name, query=True)
+                simple.add_node(n, type="Entity", name=name, query=True)
+                added.append(n)
+            node_of[name] = n
+            return n
+
+        for i, (s, r, o) in enumerate(edges):
+            su, ob = node_for(s), node_for(o)
+            f = f"qf:{i}"
+            attrs = dict(type="Fact", subject=s, relation=norm(r), object=o, query=True, mentions=[],
+                         provenance={"chunk_id": -1, "arrival": self.store.next_arrival, "serial": None, "span": f"{s} {r} {o}"})
+            g.add_node(f, **attrs)
+            simple.add_node(f, **attrs)
+            g.add_edge(su, f, type="subject_of")
+            g.add_edge(ob, f, type="object_of")
+            simple.add_edge(su, f)
+            simple.add_edge(ob, f)
+            added.append(f)
+            qfacts.append(f)
+        return added, list(dict.fromkeys(matched)), qfacts
+
+    def _detach_query(self, added: list[str]) -> None:
+        self.store.g.remove_nodes_from(added)
+        if self.store._simple is not None:
+            self.store._simple.remove_nodes_from(added)
 
     def _by_score(self, nodes: list[str], scores: np.ndarray) -> list[str]:
         order = np.argsort(-scores)

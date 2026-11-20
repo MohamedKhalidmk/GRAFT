@@ -42,6 +42,33 @@ def _retrieve_in_worker(question: str) -> Region:
     return _worker_retriever.retrieve(question)
 
 
+QUERY_GRAPH_PROMPT = """GRAFT-QUERY
+You turn a question into a small graph pattern for a memory graph with this schema:
+{schema}
+Write every fact the question states or asks about as an edge (subject, relation, object). Name each entity the
+question mentions exactly as it is written. For each unknown thing the question asks about or passes through, use a
+placeholder ?A, ?B, ... in order. Use short relation labels in the style of stored facts, e.g. "spouse",
+"country of citizenship", "official language", "author".
+Example: "Where was the spouse of Pee Wee King born?" ->
+{{"edges": [{{"subject": "Pee Wee King", "relation": "spouse", "object": "?A"}},
+            {{"subject": "?A", "relation": "place of birth", "object": "?B"}}]}}
+Return JSON only: {{"edges": [{{"subject": "...", "relation": "...", "object": "..."}}]}}"""
+
+
+def parse_question_graph(llm: ClaudeLLM, schema_text: str, question: str) -> list[tuple[str, str, str]]:
+    """Haiku's graph pattern for one question; [] if the reply has no usable edges (retrieval then runs as usual)."""
+    from my_method.writer import parse_json
+    for _ in range(2):
+        try:
+            reply = parse_json(llm.complete(QUERY_GRAPH_PROMPT.format(schema=schema_text), question, 512).text)
+            edges = [(str(e["subject"]).strip(), str(e["relation"]).strip(), str(e["object"]).strip())
+                     for e in reply.get("edges", []) if isinstance(e, dict) and all(e.get(k) for k in ("subject", "relation", "object"))]
+            return edges[:8]
+        except (ValueError, KeyError, TypeError):
+            continue
+    return []
+
+
 def question_text(query: str) -> str:
     """The question inside the benchmark's FactConsolidation query prompt."""
     return query.rsplit("Based on the provided Knowledge Pool,", 1)[-1].rsplit("Answer:", 1)[0].strip()
@@ -98,7 +125,8 @@ class GraftAgent:
                               include_outdated=c["include_outdated"], goat_targets=c["goat_targets"], goat_topk=c["goat_topk"],
                               region=c.get("region", "nearest"), expand_alpha=c.get("expand_alpha", 0.5),
                               explainer=c.get("explainer", "goat"), link_embed_k=c.get("link_embed_k", 0),
-                              hybrid=c.get("hybrid", False), hybrid_k=c.get("hybrid_k", 0))
+                              hybrid=c.get("hybrid", False), hybrid_k=c.get("hybrid_k", 0),
+                              query_graph=c.get("query_graph", False), query_match_min=c.get("query_match_min", 0.85))
         model = None
         if cfg.mode not in ("ppr", "embed"):
             model, gnn_cfg = load_model(REPO / c["gnn_checkpoint"])
@@ -114,6 +142,7 @@ class GraftAgent:
         global _worker_retriever
         _worker_retriever = self.retriever
         texts = [question_text(q.query) for q in self.questions]
+        self._prepare_query_graphs(texts)
         # Embed every node and question here, in the parent: workers are forked, and a forked process
         # cannot use CUDA. With everything cached, workers only read vectors.
         self.texts.embed_texts([node_text(self.store, n) for n in self.store.g.nodes] + texts)
@@ -121,10 +150,19 @@ class GraftAgent:
             regions = pool.map(_retrieve_in_worker, texts, chunksize=1)
         self.regions = {q.q_index: r for q, r in zip(self.questions, regions)}
 
+    def _prepare_query_graphs(self, texts: list[str]) -> None:
+        """query_graph option: parse the questions with Haiku here, in the parent, before workers fork."""
+        if not self.retriever.cfg.query_graph:
+            return
+        schema = Schema.load(REPO / self.config["schema_path"]).describe()
+        self.retriever.prepare_queries(texts, lambda q: parse_question_graph(self.llm, schema, q))
+
     def answer(self, question: Question) -> tuple[str, dict]:
         workers = self.config.get("retrieval_workers", 1)
         if workers > 1 and not self.regions:
             self._retrieve_all(workers)
+        if not self.regions and self.retriever.cfg.query_graph:
+            self._prepare_query_graphs([question_text(question.query)])
         region = self.regions.get(question.q_index) or self.retriever.retrieve(question_text(question.query))
         call, memory = answer(self.llm, self.store, region, question.query, self.sub_dataset,
                               self.config["answer_max_tokens"])
@@ -132,7 +170,7 @@ class GraftAgent:
                            "linked_entities": region.linked_entities, "region_facts": len(region.facts),
                            "subgraph_nodes": region.subgraph_nodes, "fallback": region.fallback,
                            "subgraph_text": "\n".join(self.store.fact(f)["provenance"]["span"] for f in region.subgraph_facts),
-                           "fact_sources": region.sources}
+                           "fact_sources": region.sources, "query_graph": region.query_graph}
 
 
 SGARAgent = GraftAgent  # old name, kept for older scripts
