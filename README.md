@@ -197,3 +197,29 @@ paper block comes from `data/paper_reference.py`, which parses arXiv's HTML.
 - Mem0 (both versions) caps its extraction output at 2000 tokens; a 4096-token FC chunk holds
   ~250 facts, so extraction is likely truncated. Kept for fidelity; probably part of why Mem0
   scores low in the paper.
+
+## Built on
+
+GRAFT's explainer step uses **GOAt** (Lu et al., ICLR 2024; https://github.com/sluxsr/GOAt) and, as an option,
+**EiG-Search** (Lu et al., ICML 2024; https://github.com/sluxsr/EiG-Search). Benchmark data and baselines come from
+**MemoryAgentBench** (https://github.com/HUST-AI-HYZ/MemoryAgentBench). GOAt and MemoryAgentBench are git
+submodules and keep their own terms; see `NOTICE` for full citations.
+
+```bibtex
+@inproceedings{lu2024goat,
+  title     = {{GOAt}: Explaining Graph Neural Networks via Graph Output Attribution},
+  author    = {Shengyao Lu and Keith G. Mills and Jiao He and Bang Liu and Di Niu},
+  booktitle = {The Twelfth International Conference on Learning Representations},
+  year      = {2024}
+}
+@inproceedings{lu2024eig,
+  title     = {{EiG-Search}: Generating Edge-Induced Subgraphs for {GNN} Explanation in Linear Time},
+  author    = {Shengyao Lu and Bang Liu and Keith G Mills and Jiao He and Di Niu},
+  booktitle = {Forty-first International Conference on Machine Learning},
+  year      = {2024}
+}
+```
+
+## License
+
+Apache License 2.0, copyright 2026 Mohamed Khaled. See `LICENSE` and `NOTICE`. (Earlier versions were MIT-licensed.)
