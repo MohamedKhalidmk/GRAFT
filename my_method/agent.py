@@ -6,7 +6,8 @@ Config keys (defaults in eval/methods.py, all switchable in the UI):
     schema_path       which schema file to use with "fixed"
     revisions         true: SUPERSEDE edges | false: append-only (ablation)
     shared_graph      path: load this graph instead of writing one (built and saved there on first use)
-    start_graph       "empty" (from scratch) | "synthetic" (experiment D: extend a synthetic starting graph)
+    start_graph       "empty" (from scratch) | "synthetic" (experiment D: extend a synthetic starting graph) |
+                      "outside" (GRAFT layer 1: the base graph at start_graph_path, built by my_method/base_graph.py)
     retrieval         "gnn_goat" (A) | "goat_ppr" (B) | "ppr_goat_ppr" (C) | "gnn_topk" | "ppr"
     region, expand_alpha   B / C only, see my_method/retrieval.py
     explainer         edge attribution: "goat" (default) | "eig" (EiG-Search)
@@ -88,6 +89,10 @@ class GraftAgent:
             from my_method.writer import graph_pattern
             self.store = synthetic_start_graph(config.get("start_graph_seed", 7))
             pattern = graph_pattern(self.store)
+        elif config.get("start_graph", "empty") == "outside":  # GRAFT layer 1: graft the documents onto a base graph
+            from my_method.writer import graph_pattern
+            self.store = GraphStore.load(REPO / config["start_graph_path"])
+            pattern = graph_pattern(self.store, max_labels=60)
         if config["writer"] == "rule":
             self.writer = RuleWriter(revisions=config["revisions"])
         else:

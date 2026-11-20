@@ -188,12 +188,13 @@ Example facts already stored:
 """
 
 
-def graph_pattern(store: GraphStore, n_examples: int = 6) -> str:
-    """The ready-made graph's relation vocabulary and a few stored facts, for the extraction prompt."""
+def graph_pattern(store: GraphStore, n_examples: int = 6, max_labels: int | None = None) -> str:
+    """The ready-made graph's relation vocabulary (its most common max_labels) and a few stored facts, for the
+    extraction prompt."""
     labels = Counter(store.fact(f)["relation"] for f in store.facts())
     examples = sorted(store.facts(), key=lambda f: store.fact(f)["provenance"]["arrival"])[:n_examples]
     lines = "\n".join(f"- {store.fact(f)['subject']} | {store.fact(f)['relation']} | {store.fact(f)['object']}" for f in examples)
-    return PATTERN_BLOCK.format(labels=", ".join(label for label, _ in labels.most_common()), examples=lines)
+    return PATTERN_BLOCK.format(labels=", ".join(label for label, _ in labels.most_common(max_labels)), examples=lines)
 
 EXTRACT_FREE = """SGAR-EXTRACT free
 You are the memory writer of an agent. Read the text and store its knowledge as a graph, in \
