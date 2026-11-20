@@ -48,10 +48,11 @@ class WriterStats:
     rejected: Counter = field(default_factory=Counter)  # facts dropped by schema validation, by reason
     parse_failures: int = 0
     llm_calls: int = 0
+    linking: Counter = field(default_factory=Counter)  # entity linking outcomes (EntityLinker)
 
     def as_dict(self) -> dict:
         return {"ops": dict(self.ops), "rejected": dict(self.rejected), "parse_failures": self.parse_failures,
-                "writer_llm_calls": self.llm_calls}
+                "writer_llm_calls": self.llm_calls, "linking": dict(self.linking)}
 
 
 # ---------------------------------------------------------------------------- shared
@@ -234,6 +235,92 @@ def _serial(value) -> int | None:
         return None
 
 
+LINK_PROMPT = """GRAFT-LINK
+You link names found in a document to the entities of an existing knowledge graph. For each NAME you see the
+fact it comes from and up to 10 CANDIDATE graph entities, each with one stored fact about it. Choose the candidate
+that is the same real-world thing as the name, or "new" if none is. Same spelling is not enough (two people can
+share a name); a different spelling can still be the same thing (e.g. "USA" and "United States of America").
+Return JSON only: {"links": [{"name": "N1", "match": "c3"}, {"name": "N2", "match": "new"}]}"""
+
+
+class EntityLinker:
+    """Links each new document name to a base-graph entity (Haiku picks among the k nearest by name embedding) or
+    marks it new. One call per chunk for all its undecided names; decisions are cached per name and logged."""
+
+    def __init__(self, llm: ClaudeLLM, store: GraphStore, texts, stats: "WriterStats", k: int = 10, max_tokens: int = 2048):
+        import numpy as np
+        self.llm, self.texts, self.stats, self.k, self.max_tokens = llm, texts, stats, k, max_tokens
+        self.base = [e for e in store.entities() if store.fact(e).get("layer") == "base"]
+        vecs = texts.embed_texts([store.fact(e)["name"] for e in self.base]) if self.base else np.zeros((0, texts.dim))
+        self.vecs = vecs / (np.linalg.norm(vecs, axis=1, keepdims=True) + 1e-8)
+        self.cache: dict[str, str | None] = {}  # norm(name) -> base entity name to use, or None (new)
+        self.log: list[dict] = []
+
+    def _describe(self, store: GraphStore, e: str) -> str:
+        fs = store.facts_of_entity(e)
+        if not fs:
+            return store.fact(e)["name"]
+        d = store.fact(fs[0])
+        return f"{store.fact(e)['name']}  (e.g. {d['subject']} | {d['relation']} | {d['object']})"
+
+    def link(self, chunk_id: int, facts: list["NewFact"], store: GraphStore) -> list["NewFact"]:
+        import numpy as np
+        context: dict[str, str] = {}
+        for f in facts:
+            for name in (f.subject, f.object):
+                key = norm(name)
+                if key in self.cache or key in context:
+                    continue
+                node = entity_id(name)
+                if node in store.g and store.fact(node).get("layer") != "base":  # an entity earlier documents created
+                    self.cache[key] = None
+                    self.stats.linking["reused_document_entity"] += 1
+                    continue
+                context[key] = f"{name}   [from: {f.subject} | {f.relation} | {f.object}]"
+        pending = list(context)
+        if pending and len(self.base):
+            qv = self.texts.embed_texts([context[k].split("   [from:")[0] for k in pending])
+            qv = qv / (np.linalg.norm(qv, axis=1, keepdims=True) + 1e-8)
+            top = np.argsort(-(qv @ self.vecs.T), axis=1)[:, : self.k]
+            lines, cands = [], {}
+            for i, key in enumerate(pending):
+                cands[f"N{i + 1}"] = [self.base[j] for j in top[i]]
+                lines.append(f"N{i + 1}: {context[key]}")
+                lines += [f"    c{c + 1}: {self._describe(store, e)}" for c, e in enumerate(cands[f'N{i + 1}'])]
+            reply = None
+            for _ in range(2):
+                self.stats.llm_calls += 1
+                self.stats.linking["calls"] += 1
+                try:
+                    reply = parse_json(self.llm.complete(LINK_PROMPT, "\n".join(lines), self.max_tokens).text)
+                    break
+                except (ValueError, json.JSONDecodeError):
+                    self.stats.parse_failures += 1
+            chosen = {str(x.get("name")): str(x.get("match", "new")) for x in (reply or {}).get("links", []) if isinstance(x, dict)}
+            for i, key in enumerate(pending):
+                tag = f"N{i + 1}"
+                m = chosen.get(tag, "new")
+                pick = None
+                if m.startswith("c") and m[1:].isdigit() and 1 <= int(m[1:]) <= len(cands[tag]):
+                    pick = cands[tag][int(m[1:]) - 1]
+                self.cache[key] = store.fact(pick)["name"] if pick else None
+                self.stats.linking["matched_base" if pick else ("new" if reply else "new_no_reply")] += 1
+                self.log.append({"chunk": chunk_id, "name": context[key].split("   [from:")[0], "from": context[key],
+                                 "candidates": [store.fact(e)["name"] for e in cands[tag]], "choice": m,
+                                 "matched": store.fact(pick)["name"] if pick else None,
+                                 "exact_name_was_candidate": entity_id(context[key].split("   [from:")[0]) in cands[tag]})
+        elif pending:
+            for key in pending:
+                self.cache[key] = None
+                self.stats.linking["new_no_base"] += 1
+        out = []
+        for f in facts:
+            s = self.cache.get(norm(f.subject)) or f.subject
+            o = self.cache.get(norm(f.object)) or f.object
+            out.append(NewFact(s, f.relation, o, f.serial, f.span))
+        return out
+
+
 class LLMWriter:
     def __init__(self, llm: ClaudeLLM, schema: Schema, mode: str, revisions: bool, max_tokens: int = 8192,
                  pattern: str = ""):
@@ -246,6 +333,8 @@ class LLMWriter:
 
     def write_chunk(self, chunk_id: int, text: str, store: GraphStore) -> None:
         facts = self.extract(text)
+        if getattr(self, "linker", None) is not None:  # Haiku links new names to base-graph entities first
+            facts = self.linker.link(chunk_id, facts, store)
         apply_decisions(store, chunk_id, facts, self.decide(facts, store), self.stats)
 
     def _ask_json(self, system: str, user: str) -> dict | None:

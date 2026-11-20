@@ -17,6 +17,7 @@ Config keys (defaults in eval/methods.py, all switchable in the UI):
     retrieval_workers CPU processes for retrieval (GOAt is per-question CPU work, so this is its speedup)
 """
 
+import json
 import multiprocessing
 from pathlib import Path
 
@@ -100,6 +101,10 @@ class GraftAgent:
             self.writer = LLMWriter(self.llm, schema, config["schema"], config["revisions"], config["writer_max_tokens"],
                                    pattern)
         self.texts = TextEmbedder(load_embedder(config["embedding_model"]))
+        if config.get("writer_linking") == "llm" and isinstance(self.writer, LLMWriter):  # Haiku links names to base entities
+            from my_method.writer import EntityLinker
+            self.writer.linker = EntityLinker(self.llm, self.store, self.texts, self.writer.stats,
+                                              k=config.get("linking_candidates", 10))
         self.retriever: Retriever | None = None
         self.questions = task.questions
         self.regions: dict[int, Region] = {}
@@ -114,12 +119,20 @@ class GraftAgent:
             return {"graph": self.store.stats(), "writer": {"reused_graph": str(shared)}, "graph_file": str(shared)}
         for chunk_id, chunk in enumerate(chunks):
             self.writer.write_chunk(chunk_id, chunk, self.store)
+            if getattr(self.writer, "linker", None) is not None and chunk_id % 50 == 0:
+                print(f"[graft] linking so far: {dict(self.writer.stats.linking)}", flush=True)
             if chunk_id % 50 == 0:
                 print(f"[graft] chunk {chunk_id + 1}/{len(chunks)}: {self.store.stats()}", flush=True)
         self.store.save(self.work_dir / "graph.json")
+        linker = getattr(self.writer, "linker", None)
+        if linker is not None:  # every linking decision, next to the graph (and with the shared copy)
+            with open(self.work_dir / "entity_linking.jsonl", "w") as f:
+                f.writelines(json.dumps(d, ensure_ascii=False) + "\n" for d in linker.log)
         if shared:
             Path(shared).parent.mkdir(parents=True, exist_ok=True)
             self.store.save(shared)
+            if linker is not None:
+                Path(str(shared) + ".linking.jsonl").write_text((self.work_dir / "entity_linking.jsonl").read_text())
         self.retriever = self._make_retriever()
         return {"graph": self.store.stats(), "writer": self.writer.stats.as_dict(),
                 "graph_file": str(self.work_dir / "graph.json")}

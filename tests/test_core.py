@@ -321,3 +321,38 @@ def test_question_graph_needs_no_embedding_after_prepare():
     texts.embedder = NoEmbed()
     region = r.retrieve(q)
     assert region.facts
+
+
+def test_entity_linker_maps_names_to_base_entities_and_logs():
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder
+    from my_method.writer import EntityLinker, NewFact, WriterStats
+
+    base = GraphStore()
+    f = base.add_fact("United States of America", "capital", "Washington, D.C.", Provenance(-1, base.take_arrival(), None, "x"))
+    for n in base.g.nodes:
+        base.g.nodes[n]["layer"] = "base"
+    calls = []
+
+    class FakeLLM:
+        def complete(self, system, user, max_tokens):
+            calls.append(user)
+            picks, tag, wants_us = [], None, False
+            for l in user.splitlines() + ["N0: end"]:
+                if l.startswith("N"):
+                    if tag and not any(p["name"] == tag for p in picks):
+                        picks.append({"name": tag, "match": "new"})
+                    tag, wants_us = l.split(":")[0], "USA" in l.split("[from:")[0]
+                elif wants_us and l.strip().startswith("c") and l.split(":", 1)[1].strip().startswith("United States"):
+                    picks.append({"name": tag, "match": l.strip().split(":")[0]})
+            return type("R", (), {"text": json.dumps({"links": picks})})()
+
+    texts = TextEmbedder(load_embedder("hash:16"))
+    stats = WriterStats()
+    linker = EntityLinker(FakeLLM(), base, texts, stats, k=3)
+    out = linker.link(0, [NewFact("USA", "official language", "Elvish", 1, "1. USA ...")], base)
+    assert out[0].subject == "United States of America" and out[0].object == "Elvish"
+    assert len(calls) == 1 and stats.linking["matched_base"] == 1 and stats.linking["new"] == 1
+    out2 = linker.link(1, [NewFact("USA", "head of state", "Somebody", 2, "2. USA ...")], base)
+    assert out2[0].subject == "United States of America" and len(calls) == 2  # USA cached; only "Somebody" asked
+    assert {d["name"] for d in linker.log} == {"USA", "Elvish", "Somebody"}
