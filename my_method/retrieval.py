@@ -18,6 +18,9 @@
    B and C rank: GOAt-picked facts first (by importance), then facts by the second PPR, then the
    GNN's ranking to fill the budget.
    If no entity links, every mode falls back to embedding similarity over current facts.
+   Options (off by default): link_embed_k adds the k entities whose name embedding is closest to the
+   question to the exact matches before PPR (HippoRAG-style linking); hybrid interleaves the mode's ranking
+   with plain embedding search over all current facts, one fact from each in turn, duplicates dropped.
 4. Latest-version rule: each fetched fact is replaced by its newest version; optionally the
    superseded versions are kept too, marked outdated.
 5. Cut to the budget (max facts and max approximate tokens).
@@ -50,6 +53,8 @@ class RetrievalConfig:
     region: str = "nearest"  # goat_ppr only: "nearest" (max_nodes nearest by hops) | "full" (whole graph)
     expand_alpha: float = 0.5  # goat_ppr / ppr_goat_ppr: PageRank damping of the second walk (HippoRAG 2 uses 0.5)
     explainer: str = "goat"  # edge attribution in every GOAt step: "goat" (GOAt, ICLR 2024) | "eig" (EiG-Search, ICML 2024)
+    link_embed_k: int = 0  # also link the k entities closest to the question by embedding (0 = exact match only)
+    hybrid: bool = False  # interleave the mode's ranking with embedding search over all current facts
 
 
 @dataclass
@@ -73,6 +78,7 @@ class Retriever:
         self.store, self.cfg, self.texts, self.model = store, cfg, texts, model
         names = [(e, _words(store.fact(e)["name"])) for e in store.entities()]
         self.names = sorted([(e, w) for e, w in names if len(w.strip()) >= 3], key=lambda p: -len(p[1]))
+        self._entity_vecs = None  # built on first use from cached vectors (forked workers never embed)
 
     def link(self, question: str) -> list[str]:
         q = _words(question)
@@ -80,15 +86,26 @@ class Retriever:
         for entity, words in self.names:
             if words in q and not any(words in longer for _, longer in found):
                 found.append((entity, words))
-        return [e for e, _ in found]
+        exact = [e for e, _ in found]
+        if self.cfg.link_embed_k <= 0:
+            return exact
+        if self._entity_vecs is None:
+            ids = self.store.entities()
+            self._entity_vecs = (ids, self.texts.embed_texts([node_text(self.store, e) for e in ids]))
+        ids, vecs = self._entity_vecs
+        if not ids:
+            return exact
+        sims = vecs @ self.texts.embed_one(question)
+        extra = [ids[i] for i in np.argsort(-sims)[: self.cfg.link_embed_k + len(exact)] if ids[i] not in exact]
+        return exact + extra[: self.cfg.link_embed_k]
 
     def retrieve(self, question: str) -> Region:
         linked = self.link(question)
         if not linked:
             return self._finish(self._similar_facts(question), Region([], fallback=True))
         if self.cfg.mode == "ppr":
-            return self._finish(self._ppr(linked), Region([], linked_entities=linked,
-                                                          subgraph_nodes=self.store.g.number_of_nodes()))
+            return self._finish(self._merge(question, self._ppr(linked)),
+                                Region([], linked_entities=linked, subgraph_nodes=self.store.g.number_of_nodes()))
         if self.cfg.mode == "goat_ppr":
             nodes = (self.store.entities() + self.store.facts() if self.cfg.region == "full"
                      else nearest_nodes(self.store, linked, self.cfg.max_nodes))
@@ -105,7 +122,20 @@ class Retriever:
             ranked = self._goat(sub, scores)
         else:
             ranked = self._by_score(nodes, scores)
-        return self._finish(ranked, region)
+        return self._finish(self._merge(question, ranked), region)
+
+    def _merge(self, question: str, ranked: list[str]) -> list[str]:
+        """hybrid: one fact from the mode's ranking, then one from embedding search, in turn; duplicates dropped."""
+        if not self.cfg.hybrid:
+            return ranked
+        similar = self._similar_facts(question)
+        out, seen = [], set()
+        for i in range(max(len(ranked), len(similar))):
+            for lst in (ranked, similar):
+                if i < len(lst) and lst[i] not in seen:
+                    seen.add(lst[i])
+                    out.append(lst[i])
+        return out
 
     # ---- ranking ----
 

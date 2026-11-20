@@ -196,3 +196,39 @@ def test_shared_graph_is_built_once_then_loaded(tmp_path):
     first = GraftAgent(cfg, gw, task).memorize(task.chunks)
     second = GraftAgent(cfg, gw, task).memorize(["2. A is a citizen of C."])
     assert first["graph"]["facts"] == 1 and second["writer"] == {"reused_graph": str(tmp_path / "g.json")}
+
+
+def _small_store():
+    store = GraphStore()
+    store.add_fact("Pee Wee King", "country of citizenship", "France", Provenance(0, store.take_arrival(), 1, "1. a"))
+    store.add_fact("France", "official language", "Hebrew", Provenance(1, store.take_arrival(), 2, "2. b"))
+    for i in range(20):
+        store.add_fact(f"Person {i}", "country of citizenship", "France", Provenance(2, store.take_arrival(), 10 + i, f"x {i}"))
+    return store
+
+
+@pytest.mark.parametrize("explainer", ["goat", "eig"])
+def test_embedding_linking_and_hybrid_on_mode_c(explainer):
+    """link_embed_k keeps the exact matches first and adds k more entities; hybrid interleaves the mode's ranking
+    with embedding search, without duplicates, and still returns only newest facts within the budget."""
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    q = "What language does Pee Wee King's country speak?"
+    base = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=10, explainer=explainer), texts, model)
+    linked = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=10, explainer=explainer,
+                                              link_embed_k=3), texts, model)
+    assert base.link(q) == ["e:pee wee king"]
+    got = linked.link(q)
+    assert got[0] == "e:pee wee king" and len(got) == 4 and len(set(got)) == 4
+    both = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=10, explainer=explainer,
+                                            link_embed_k=3, hybrid=True), texts, model)
+    region = both.retrieve(q)
+    assert region.facts and len(region.facts) == len(set(region.facts)) <= 10
+    ranked = ["f:a", "f:b", "f:c"]
+    both._similar_facts = lambda question: ["f:b", "f:x", "f:y"]
+    assert both._merge(q, ranked) == ["f:a", "f:b", "f:x", "f:c", "f:y"]  # one from each in turn

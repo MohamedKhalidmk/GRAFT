@@ -97,7 +97,8 @@ class GraftAgent:
         cfg = RetrievalConfig(mode=c["retrieval"], max_facts=c["max_facts"], max_tokens=c["max_tokens"],
                               include_outdated=c["include_outdated"], goat_targets=c["goat_targets"], goat_topk=c["goat_topk"],
                               region=c.get("region", "nearest"), expand_alpha=c.get("expand_alpha", 0.5),
-                              explainer=c.get("explainer", "goat"))
+                              explainer=c.get("explainer", "goat"), link_embed_k=c.get("link_embed_k", 0),
+                              hybrid=c.get("hybrid", False))
         model = None
         if cfg.mode != "ppr":
             model, gnn_cfg = load_model(REPO / c["gnn_checkpoint"])
