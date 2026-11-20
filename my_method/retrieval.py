@@ -36,7 +36,7 @@ import torch
 from my_method.gnn.eig import eig_edge_attributions
 from my_method.gnn.explain import edge_attributions
 from my_method.gnn.features import TextEmbedder, build_features, nearest_nodes, node_text, pagerank, ppr_scores, select_subgraph
-from my_method.graph_store import GraphStore, entity_id, norm
+from my_method.graph_store import GraphStore, entity_id, is_stopword_name, norm
 
 MODES = ("gnn_goat", "gnn_topk", "ppr", "goat_ppr", "ppr_goat_ppr", "embed")
 
@@ -84,7 +84,9 @@ class Retriever:
             raise ValueError(f"retrieval mode {cfg.mode} needs a trained GNN checkpoint")
         self.store, self.cfg, self.texts, self.model = store, cfg, texts, model
         names = [(e, _words(store.fact(e)["name"])) for e in store.entities()]
-        self.names = sorted([(e, w) for e, w in names if len(w.strip()) >= 3], key=lambda p: -len(p[1]))
+        # an entity named by a single stopword ("The") would match every question: never linked
+        self.names = sorted([(e, w) for e, w in names if len(w.strip()) >= 3 and not is_stopword_name(w)],
+                            key=lambda p: -len(p[1]))
         self._entity_vecs = None  # built on first use from cached vectors (forked workers never embed)
 
     def link(self, question: str) -> list[str]:
@@ -103,7 +105,8 @@ class Retriever:
         if not ids:
             return exact
         sims = vecs @ self.texts.embed_one(question)
-        extra = [ids[i] for i in np.argsort(-sims)[: self.cfg.link_embed_k + len(exact)] if ids[i] not in exact]
+        extra = [ids[i] for i in np.argsort(-sims)[: self.cfg.link_embed_k + len(exact) + 5]
+                 if ids[i] not in exact and not is_stopword_name(self.store.fact(ids[i])["name"])]
         return exact + extra[: self.cfg.link_embed_k]
 
     def retrieve(self, question: str) -> Region:
@@ -185,7 +188,8 @@ class Retriever:
         self.query_links = getattr(self, "query_links", {})
         from concurrent.futures import ThreadPoolExecutor
         todo = [q for q in questions if q not in self.query_links]
-        names = {q: sorted({x for s, _, o in self.query_graphs.get(q, []) for x in (s, o) if not x.startswith("?")}) for q in todo}
+        names = {q: sorted({x for s, _, o in self.query_graphs.get(q, []) for x in (s, o)
+                            if not x.startswith("?") and not is_stopword_name(x)}) for q in todo}
         with ThreadPoolExecutor(8) as pool:
             for q, m in zip(todo, pool.map(lambda q: link(q, names[q]) if names[q] else {}, todo)):
                 self.query_links[q] = m
@@ -237,12 +241,14 @@ class Retriever:
         def node_for(name: str) -> str:
             if name in node_of:
                 return node_of[name]
-            if name.startswith("?"):
+            if name.startswith("?") or is_stopword_name(name):  # a bare "the" / "who" is never linked
                 m = None
             elif self.cfg.query_linking == "llm":
                 m = getattr(self, "query_links", {}).get(question, {}).get(name)
             else:
                 m = self._match_entity(name)
+            if m and is_stopword_name(self.store.fact(m)["name"]):  # nor linked to an entity named "The"
+                m = None
             if m:
                 matched.append(m)
                 node_of[name] = m

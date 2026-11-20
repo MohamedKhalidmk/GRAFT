@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from baselines.claude_llm import ClaudeLLM
-from my_method.graph_store import GraphStore, Provenance, entity_id, norm
+from my_method.graph_store import GraphStore, Provenance, entity_id, is_stopword_name, norm
 from my_method.schema import Schema
 
 FC_RELATIONS = Path(__file__).resolve().parent / "fc_relations.json"
@@ -250,7 +250,8 @@ class EntityLinker:
     def __init__(self, llm: ClaudeLLM, store: GraphStore, texts, stats: "WriterStats", k: int = 10, max_tokens: int = 2048):
         import numpy as np
         self.llm, self.texts, self.stats, self.k, self.max_tokens = llm, texts, stats, k, max_tokens
-        self.base = [e for e in store.entities() if store.fact(e).get("layer") == "base"]
+        self.base = [e for e in store.entities() if store.fact(e).get("layer") == "base"
+                     and not is_stopword_name(store.fact(e)["name"])]  # never a link target: "The", "Who"
         vecs = texts.embed_texts([store.fact(e)["name"] for e in self.base]) if self.base else np.zeros((0, texts.dim))
         self.vecs = vecs / (np.linalg.norm(vecs, axis=1, keepdims=True) + 1e-8)
         self.cache: dict[str, str | None] = {}  # norm(name) -> base entity name to use, or None (new)
@@ -270,6 +271,10 @@ class EntityLinker:
             for name in (f.subject, f.object):
                 key = norm(name)
                 if key in self.cache or key in context:
+                    continue
+                if is_stopword_name(name):  # a bare "The" is not a name: never linked to the base
+                    self.cache[key] = None
+                    self.stats.linking["stopword_not_linked"] += 1
                     continue
                 node = entity_id(name)
                 if node in store.g and store.fact(node).get("layer") != "base":  # an entity earlier documents created
