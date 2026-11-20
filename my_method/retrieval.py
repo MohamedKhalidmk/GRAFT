@@ -38,7 +38,7 @@ from my_method.gnn.explain import edge_attributions
 from my_method.gnn.features import TextEmbedder, build_features, nearest_nodes, node_text, ppr_scores, select_subgraph
 from my_method.graph_store import GraphStore
 
-MODES = ("gnn_goat", "gnn_topk", "ppr", "goat_ppr", "ppr_goat_ppr")
+MODES = ("gnn_goat", "gnn_topk", "ppr", "goat_ppr", "ppr_goat_ppr", "embed")
 
 
 @dataclass
@@ -64,6 +64,7 @@ class Region:
     linked_entities: list[str] = field(default_factory=list)
     subgraph_nodes: int = 0
     fallback: bool = False
+    sources: list[str] = field(default_factory=list)  # per fact in `facts`: "graph", "embed" or "both" (hybrid / embed)
 
 
 def _words(text: str) -> str:
@@ -73,7 +74,7 @@ def _words(text: str) -> str:
 class Retriever:
     def __init__(self, store: GraphStore, cfg: RetrievalConfig, texts: TextEmbedder, model=None):
         assert cfg.mode in MODES, cfg.mode
-        if cfg.mode != "ppr" and model is None:
+        if cfg.mode not in ("ppr", "embed") and model is None:
             raise ValueError(f"retrieval mode {cfg.mode} needs a trained GNN checkpoint")
         self.store, self.cfg, self.texts, self.model = store, cfg, texts, model
         names = [(e, _words(store.fact(e)["name"])) for e in store.entities()]
@@ -100,6 +101,11 @@ class Retriever:
         return exact + extra[: self.cfg.link_embed_k]
 
     def retrieve(self, question: str) -> Region:
+        self._merge_info = None
+        if self.cfg.mode == "embed":  # baseline: plain embedding search over all current facts, same budget
+            region = self._finish(self._similar_facts(question), Region([]))
+            region.sources = ["embed"] * len(region.facts)
+            return region
         linked = self.link(question)
         if not linked:
             return self._finish(self._similar_facts(question), Region([], fallback=True))
@@ -129,12 +135,14 @@ class Retriever:
         if not self.cfg.hybrid:
             return ranked
         similar = self._similar_facts(question)
-        out, seen = [], set()
+        out, seen, rounds = [], set(), {}
         for i in range(max(len(ranked), len(similar))):
             for lst in (ranked, similar):
                 if i < len(lst) and lst[i] not in seen:
                     seen.add(lst[i])
                     out.append(lst[i])
+                    rounds[lst[i]] = i
+        self._merge_info = (ranked, similar, rounds)  # lets _finish label each kept fact by where it came from
         return out
 
     # ---- ranking ----
@@ -215,6 +223,7 @@ class Retriever:
 
     def _finish(self, ranked: list[str], region: Region) -> Region:
         chosen: list[str] = []
+        picked: list[str] = []  # the ranked fact behind each chosen (newest) fact
         outdated: list[str] = []
         budget_chars = self.cfg.max_tokens * 4
         for fact in ranked:
@@ -222,6 +231,7 @@ class Retriever:
             if newest in chosen:
                 continue
             chosen.append(newest)
+            picked.append(fact)
             if self.cfg.include_outdated and fact != newest and fact not in outdated:
                 outdated.append(fact)
             text = sum(len(self.store.fact(f)["provenance"]["span"]) for f in chosen + outdated)
@@ -229,4 +239,10 @@ class Retriever:
                 break
         region.facts = chosen + outdated
         region.outdated = set(outdated)
+        info = getattr(self, "_merge_info", None)
+        if info and picked:
+            graph, similar, rounds = info
+            cut = max(rounds[f] for f in picked) + 1  # both lists were walked this far before the budget ran out
+            g, e = set(graph[:cut]), set(similar[:cut])
+            region.sources = [("both" if f in g and f in e else "graph" if f in g else "embed") for f in picked] + [""] * len(outdated)
         return region

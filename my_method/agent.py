@@ -100,7 +100,7 @@ class GraftAgent:
                               explainer=c.get("explainer", "goat"), link_embed_k=c.get("link_embed_k", 0),
                               hybrid=c.get("hybrid", False))
         model = None
-        if cfg.mode != "ppr":
+        if cfg.mode not in ("ppr", "embed"):
             model, gnn_cfg = load_model(REPO / c["gnn_checkpoint"])
             if gnn_cfg["embedding_model"] != c["embedding_model"]:
                 raise ValueError(f"GNN was trained with embeddings {gnn_cfg['embedding_model']}, "
@@ -129,7 +129,8 @@ class GraftAgent:
                               self.config["answer_max_tokens"])
         return call.text, {"stop_reason": call.stop_reason, "retrieved_text": memory,
                            "linked_entities": region.linked_entities, "region_facts": len(region.facts),
-                           "subgraph_nodes": region.subgraph_nodes, "fallback": region.fallback}
+                           "subgraph_nodes": region.subgraph_nodes, "fallback": region.fallback,
+                           "fact_sources": region.sources}
 
 
 SGARAgent = GraftAgent  # old name, kept for older scripts

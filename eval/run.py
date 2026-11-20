@@ -123,6 +123,8 @@ def score_repeat(repeat_dir: Path, golds) -> dict:
             if p and "retrieved_text" in p:
                 row["answer_in_retrieved"] = answer_in_text(g.answers, p["retrieved_text"])
                 row["retrieved_text"] = p["retrieved_text"]
+            if p and p.get("fact_sources"):
+                row["fact_sources"] = p["fact_sources"]  # aligned with the "Memory i" blocks of retrieved_text
             rows.append(row)
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
     build_info = json.loads((repeat_dir / "build.json").read_text())

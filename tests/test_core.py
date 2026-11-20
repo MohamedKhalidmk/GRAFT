@@ -232,3 +232,24 @@ def test_embedding_linking_and_hybrid_on_mode_c(explainer):
     ranked = ["f:a", "f:b", "f:c"]
     both._similar_facts = lambda question: ["f:b", "f:x", "f:y"]
     assert both._merge(q, ranked) == ["f:a", "f:b", "f:x", "f:c", "f:y"]  # one from each in turn
+
+
+def test_hybrid_labels_sources_and_embed_mode_needs_no_gnn():
+    from baselines.claude_gateway.embeddings import load_embedder
+    from eval.attribution import classify
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    q = "What language does Pee Wee King's country speak?"
+    model = make_model(feature_dim(16), 8).eval()
+    hyb = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, hybrid=True), texts, model).retrieve(q)
+    assert len(hyb.sources) == len(hyb.facts) and set(hyb.sources) <= {"graph", "embed", "both"}
+    emb = Retriever(store, RetrievalConfig(mode="embed", max_facts=5), texts, None).retrieve(q)
+    assert len(emb.facts) == 5 and emb.sources == ["embed"] * 5
+    row = {"answers": ["Hebrew"], "answer_in_retrieved": True, "fact_sources": ["graph", "embed"],
+           "retrieved_text": "Memory 1:\nFrance official language Hebrew\n\nMemory 2:\nsomething else\n"}
+    assert classify(row) == "only_graph"
+    row["fact_sources"] = ["both", "embed"]
+    assert classify(row) == "both"
