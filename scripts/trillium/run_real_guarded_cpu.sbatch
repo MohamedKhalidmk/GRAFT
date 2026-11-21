@@ -11,25 +11,31 @@
 # minute adds up cost_usd from this job's usage logs; past COST_CAP_USD (default 15) it stops.
 # The key comes from the submitting shell's environment; never put it on disk. Trillium's sbatch puts --export=NONE on
 # the command line (an #SBATCH line cannot override it), so submit with sbatch --export=ALL or the key is not passed on.
-# NOTE: Trillium compute nodes have no internet, so real (paid) configs stop at the reachability check below; only
-# fake-mode (free) configs run here. Kept as the twin in case outside access is added.
+# NOTE: Trillium compute nodes have no internet, so any batch with a real-mode config (the Haiku check is one) stops at
+# the reachability check below. Kept as the twin in case outside access is added.
 #   cd $SCRATCH/sgar/SGAR && sbatch --export=ALL scripts/trillium/run_real_guarded_cpu.sbatch configs/runs/exp/a_real_mh_262k.yaml ...
 set -euo pipefail
 source "$SLURM_SUBMIT_DIR/scripts/trillium/common.sh"
 export HF_HUB_OFFLINE=1
 : "${ANTHROPIC_API_KEY:?export ANTHROPIC_API_KEY in the shell that runs sbatch, and submit with sbatch --export=ALL}"
+CAP="${COST_CAP_USD:-15}"
+START=$(date +%s)
+# fixed Haiku check (2026-11-21): a one-repeat replay of the 2026-11-13 run's facts goes first in every batch that calls
+# Haiku, so a change on the API side shows up as a moved score on identical inputs (CANARY=0 skips it)
+CONFIGS=("$@")
+if [[ "${CANARY:-1}" == 1 ]] && grep -qs "model: claude-haiku" "${CONFIGS[@]}"; then
+  CONFIGS=(configs/runs/exp/canary/haiku_replay38.yaml "${CONFIGS[@]}")
+fi
 # Trillium compute nodes had no internet on 2026-11-21 (api.anthropic.com timed out), so a real run cannot reach the
 # API from here. Check first (unauthenticated, nothing billed) and stop at once instead of failing every question.
-if [[ -n "$(grep -L '^  mode: fake' "$@" || true)" ]]; then  # some config is not fake mode
+if [[ -n "$(grep -L '^  mode: fake' "${CONFIGS[@]}" || true)" ]]; then  # some config (or the Haiku check) is real mode
   env -u https_proxy -u HTTPS_PROXY curl -s -o /dev/null --max-time 20 https://api.anthropic.com/v1/models \
     || { echo "api.anthropic.com unreachable from this compute node: paid runs cannot run on Trillium"; exit 4; }
 fi
-CAP="${COST_CAP_USD:-15}"
-START=$(date +%s)
-setsid .venv/bin/python -m eval.queue --name "slurm_${SLURM_JOB_ID}" "$@" &
+setsid .venv/bin/python -m eval.queue --name "slurm_${SLURM_JOB_ID}" "${CONFIGS[@]}" &
 QPID=$!
 # only this job's runs: the run_name of every config it was given (other jobs write to the same results folder)
-RUN_NAMES=$(for c in "$@"; do sed -n 's/^run_name: *//p' "$c"; done | tr '\n' ' ')
+RUN_NAMES=$(for c in "${CONFIGS[@]}"; do sed -n 's/^run_name: *//p' "$c"; done | tr '\n' ' ')
 spent() {
   .venv/bin/python - "$START" $RUN_NAMES <<'EOF'
 import glob, json, os, sys
