@@ -15,7 +15,18 @@ Interactions* (MemoryAgentBench), ICLR 2026, arXiv 2507.05257.
 ## Experiments and designs
 
 - [experiments/INDEX.md](experiments/INDEX.md): every test (question, setup, result, decision, runs), from read order
-  (test 01) to the full T-REx base (test 04) and working memory (test 05).
+  (test 01) to the full T-REx base (test 04), working memory (test 05) and T-REx as a structure guide (test 06).
+
+Where things stand (2026-11-21):
+
+- GRAFT's default is mode C on the empty-start document graph. Haiku, 3 repeats: 34.7.
+- Full T-REx as a base graph: not adopted (test 04): 17-19%; T-REx sentences take two thirds of the fact slots and push
+  out the documents' edited facts ([analysis](experiments/test-04-base-graph-trex-full/runs/run-02/analysis/why_accuracy_halved.md)).
+- Working memory in the graph: not kept on Haiku (test 05, two rounds); on Qwen next.
+- Haiku drift: the run that scored 38 on 2026-11-13 scores about 34 when its exact prompts are sent again today; nothing
+  on our side differs ([baseline check](experiments/test-05-working-memory/baseline_check.md)). Every paid Haiku batch
+  now starts with that fixed check ([history](experiments/haiku_canary.md)), and the gateway logs request IDs.
+- T-REx as a structure guide, bridge or labelled background (test 06): running.
 - [docs/design/](docs/design/): designs before code, e.g. [working memory in the graph](docs/design/graft_working_memory_design.md).
 - [docs/experiments.md](docs/experiments.md): the full write-up of the read-order and baseline runs.
 
