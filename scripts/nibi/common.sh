@@ -15,7 +15,10 @@ mkdir -p "$HF_HOME" "$RESULTS_DIR" "$TIKTOKEN_CACHE_DIR"
 if [[ -n "${SLURM_JOB_ID:-}" && -n "${SLURM_TMPDIR:-}" && "${GRAFT_LOCAL:-1}" == 1 ]]; then
   [[ -f "$SCRATCH_ROOT/venv.tar" ]] || { echo "missing $SCRATCH_ROOT/venv.tar (copy it from Fir)"; exit 2; }
   t0=$(date +%s); L="$SLURM_TMPDIR/SGAR"; mkdir -p "$L"
-  (cd "$REPO" && tar cf - --exclude=./.venv --exclude=./envs --exclude=./results --exclude=./data --exclude=./.git .) | tar xf - -C "$L"
+  # job logs (*.out) of other running jobs are written into this folder while it is copied: skip them, and accept tar's
+  # exit 1 ("file changed as we read it"), as in scripts/fir/common.sh (Fir job 4832774 failed on it before it started)
+  (cd "$REPO" && tar cf - --warning=no-file-changed --exclude='./*.out' --exclude=./.venv --exclude=./envs \
+     --exclude=./results --exclude=./data --exclude=./.git . || [[ $? == 1 ]]) | tar xf - -C "$L"
   for d in results data envs; do [[ -e "$REPO/$d" ]] && ln -sfn "$REPO/$d" "$L/$d"; done
   tar xf "$SCRATCH_ROOT/venv.tar" -C "$L"
   export REPO="$L" PYTHONPATH="$L" GRAFT_CORE_PYTHON="$L/.venv/bin/python"
