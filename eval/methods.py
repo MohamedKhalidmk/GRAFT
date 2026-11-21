@@ -8,6 +8,8 @@ MIRIX (and Letta, per the released config).
 `paper_row` names the matching row of the paper's Table 3, for the reference block.
 """
 
+import os
+
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -29,7 +31,9 @@ class MethodSpec:
 
     @property
     def python(self) -> Path:
-        return REPO / ".venv" / "bin" / "python" if self.env == "core" else REPO / "envs" / self.env / "bin" / "python"
+        if self.env == "core":  # GRAFT_CORE_PYTHON: the venv unpacked to a job's local disk (scripts/fir/local_venv.sh)
+            return Path(os.environ.get("GRAFT_CORE_PYTHON") or REPO / ".venv" / "bin" / "python")
+        return REPO / "envs" / self.env / "bin" / "python"
 
 
 LONG_CONTEXT, SIMPLE_RAG, STRUCTURE_RAG, AGENTIC, OURS = (

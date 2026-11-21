@@ -36,7 +36,7 @@ import yaml
 from eval.benchmark import answer_in_text, build_task, score
 from eval.methods import METHODS, REPO
 
-CORE_PYTHON = REPO / ".venv" / "bin" / "python"
+CORE_PYTHON = Path(os.environ.get("GRAFT_CORE_PYTHON") or REPO / ".venv" / "bin" / "python")  # jobs may unpack the venv to local disk
 
 
 def load_config(path: str | Path) -> dict:
