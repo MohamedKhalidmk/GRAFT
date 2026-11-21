@@ -46,9 +46,9 @@ GRAFT is built in three layers, like grafting branches onto a tree:
 |---|---:|---:|---:|
 | Working memory in the graph (C v2) | 35.7 (34–38) | 3 | 45 |
 | **GRAFT + T-REx structure guide** | **45.7** (44–47) | 3 | 60 |
-| GRAFT, mode C | 34.7 (33–36) | 6 | 51 |
+| GRAFT, mode C (previous default) | 34.7 (33–36) | 6 | 51 |
 | Same steps, prompt only (C- v2) | 33.0 | 3 | 41 |
-| GRAFT + RoG base (Freebase) | 21 | 1 | 42 |
+| GRAFT + RoG base (Freebase) | 21 | 1 | 41 |
 | GRAFT + full T-REx base (EiG) | 17.7 (15–20) | 3 | 33 |
 | GRAFT + T-REx as background facts | 17.7 (16–19) | 3 | 33 |
 | GRAFT + T-REx as a walk-only bridge | 17.3 (16–18) | 3 | 32 |

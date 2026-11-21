@@ -20,7 +20,7 @@ TABLES = {"01": EXP / "test-01-read-order" / "table.csv", "03": EXP / "test-03-b
 ROWS = [
     ("GRAFT + T-REx structure guide", T.GREEN, [("06", {"arm": "B"})]),
     ("Working memory in the graph (C v2)", T.YELLOW, [("05", {"arm": "C v2"})]),
-    ("GRAFT, mode C (default)", T.NAVY, [("05", {"arm": "A"})]),
+    ("GRAFT, mode C (previous default)", T.NAVY, [("05", {"arm": "A"})]),
     ("Same steps, prompt only (C- v2)", T.STONE, [("05", {"arm": "C- v2"})]),
     ("GRAFT + RoG base (Freebase)", T.STONE, [("03", {"kind": "paid"})]),
     ("GRAFT + full T-REx base (EiG)", T.STONE, [("04", {"run": "run-02", "pass": "EiG"})]),
@@ -81,7 +81,7 @@ def main():
     T.bar_chart(T.ROOT / "assets" / "results.png", "Accuracy on FactConsolidation multi-hop",
                 "100 questions with edited facts · " + ("" if qwen else "Claude Haiku 5.5 answers · ")
                 + "% correct, mean with range over repeats",
-                panels, legend=[T.NAVY, (T.GREEN, "new default on Haiku"), T.YELLOW, T.STONE],
+                panels, legend=[(T.GREEN, "new default on Haiku"), (T.NAVY, "previous default"), T.YELLOW, T.STONE],
                 footnote="Repeats vary by about 2 points: Haiku's sampling can't be fixed. "
                          "Single runs: BM25 and HippoRAG 2 on Nov 13, RoG base on Nov 20.")
 

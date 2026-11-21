@@ -14,7 +14,7 @@ Does a base knowledge graph under the documents (GRAFT layer 1) help, starting w
 
 ## Result
 
-Haiku matched 21.9% of document names to a base entity (13.3% by exact name); 79% of document facts touch a base entity, almost all through hubs (USA, football, Catholicism). Gold in final facts 42%, accuracy 21% (one real run) vs mode C 38%.
+Haiku matched 21.9% of document names to a base entity (13.3% by exact name); 79% of document facts touch a base entity, almost all through hubs (USA, football, Catholicism). Gold in final facts 42% in the free check and 41% in the paid run; accuracy 21% (one real run, 2026-11-20) vs mode C 38% (one run, 2026-11-13; 34.7 over 6 repeats a week later, see test 07).
 
 ## Decision
 
