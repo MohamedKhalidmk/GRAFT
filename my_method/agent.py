@@ -322,6 +322,14 @@ class GraftAgent:
         texts = [question_text(q.query) for q in self.questions]
         schema = Schema.load(REPO / self.config["schema_path"]).describe()
         self.retriever.prepare_queries(texts, lambda q: parse_question_graph(self.llm, schema, q))  # the plan
+        r = self.retriever
+        if r.cfg.guide_planning and getattr(r, "guide", None):  # test 06 guide + working memory: the guide's chain,
+            r.plans = {}                                         # followed once per question here, before workers fork
+            for q in texts:
+                edges = r.query_graphs.get(q, [])
+                for _, rel, _ in edges:
+                    r.guide.canon(rel)
+                r.plans[q] = r.guide.plan(self.store, edges, r.link(q))
         shared = self.config.get("shared_graph")
         if shared:
             self.texts.load_saved(REPO / shared)

@@ -116,6 +116,10 @@ class WorkingMemory:
         node_of: dict[str, str] = {}  # placeholder -> graph entity the result links to
         done, cited, calls = [], [], 0
         base_region = None
+        # guide + working memory (test 06): the T-REx guide's planned chain (document facts, newest versions) is
+        # cited from the start, so every step sees it first and the final answer gets it even if no step cites it
+        plan, plan_log = getattr(self.retriever, "plans", {}).get(question, ([], {}))
+        cited = list(plan)
         try:
             if self.mode == "graph":
                 self._add("W:q", type="Work", kind="question", text=question)
@@ -140,7 +144,8 @@ class WorkingMemory:
                     if base_region is None:
                         base_region = self.retriever._retrieve(question)
                     region = base_region
-                block, number = self._facts_block(region.facts)
+                step_facts = list(dict.fromkeys(plan + region.facts))[: max(len(region.facts), len(plan))]
+                block, number = self._facts_block(step_facts)
                 prompt = f"{self._memory_text(question, done)}\n\n[Facts]\n{block}\n\n[Step {i}] Find {text}"
                 call = self.llm.complete(self.step_prompt, prompt, self.step_max_tokens)
                 calls += 1
@@ -178,6 +183,7 @@ class WorkingMemory:
             final = self.llm.complete(chat[0]["content"], chat[1]["content"], answer_max_tokens)
             calls += 1
             record = {"question": question, "mode": self.mode, "steps": done, "final_facts": final_facts,
+                      "plan": {"facts": list(plan), **plan_log} if plan_log else None,
                       "work_nodes": list(self.added), "work_edges": self.edges, "calls": calls}
             return final.text, {"stop_reason": final.stop_reason, "retrieved_text": memory, "working_memory": record,
                                 "region_facts": len(final_facts), "steps": len(done), "wm_calls": calls}

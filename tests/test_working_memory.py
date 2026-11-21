@@ -66,3 +66,18 @@ def test_prompt_only_writes_nothing():
     rec = meta["working_memory"]
     assert rec["work_nodes"] == [] and rec["work_edges"] == []
     assert [s["result"] for s in rec["steps"]] == ["Bob", "Paris"]
+
+
+def test_guide_plan_is_cited_from_the_start():
+    """guide + working memory (test 06): the guide's planned chain reaches every step and the final answer."""
+    g = graph()
+    r = Retriever(g, RetrievalConfig(mode="ppr", max_facts=10), TextEmbedder(HashEmbedder(64)))
+    carl = [f for f in g.facts() if g.fact(f)["subject"] == "Carl"][0]  # a fact no step would cite
+    q = "Where was Ann's spouse born?"
+    r.plans = {q: ([carl], {"start": "Carl", "steps": [{"how": "direct"}]})}
+    llm = ScriptedLLM()
+    text, meta = WorkingMemory(g, r, llm, "graph").run(q, "Q: " + q, [("Ann", "spouse", "?A"), ("?A", "place of birth", "?B")],
+                                                       "factconsolidation_mh_262k", 64)
+    rec = meta["working_memory"]
+    assert carl in rec["final_facts"] and rec["plan"]["facts"] == [carl]
+    assert all("Carl was born in Rome" in p for s, p in llm.prompts[:2])  # both steps see the planned fact
