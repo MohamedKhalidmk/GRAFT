@@ -26,7 +26,8 @@ Where things stand (2026-11-21):
 - Haiku drift: the run that scored 38 on 2026-11-13 scores about 34 when its exact prompts are sent again today; nothing
   on our side differs ([baseline check](experiments/test-05-working-memory/baseline_check.md)). Every paid Haiku batch
   now starts with that fixed check ([history](experiments/haiku_canary.md)), and the gateway logs request IDs.
-- T-REx as a structure guide, bridge or labelled background (test 06): running.
+- T-REx as a structure guide (test 06): **45.7 vs 34.7 on Haiku, kept** (relation mapping adds missed revisions; chain
+  planning follows the parsed chain through the documents). T-REx inside the graph, even walk-only, still hurts (17.3).
 - [docs/design/](docs/design/): designs before code, e.g. [working memory in the graph](docs/design/graft_working_memory_design.md).
 - [docs/experiments.md](docs/experiments.md): the full write-up of the read-order and baseline runs.
 

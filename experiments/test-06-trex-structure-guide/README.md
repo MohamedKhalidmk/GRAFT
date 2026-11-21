@@ -2,7 +2,7 @@
 
 | Test | Date | Status | Current run |
 |---|---|---|---|
-| 06 | 2026-11-21 | running | run-01 |
+| 06 | 2026-11-21 | done on Haiku (Qwen next) | [run-01](runs/run-01/) |
 
 ## Question
 
@@ -38,14 +38,32 @@ Free steps (run-01):
   join only at 0.92 or above. The planned chain holds the gold answer for 44 of 100 questions (mode C's facts: 49),
   10 where mode C's facts do not, and 18 that the question layer got wrong.
 
-Paid arms B, C, D: running (Fir).
+Paid arms, Haiku, 3 repeats each ([table.csv](table.csv), built by `make_table.py` from the runs; Fir 4834168, 4832786,
+4834224):
+
+| Arm | Accuracy (mean, SD) | Per repeat | Gold fact in final facts | Cost / 100 questions |
+|---|---|---|---|---|
+| A · empty start, mode C (rerun the same day) | 34.7, 1.5 | 36 / 33 / 35 | 50.3 | $0.027 |
+| B · T-REx as a structure guide | **45.7**, 1.5 | 47 / 46 / 44 | 60.3 | $0.037 |
+| C · T-REx as a bridge, documents only | 17.3, 1.2 | 18 / 16 / 18 | 32.0 | $0.022 |
+| D · C + 5 labelled background facts | 17.7, 1.5 | 19 / 16 / 18 | 33.0 | $0.029 |
+
+B beats A by 11 points, about seven times the repeat spread, and brings the gold fact to the model for 10 more questions in
+100; its added cost is the question parse (one short Haiku call). C shows that T-REx hurts even when none of its facts
+are returned: in the walk it still pulls PageRank away from the documents, so gold in the final facts falls to 32%, as
+in test 04. D's labelled background facts change nothing on top of C. Spend $0.263 (B $0.110, C $0.067, D $0.086).
+The Haiku checks at the start of the B and D batches collided in one run folder (both started in the same second; fixed
+in eval/run.py since), so this round has no clean check.
 
 ## Decision
 
-Pending. Keep an arm if it beats A by more than the repeat spread.
+**B is kept: the T-REx structure guide becomes GRAFT's default on top of mode C** (11 points over A on Haiku). C and D
+are not adopted: T-REx as part of the graph hurts in any role tried (test 04 and here). Next: B on Qwen, the model the
+system ships with, and which of B's two parts carries the gain (linking only, planning only; about $0.10 each).
 
 ## Revisions
 
+- 2026-11-21: run-01 paid arms done; B kept, C and D not adopted.
 - 2026-11-21: design approved (user); arm D added (user); guide built from the raw T-REx parquet after the 45-property
   base covered too few question relations; revision threshold raised to 0.92 after the dry check; arm C reran with
   200 GB after running out of memory at 64 GB ($0); arm D started in parallel with C (user).
