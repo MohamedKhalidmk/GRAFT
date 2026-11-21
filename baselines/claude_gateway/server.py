@@ -18,6 +18,7 @@ Anthropic API is never contacted.
 
 import argparse
 import base64
+import hashlib
 import json
 import threading
 import time
@@ -38,7 +39,11 @@ class RealBackend:
         self.client = anthropic.Anthropic(base_url="https://api.anthropic.com", max_retries=5)
 
     def create(self, params: dict) -> dict:
-        return self.client.messages.create(**params).model_dump(mode="json")
+        # the raw response gives the API's request-id header, logged per call so server-side changes can be traced
+        raw = self.client.messages.with_raw_response.create(**params)
+        message = raw.parse().model_dump(mode="json")
+        message["_request_id"] = raw.headers.get("request-id")
+        return message
 
 
 class OpenAIBackend:
@@ -87,11 +92,14 @@ class Gateway:
         params["model"] = self.model
         params.setdefault("thinking", {"type": "disabled"})
         start = time.time()
+        request_hash = hashlib.sha256(json.dumps(params, sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:16]
         message = self.backend.create(params)
-        self._log(api, requested_model, message, time.time() - start, dropped)
+        self._log(api, requested_model, message, time.time() - start, dropped, request_hash)
+        message.pop("_request_id", None)  # logged, not part of the Messages reply
         return message
 
-    def _log(self, api: str, requested_model: str, message: dict, latency: float, dropped: list[str]) -> None:
+    def _log(self, api: str, requested_model: str, message: dict, latency: float, dropped: list[str],
+             request_hash: str = "") -> None:
         u = message["usage"]
         read, write = u.get("cache_read_input_tokens") or 0, u.get("cache_creation_input_tokens") or 0
         with self.lock:
@@ -99,7 +107,13 @@ class Gateway:
                    "model": self.model, "input_tokens": u["input_tokens"], "output_tokens": u["output_tokens"],
                    "cache_read_tokens": read, "cache_write_tokens": write,
                    "cost_usd": token_cost(self.model, u["input_tokens"], u["output_tokens"], read, write),
-                   "latency_s": latency, "stop_reason": message.get("stop_reason"), "dropped_params": dropped}
+                   "latency_s": latency, "stop_reason": message.get("stop_reason"), "dropped_params": dropped,
+                   # traceability (added 2026-11-21): the same hash means the same request was sent; message and
+                   # request IDs identify the call on the API side; the reply hash shows whether the answer changed
+                   "request_hash": request_hash, "message_id": message.get("id"),
+                   "request_id": message.get("_request_id"),
+                   "reply_hash": hashlib.sha256("".join(b.get("text", "") for b in message.get("content", [])
+                                                        if isinstance(b, dict)).encode()).hexdigest()[:16]}
             with open(self.usage_log, "a") as f:
                 f.write(json.dumps(row) + "\n")
 

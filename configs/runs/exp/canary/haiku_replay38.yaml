@@ -1,0 +1,21 @@
+# PAID, about $0.027 (fixed Haiku check, added 2026-11-21): today's Haiku re-answers the exact facts the 2026-11-13 run retrieved
+# (that run scored 38; replays on 2026-11-21: 34 / 36 / 33). One repeat, put first in every paid Haiku batch by the
+# guarded job scripts (CANARY=0 skips it). History: python scripts/haiku_canary.py
+run_name: exp_real_canary_replay38
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  max_facts: 50
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+  replay_retrieved: configs/runs/exp/canary/replay38_retrieved.jsonl  # the 2026-11-13 run's retrieved facts, q_index + text
+data:
+  length: 262k
+  splits: [mh]
+llm:
+  model: claude-haiku-5-5
+  mode: real
+  answer_max_tokens: 256
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1
