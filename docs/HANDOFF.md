@@ -9,7 +9,7 @@ nothing is watching these jobs now.
 
 | Cluster | Job ID | What | Output | Check |
 |---|---|---|---|---|
-| Fir | 4874611 (running) | GRAFT test 06 **arm E**: T-REx guide + working memory in the graph (C v2), Haiku, 3 repeats, after the fixed Haiku check; cap $1 | `$HOME/scratch/sgar/results/runs/exp_real_tg_e_guide_wm_v2_*_j4874611/`, `exp_real_canary_replay38_*_j4874611/`; log `~/projects/def-sylu/khaledmk/SGAR/tg-e_guide_wm_v2-cpu-4874611.out` | `F 'sacct -j 4874611 -X -o State,Elapsed'`, then score with the snippet below |
+| Fir | 4874611 (done) | GRAFT test 06 **arm E**: T-REx guide + working memory in the graph (C v2), Haiku, 3 repeats, after the fixed Haiku check; cap $1 | `$HOME/scratch/sgar/results/runs/exp_real_tg_e_guide_wm_v2_*_j4874611/`, `exp_real_canary_replay38_*_j4874611/`; log `~/projects/def-sylu/khaledmk/SGAR/tg-e_guide_wm_v2-cpu-4874611.out` | `F 'sacct -j 4874611 -X -o State,Elapsed'`, then score with the snippet below |
 | Fir | 4876819 (pending) | GRAFT on **Qwen** (free): mode C, the guide, C v2, C- v2 on the empty-start graph (`configs/runs/exp/qwen/*.yaml`) | `$HOME/scratch/sgar/results/runs/exp_qwen_empty_*`; log `graft-q-all-4876819.out` and `vllm-4876819.log` in the SGAR folder | `F 'squeue -j 4876819'`. **Twin of Nibi 28263641: when one starts RUNNING, `scancel` the other** |
 | Nibi | 28263641 (pending) | same Qwen job on a 3g.40gb MIG slice | `~/scratch/sgar/results/runs/exp_qwen_empty_*` | `N 'squeue -j 28263641'` |
 | Nibi | 28262994-28263014, 28263382-28263401 | Flotilla **LongMemEval Fast** route, shards 01-19 (many running, 04-09 pending) | `~/scratch/flotilla/lme/runs/fast/lme_KK/` (trace.jsonl, compute.json) | `N 'squeue -u $USER'`; Fir twins of these (4875345-53) may exist: cancel any twin whose partner runs |
@@ -18,8 +18,7 @@ nothing is watching these jobs now.
 
 Score a GRAFT run (on Fir): `F 'cd $HOME/scratch/sgar/results/runs; for p in <run>/repeat_*/scored.jsonl; do python3 -c "import json,sys; s=[json.loads(l) for l in open(sys.argv[1])]; print(sum(x[\"substring_exact_match\"]>0 for x in s), sum(bool(x[\"answer_in_retrieved\"]) for x in s), round(sum(x.get(\"cost_usd\",0) for x in s),3))" $p; done'`
 
-Finished today, not yet written into test 06: the guide alone rerun the same day as arm E (Fir 4874613,
-`exp_real_tg_b_guide_sameday2_*`): **48 / 47 / 45 = 46.7**, gold in final facts 61 / 61 / 60, $0.036 per repeat.
+Arm E (4874611) and the guide rerun (4874613) finished and are recorded in GRAFT test 06 run-03.
 
 ## 2. Half-done or broken
 
@@ -35,9 +34,7 @@ c. **LongMemEval judge: decided (user, 2026-11-21): Claude Haiku 5.5** with Long
    Haiku check before each judge batch, request IDs logged (PROTOCOL.md, protocol-v10 addendum). Left: add the Haiku
    backend to `memory_route judge` with a cost guard (paid, CPU job, key via the dialog only), and put the canary job
    before it in `submit_longmemeval.sh judge`. Estimated $2.50 for ten routes plus the checks; ask before running.
-d. **Arm E and the guide rerun are not recorded yet.** When 4874611 finishes, copy both runs into
-   `experiments/test-06-trex-structure-guide/runs/run-03/` in GRAFT, add them to `make_table.py` (rows "E" and
-   "B (run-03)"), rebuild, update the README and INDEX, log spend in Flotilla `docs/run_log.md`.
+d. Arm E and the guide rerun are recorded (test 06 run-03): E 46.7, guide alone 46.7 the same day; E not kept.
 e. **Per-row cost order** (cheapest route judged per question from its own GPU-seconds) was asked of the labelling agent
    for `strategy_labels.py` and `strategy_router.py`; check `git log` in Flotilla for whether it landed, and add it with
    tests if not.

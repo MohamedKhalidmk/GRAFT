@@ -65,6 +65,19 @@ check on its own (36, inside its 33-36 range; [test 07](../test-07-haiku-drift/h
 
 The gain holds: +12.0 the same day (+11.0 in run-01). Spend $0.217 (A $0.080, B $0.109, Haiku check $0.027).
 
+run-03, arm E (user): the guide plus working memory written into the graph (test 05 C v2, the guide's planned chain
+cited from the first step), against the guide alone the same day. Fir 4874611, 4874613; the fixed Haiku check before
+it scored 35.
+
+| Arm | Accuracy (mean, SD) | Per repeat | Gold fact in final facts | Cost / 100 questions |
+|---|---|---|---|---|
+| B · the guide alone | 46.7, 1.5 | 48 / 47 / 45 | 60.7 | $0.036 |
+| E · the guide + working memory (C v2) | 46.7, 2.9 | 50 / 45 / 45 | 55.7 | $0.079 |
+
+Working memory adds nothing on top of the guide: the same mean, a wider spread, about twice the cost. Gold in the final
+facts falls (55.7 vs 60.7) because only the facts the steps cite reach the final call, as in test 05. Spend $0.373
+(E $0.237, B $0.109, Haiku check $0.027).
+
 ## Decision
 
 **B is kept: the T-REx structure guide becomes GRAFT's default on top of mode C** (11 points over A on Haiku). C and D
@@ -73,6 +86,7 @@ system ships with, and which of B's two parts carries the gain (linking only, pl
 
 ## Revisions
 
+- 2026-11-21: run-03, arm E (guide + working memory) 46.7 vs the guide alone 46.7 the same day: not kept.
 - 2026-11-21: run-02, same-day A vs B confirmation (+12.0); the guide is GRAFT's default (user).
 - 2026-11-21: run-01 paid arms done; B kept, C and D not adopted.
 - 2026-11-21: design approved (user); arm D added (user); guide built from the raw T-REx parquet after the 45-property

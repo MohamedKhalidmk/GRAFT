@@ -1,0 +1,200 @@
+{
+ "doc_facts": 18088,
+ "relations_mapped": 17820,
+ "labels_mapped": 145,
+ "labels": 151,
+ "revisions_added": 1012,
+ "revision_examples": [
+  [
+   "author",
+   "author",
+   "author"
+  ],
+  [
+   "performer",
+   "performer",
+   "performer"
+  ],
+  [
+   "sport",
+   "sport",
+   "sport"
+  ],
+  [
+   "place of birth",
+   "place of birth",
+   "place of birth"
+  ],
+  [
+   "educated at",
+   "educated at",
+   "educated at"
+  ],
+  [
+   "type of music",
+   "genre",
+   "genre"
+  ],
+  [
+   "speaks language",
+   "speaks language",
+   "official language"
+  ],
+  [
+   "citizen of",
+   "country of citizenship",
+   "country of citizenship"
+  ],
+  [
+   "type of music",
+   "genre",
+   "genre"
+  ],
+  [
+   "citizen of",
+   "citizen of",
+   "country of citizenship"
+  ],
+  [
+   "educated at",
+   "educated at",
+   "educated at"
+  ],
+  [
+   "performer",
+   "performer",
+   "performer"
+  ],
+  [
+   "spouse",
+   "spouse",
+   "spouse"
+  ],
+  [
+   "founded by",
+   "founded by",
+   "label:founded by"
+  ],
+  [
+   "spouse",
+   "spouse",
+   "spouse"
+  ],
+  [
+   "country of citizenship",
+   "citizenship",
+   "country of citizenship"
+  ],
+  [
+   "founded by",
+   "founded by",
+   "label:founded by"
+  ],
+  [
+   "religion",
+   "religion",
+   "label:religion"
+  ],
+  [
+   "languages spoken",
+   "language spoken",
+   "official language"
+  ],
+  [
+   "country of origin",
+   "country of origin",
+   "country of origin"
+  ],
+  [
+   "country of citizenship",
+   "country of citizenship",
+   "country of citizenship"
+  ],
+  [
+   "employer",
+   "employer",
+   "employer"
+  ],
+  [
+   "educated at",
+   "educated at",
+   "educated at"
+  ],
+  [
+   "religion",
+   "religion",
+   "label:religion"
+  ],
+  [
+   "country of citizenship",
+   "citizen of",
+   "country of citizenship"
+  ],
+  [
+   "founded by",
+   "founded by",
+   "label:founded by"
+  ],
+  [
+   "citizenship",
+   "citizenship",
+   "country of citizenship"
+  ],
+  [
+   "creator",
+   "creator",
+   "creator"
+  ],
+  [
+   "country of origin",
+   "country of origin",
+   "country of origin"
+  ],
+  [
+   "language",
+   "language",
+   "languages spoken, written or signed"
+  ]
+ ],
+ "entities_merged": 9,
+ "merge_examples": [
+  [
+   "Winnie-the-Pooh",
+   "winnie the pooh"
+  ],
+  [
+   "The Orange County Register",
+   "orange county register"
+  ],
+  [
+   "Monk",
+   "monk"
+  ],
+  [
+   "The Trump Entrepreneur Initiative",
+   "trump entrepreneur initiative"
+  ],
+  [
+   "Invisible Man",
+   "invisible man"
+  ],
+  [
+   "The Guardian",
+   "guardian"
+  ],
+  [
+   "The Monarchy of Canada",
+   "monarchy of canada"
+  ],
+  [
+   "New York City Comptroller",
+   "new york city comptroller"
+  ],
+  [
+   "Chancellor of the Exchequer",
+   "chancellor of the exchequer"
+  ]
+ ],
+ "merges_refused": [],
+ "merges_refused_count": 0
+}

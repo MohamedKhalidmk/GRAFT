@@ -15,6 +15,8 @@ ARMS = [("Haiku", "A", "empty start, mode C (test 05, rerun the same day)", [T05
         ("Haiku", "D", "C + 5 labelled background facts", [HERE / "runs" / "run-01"], "exp_real_tg_d_background_2*"),
         ("Haiku", "A (run-02)", "empty start, mode C, rerun the same day as B (run-02)", [HERE / "runs" / "run-02"], "exp_real_tg_a_sameday_2*"),
         ("Haiku", "B (run-02)", "the structure guide, rerun the same day as A (run-02)", [HERE / "runs" / "run-02"], "exp_real_tg_b_guide_sameday_2*"),
+        ("Haiku", "E (run-03)", "the guide + working memory in the graph (C v2), same day as B (run-03)", [HERE / "runs" / "run-03"], "exp_real_tg_e_guide_wm_v2_2*"),
+        ("Haiku", "B (run-03)", "the guide alone, rerun the same day as E (run-03)", [HERE / "runs" / "run-03"], "exp_real_tg_b_guide_sameday2_2*"),
         ("Qwen", "A", "empty start, mode C (test 05)", sorted(T05.glob("run-*")), "exp_qwen_empty_a_modec_2*"),
         ("Qwen", "B", "T-REx as a structure guide (linking + planning)", sorted((HERE / "runs").glob("run-*")), "exp_qwen_empty_b_guide_2*")]
 rows, accs = [], []

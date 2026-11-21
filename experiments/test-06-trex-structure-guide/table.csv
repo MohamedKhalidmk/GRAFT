@@ -5,3 +5,5 @@ Haiku,C,"T-REx as a bridge (walk only, weight 0.2)",3,17.3,1.2,18 / 16 / 18,32.0
 Haiku,D,C + 5 labelled background facts,3,17.7,1.5,19 / 16 / 18,33.0,0.029
 Haiku,A (run-02),"empty start, mode C, rerun the same day as B (run-02)",3,34.0,0.0,34 / 34 / 34,50.7,0.027
 Haiku,B (run-02),"the structure guide, rerun the same day as A (run-02)",3,46.0,3.0,46 / 43 / 49,60.0,0.036
+Haiku,E (run-03),"the guide + working memory in the graph (C v2), same day as B (run-03)",3,46.7,2.9,50 / 45 / 45,55.7,0.079
+Haiku,B (run-03),"the guide alone, rerun the same day as E (run-03)",3,46.7,1.5,48 / 47 / 45,60.7,0.036
