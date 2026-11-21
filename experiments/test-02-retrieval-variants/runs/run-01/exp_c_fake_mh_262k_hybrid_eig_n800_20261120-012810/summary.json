@@ -1,0 +1,59 @@
+{
+  "run_name": "exp_c_fake_mh_262k_hybrid_eig_n800",
+  "method": "graft",
+  "display": "GRAFT (ours)",
+  "family": "Ours (structure-augmented + agentic)",
+  "variant": "explainer=eig, gnn_checkpoint=results/checkpoints/gnn_bge_400w, hybrid=True, max_facts=50, max_nodes=800, retrieval=ppr_goat_ppr, retrieval_workers=8, shared_graph=results/checkpoints/shared_graphs/real_mh_262k_empty_start.json",
+  "paper_row": null,
+  "llm_mode": "fake",
+  "model": "claude-haiku-5-5",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "length": "262k",
+  "chunk_size": 512,
+  "repeats": 1,
+  "n_questions": {
+    "mh": 100
+  },
+  "unanswered": 0,
+  "accuracy": {
+    "mh": {
+      "mean": 0.0,
+      "std": 0.0,
+      "per_repeat": [
+        0.0
+      ]
+    }
+  },
+  "answer_in_retrieved": {
+    "mh": 0.53
+  },
+  "tokens_per_question": 1425.41,
+  "llm_calls_per_question": 1,
+  "memory_build_time_s": 3.2453806400299072,
+  "build_tokens": 0,
+  "query_time_s": 0.5962169766426086,
+  "max_tokens_stops": 0,
+  "api_cost_usd": {
+    "build": 0.0,
+    "query": 0.0143341,
+    "total": 0.0143341
+  },
+  "build_info": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "llm_calls": 0,
+    "memory_build_time_s": 3.2453806400299072,
+    "n_chunks": 537,
+    "graph": {
+      "entities": 10839,
+      "facts": 18088,
+      "supersedes_edges": 5994,
+      "current_facts": 12094
+    },
+    "writer": {
+      "reused_graph": "/home/khaledmk/projects/def-sylu/khaledmk/SGAR/results/checkpoints/shared_graphs/real_mh_262k_empty_start.json"
+    },
+    "graph_file": "/home/khaledmk/projects/def-sylu/khaledmk/SGAR/results/checkpoints/shared_graphs/real_mh_262k_empty_start.json"
+  }
+}

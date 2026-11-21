@@ -1,0 +1,5 @@
+{
+ "run": "run-02",
+ "test": "test-01-read-order",
+ "notes": "Fir job 3845944, 256-token re-answer, $0.21; HippoRAG 2 on the Mac, $1.37"
+}

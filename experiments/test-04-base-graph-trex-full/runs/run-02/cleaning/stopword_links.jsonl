@@ -1,0 +1,29 @@
+{"stopword_entities": 25, "by_layer": {"base": 25}, "largest": [["e:or", "OR", "base", 62], ["e:in", "IN", "base", 61], ["e:up", "UP", "base", 59], ["e:can", "CAN", "base", 41], ["e:no", "NO", "base", 33], ["e:at", "AT", "base", 33], ["e:be", "BE", "base", 32], ["e:ain", "Ain", "base", 31], ["e:on", "ON", "base", 25], ["e:am", "AM", "base", 22], ["e:don", "Don", "base", 21], ["e:as", "AS", "base", 13], ["e:to", "TO", "base", 12], ["e:so", "SO", "base", 11], ["e:me", "ME", "base", 7]]}
+{"questions": 100, "with_stopword_link_before": 89, "after": 0, "questions_whose_links_changed": 89, "left_with_no_link_after": 5}
+{"q": 0, "question": "What is the country of origin of the sport played by Christian Abbiati?", "old": ["e:christian abbiati", "e:the"], "new": ["e:christian abbiati"]}
+{"q": 1, "question": "Which religion is the country of citizenship of Karl Lueger predominantly associated with?", "old": ["e:karl lueger", "e:the"], "new": ["e:karl lueger"]}
+{"q": 2, "question": "The continent where the country of citizenship of the spouse of the author of \"American Pastoral\" is related t", "old": ["e:american pastoral", "e:the"], "new": ["e:american pastoral"]}
+{"q": 3, "question": "What is the place of origin for the broadcaster who first aired \"Your Hit Parade\"?", "old": ["e:your hit parade", "e:the"], "new": ["e:your hit parade"]}
+{"q": 4, "question": "What is the name of the language in which Valmiki wrote his notable works?", "old": ["e:the"], "new": []}
+{"q": 5, "question": "What is the language officially spoken in the country where the spouse of the Chief Executive Officer of CBS C", "old": ["e:chief executive officer", "e:cbs corporation", "e:the"], "new": ["e:chief executive officer", "e:cbs corporation"]}
+{"q": 6, "question": "Which language was the one in which Melvil Dewey produced their notable work?", "old": ["e:melvil dewey", "e:the", "e:one"], "new": ["e:melvil dewey", "e:one"]}
+{"q": 7, "question": "In which language does the director/manager, who is affiliated with \"Revolver\", communicate officially in thei", "old": ["e:revolver", "e:the"], "new": ["e:revolver"]}
+{"q": 8, "question": "In which school did the author of \"Measure for Measure\" receive their education?", "old": ["e:measure for measure", "e:the"], "new": ["e:measure for measure"]}
+{"q": 9, "question": "What is the name of the person who created the language used as the official language of the headquarters of F", "old": ["e:fc viikingit", "e:the"], "new": ["e:fc viikingit"]}
+{"q": 10, "question": "What continent does the place of birth of the chief executive officer of Visual Basic .NET belong to?", "old": ["e:chief executive officer", "e:visual basic .net", "e:the"], "new": ["e:chief executive officer", "e:visual basic .net"]}
+{"q": 11, "question": "Where was the person who created the religion that Giulio Alberoni was associated with born?", "old": ["e:the"], "new": []}
+{"q": 12, "question": "What is the location of the head office of the broadcaster that originally aired \"Adventures in Paradise\"?", "old": ["e:adventures in paradise", "e:head office", "e:the"], "new": ["e:adventures in paradise", "e:head office"]}
+{"q": 13, "question": "What is the notable work of the performer associated with Miley Stewart?", "old": ["e:miley", "e:the"], "new": ["e:miley"]}
+{"q": 15, "question": "What is the place of the headquarters of the educational institution where Stewart Udall received his educatio", "old": ["e:the"], "new": []}
+{"q": 16, "question": "What is the continent of the country of citizenship of the person who founded International Judo Federation?", "old": ["e:international judo federation", "e:the"], "new": ["e:international judo federation"]}
+{"q": 17, "question": "In which country was the individual who founded Duquesne University born?", "old": ["e:duquesne university", "e:the"], "new": ["e:duquesne university"]}
+{"q": 18, "question": "Which city serves as the capital of the country where the manufacturer which created Ford Ranger was founded?", "old": ["e:ford ranger", "e:the"], "new": ["e:ford ranger"]}
+{"q": 19, "question": "Which city is the capital of the country that created the sport associated with Peter Schmeichel's position?", "old": ["e:peter schmeichel", "e:the"], "new": ["e:peter schmeichel"]}
+{"q": 20, "question": "Who holds the title of head of state in the country where the sport that Halifax Town A.F.C. is associated wit", "old": ["e:halifax town", "e:the"], "new": ["e:halifax town"]}
+{"q": 21, "question": "Which continent is the country of citizenship of Gustav Vigeland located in?", "old": ["e:gustav vigeland", "e:the"], "new": ["e:gustav vigeland"]}
+{"q": 22, "question": "What is the country of origin of the sport associated with John Beilein's occupation?", "old": ["e:john beilein", "e:the"], "new": ["e:john beilein"]}
+{"q": 24, "question": "What kind of sports is Tina Charles into, based on the position she plays in her team?", "old": ["e:tina charles", "e:the"], "new": ["e:tina charles"]}
+{"q": 25, "question": "What is the continent of the country where the director / manager of \"Please Please Me\" holds citizenship?", "old": ["e:please please me", "e:the"], "new": ["e:please please me"]}
+{"q": 26, "question": "What is the birthplace of the spouse of Bianca Jagger?", "old": ["e:bianca jagger", "e:the"], "new": ["e:bianca jagger"]}
+{"question_layer_links": 103, "touching_stopword_before": 0, "after": 0, "examples": []}
+{"document_links": 10722, "touching_stopword_before": 0, "after": 0, "decisions_with_a_stopword_candidate_shown": 18, "examples": []}

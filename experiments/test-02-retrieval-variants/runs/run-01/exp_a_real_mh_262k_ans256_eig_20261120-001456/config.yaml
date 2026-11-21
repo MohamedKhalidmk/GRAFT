@@ -1,0 +1,21 @@
+run_name: exp_a_real_mh_262k_ans256_eig
+method: graft
+method_config:
+  retrieval: gnn_goat
+  explainer: eig
+  max_facts: 50
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+data:
+  length: 262k
+  splits:
+  - mh
+  chunk_size: 512
+  max_questions: null
+llm:
+  model: claude-haiku-5-5
+  mode: real
+  answer_max_tokens: 256
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1

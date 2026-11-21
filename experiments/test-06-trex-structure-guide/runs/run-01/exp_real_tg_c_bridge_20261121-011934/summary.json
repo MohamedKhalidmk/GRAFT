@@ -1,0 +1,61 @@
+{
+  "run_name": "exp_real_tg_c_bridge",
+  "method": "graft",
+  "display": "GRAFT (ours)",
+  "family": "Ours (structure-augmented + agentic)",
+  "variant": "bridge_weight=0.2, document_facts_only=True, explainer=goat, gnn_checkpoint=results/checkpoints/gnn_bge_400w, linking_candidates=10, max_facts=50, retrieval=ppr_goat_ppr, retrieval_workers=8, shared_graph=results/checkpoints/shared_graphs/real_mh_262k_trexfull_link_start.json, start_graph=outside, start_graph_path=results/checkpoints/base_graphs/trex_full_base.json, writer_linking=llm",
+  "paper_row": null,
+  "llm_mode": "real",
+  "model": "claude-haiku-5-5",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "length": "262k",
+  "chunk_size": 512,
+  "repeats": 3,
+  "n_questions": {
+    "mh": 100
+  },
+  "unanswered": 0,
+  "accuracy": {
+    "mh": {
+      "mean": 17.333333333333332,
+      "std": 1.1547005383792515,
+      "per_repeat": [
+        18.0,
+        16.0,
+        18.0
+      ]
+    }
+  },
+  "answer_in_retrieved": {
+    "mh": 0.32
+  },
+  "tokens_per_question": 2024.2666666666667,
+  "llm_calls_per_question": 1,
+  "memory_build_time_s": 1033.1717091401417,
+  "build_tokens": 0,
+  "query_time_s": 6.990632281303406,
+  "max_tokens_stops": 1,
+  "api_cost_usd": {
+    "build": 0.0,
+    "query": 0.06745960000000001,
+    "total": 0.06745960000000001
+  },
+  "build_info": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "llm_calls": 0,
+    "memory_build_time_s": 1143.6206259727478,
+    "n_chunks": 537,
+    "graph": {
+      "entities": 348732,
+      "facts": 1230691,
+      "supersedes_edges": 5293,
+      "current_facts": 1225398
+    },
+    "writer": {
+      "reused_graph": "/localscratch/khaledmk.4832786.0/SGAR/results/checkpoints/shared_graphs/real_mh_262k_trexfull_link_start.json"
+    },
+    "graph_file": "/localscratch/khaledmk.4832786.0/SGAR/results/checkpoints/shared_graphs/real_mh_262k_trexfull_link_start.json"
+  }
+}

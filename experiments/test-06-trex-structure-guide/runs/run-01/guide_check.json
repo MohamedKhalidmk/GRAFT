@@ -1,0 +1,5394 @@
+{
+ "summary": {
+  "linking": {
+   "doc_facts": 18088,
+   "relations_mapped": 17820,
+   "labels_mapped": 145,
+   "labels": 151,
+   "revisions_added": 1012,
+   "entities_merged": 9,
+   "merges_refused_count": 0
+  },
+  "graph_before": {
+   "entities": 10839,
+   "facts": 18088,
+   "supersedes_edges": 5994,
+   "current_facts": 12094
+  },
+  "graph_after": {
+   "entities": 10830,
+   "facts": 18088,
+   "supersedes_edges": 7006,
+   "current_facts": 11082
+  },
+  "questions": 100,
+  "with_plan_facts": 82,
+  "gold_in_plan": 44,
+  "gold_in_mode_c_facts": 49,
+  "gold_in_plan_not_in_mode_c": 10,
+  "gold_in_plan_and_b_wrong": 18,
+  "steps": {
+   "bridged": 8,
+   "direct": 148,
+   "not found": 50
+  }
+ },
+ "linking": {
+  "doc_facts": 18088,
+  "relations_mapped": 17820,
+  "labels_mapped": 145,
+  "labels": 151,
+  "revisions_added": 1012,
+  "revision_examples": [
+   [
+    "author",
+    "author",
+    "author"
+   ],
+   [
+    "performer",
+    "performer",
+    "performer"
+   ],
+   [
+    "sport",
+    "sport",
+    "sport"
+   ],
+   [
+    "place of birth",
+    "place of birth",
+    "place of birth"
+   ],
+   [
+    "educated at",
+    "educated at",
+    "educated at"
+   ],
+   [
+    "type of music",
+    "genre",
+    "genre"
+   ],
+   [
+    "speaks language",
+    "speaks language",
+    "official language"
+   ],
+   [
+    "citizen of",
+    "country of citizenship",
+    "country of citizenship"
+   ],
+   [
+    "type of music",
+    "genre",
+    "genre"
+   ],
+   [
+    "citizen of",
+    "citizen of",
+    "country of citizenship"
+   ],
+   [
+    "educated at",
+    "educated at",
+    "educated at"
+   ],
+   [
+    "performer",
+    "performer",
+    "performer"
+   ],
+   [
+    "spouse",
+    "spouse",
+    "spouse"
+   ],
+   [
+    "founded by",
+    "founded by",
+    "label:founded by"
+   ],
+   [
+    "spouse",
+    "spouse",
+    "spouse"
+   ],
+   [
+    "country of citizenship",
+    "citizenship",
+    "country of citizenship"
+   ],
+   [
+    "founded by",
+    "founded by",
+    "label:founded by"
+   ],
+   [
+    "religion",
+    "religion",
+    "label:religion"
+   ],
+   [
+    "languages spoken",
+    "language spoken",
+    "official language"
+   ],
+   [
+    "country of origin",
+    "country of origin",
+    "country of origin"
+   ],
+   [
+    "country of citizenship",
+    "country of citizenship",
+    "country of citizenship"
+   ],
+   [
+    "employer",
+    "employer",
+    "employer"
+   ],
+   [
+    "educated at",
+    "educated at",
+    "educated at"
+   ],
+   [
+    "religion",
+    "religion",
+    "label:religion"
+   ],
+   [
+    "country of citizenship",
+    "citizen of",
+    "country of citizenship"
+   ],
+   [
+    "founded by",
+    "founded by",
+    "label:founded by"
+   ],
+   [
+    "citizenship",
+    "citizenship",
+    "country of citizenship"
+   ],
+   [
+    "creator",
+    "creator",
+    "creator"
+   ],
+   [
+    "country of origin",
+    "country of origin",
+    "country of origin"
+   ],
+   [
+    "language",
+    "language",
+    "languages spoken, written or signed"
+   ]
+  ],
+  "entities_merged": 9,
+  "merge_examples": [
+   [
+    "Winnie-the-Pooh",
+    "winnie the pooh"
+   ],
+   [
+    "The Orange County Register",
+    "orange county register"
+   ],
+   [
+    "Monk",
+    "monk"
+   ],
+   [
+    "The Trump Entrepreneur Initiative",
+    "trump entrepreneur initiative"
+   ],
+   [
+    "Invisible Man",
+    "invisible man"
+   ],
+   [
+    "The Guardian",
+    "guardian"
+   ],
+   [
+    "The Monarchy of Canada",
+    "monarchy of canada"
+   ],
+   [
+    "New York City Comptroller",
+    "new york city comptroller"
+   ],
+   [
+    "Chancellor of the Exchequer",
+    "chancellor of the exchequer"
+   ]
+  ],
+  "merges_refused": [],
+  "merges_refused_count": 0
+ },
+ "questions": [
+  {
+   "q": 0,
+   "edges": [
+    [
+     "Christian Abbiati",
+     "sport",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Philippines"
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": true,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Christian Abbiati",
+    "want": [
+     "sport",
+     "country of origin"
+    ],
+    "steps": [
+     {
+      "want": "sport",
+      "found": [
+       "position played",
+       "sport"
+      ],
+      "how": "bridged"
+     },
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "Christian Abbiati plays the position of cornerback.",
+    "cornerback is associated with the sport of field hockey.",
+    "field hockey was created in the country of Philippines."
+   ]
+  },
+  {
+   "q": 1,
+   "edges": [
+    [
+     "Karl Lueger",
+     "country of citizenship",
+     "?A"
+    ],
+    [
+     "?A",
+     "predominant religion",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "atheism"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Karl Lueger",
+    "want": [
+     "country of citizenship",
+     "predominant religion"
+    ],
+    "steps": [
+     {
+      "want": "country of citizenship",
+      "found": [
+       "citizen of"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "predominant religion",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "Karl Lueger is a citizen of Lordship of Ireland."
+   ]
+  },
+  {
+   "q": 2,
+   "edges": [
+    [
+     "American Pastoral",
+     "author",
+     "?A"
+    ],
+    [
+     "?A",
+     "spouse",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of citizenship",
+     "?C"
+    ],
+    [
+     "?C",
+     "continent",
+     "?D"
+    ]
+   ],
+   "gold": [
+    "Oceania"
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "American Pastoral",
+    "want": [
+     "author",
+     "spouse",
+     "country of citizenship",
+     "continent"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "spouse",
+      "found": [
+       "spouse"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of citizenship",
+      "found": [
+       "citizen of"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "continent",
+      "found": null
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "The author of American Pastoral is F. Scott Fitzgerald.",
+    "F. Scott Fitzgerald is married to Carl Lumbly.",
+    "Carl Lumbly is a citizen of Colombia."
+   ]
+  },
+  {
+   "q": 3,
+   "edges": [
+    [
+     "Your Hit Parade",
+     "first aired by",
+     "?A"
+    ],
+    [
+     "?A",
+     "place of origin",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Paris"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Your Hit Parade",
+    "want": [
+     "first aired by",
+     "country of origin"
+    ],
+    "steps": [
+     {
+      "want": "first aired by",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 4,
+   "edges": [
+    [
+     "Valmiki",
+     "language of work",
+     "?A"
+    ]
+   ],
+   "gold": [
+    "English"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Valmiki",
+    "want": [
+     "language of work or name"
+    ],
+    "steps": [
+     {
+      "want": "language of work or name",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 5,
+   "edges": [
+    [
+     "CBS Corporation",
+     "chief executive officer",
+     "?A"
+    ],
+    [
+     "?A",
+     "spouse",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of citizenship",
+     "?C"
+    ],
+    [
+     "?C",
+     "official language",
+     "?D"
+    ]
+   ],
+   "gold": [
+    "Walloon"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "CBS Corporation",
+    "want": [
+     "chief executive officer",
+     "spouse",
+     "country of citizenship",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "chief executive officer",
+      "found": [
+       "chief executive officer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "spouse",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "The chief executive officer of CBS Corporation is Les Moonves."
+   ]
+  },
+  {
+   "q": 6,
+   "edges": [
+    [
+     "Melvil Dewey",
+     "notable work",
+     "?A"
+    ],
+    [
+     "?A",
+     "language of work or name",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Italian"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Melvil Dewey",
+    "want": [
+     "notable work",
+     "language of work or name"
+    ],
+    "steps": [
+     {
+      "want": "notable work",
+      "found": [
+       "famous for"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "language of work or name",
+      "found": [
+       "language of work"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Melvil Dewey is famous for Dewey Decimal Classification.",
+    "Dewey Decimal Classification was written in the language of Italian."
+   ]
+  },
+  {
+   "q": 7,
+   "edges": [
+    [
+     "?A",
+     "affiliation",
+     "Revolver"
+    ],
+    [
+     "?A",
+     "director/manager",
+     "Revolver"
+    ],
+    [
+     "?A",
+     "country of citizenship",
+     "?B"
+    ],
+    [
+     "?B",
+     "official language",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Arabic"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Revolver",
+    "want": [
+     "affiliation",
+     "director",
+     "country of citizenship",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "affiliation",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 8,
+   "edges": [
+    [
+     "Measure for Measure",
+     "author",
+     "?A"
+    ],
+    [
+     "?A",
+     "educated at",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "University of Oxford"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Measure for Measure",
+    "want": [
+     "author",
+     "educated at"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "educated at",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "The author of Measure for Measure is Terrance Dicks."
+   ]
+  },
+  {
+   "q": 9,
+   "edges": [
+    [
+     "FC Viikingit",
+     "headquarters location",
+     "?A"
+    ],
+    [
+     "?A",
+     "official language",
+     "?B"
+    ],
+    [
+     "?B",
+     "creator",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "L. L. Zamenhof"
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "FC Viikingit",
+    "want": [
+     "headquarters location",
+     "official language",
+     "creator"
+    ],
+    "steps": [
+     {
+      "want": "headquarters location",
+      "found": [
+       "headquarters location"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "official language",
+      "found": [
+       "official language"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "creator",
+      "found": [
+       "creator"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "The headquarters of FC Viikingit is located in the city of Helsinki.",
+    "The official language of Helsinki is Esperanto.",
+    "Esperanto was created by Frank Miller."
+   ]
+  },
+  {
+   "q": 10,
+   "edges": [
+    [
+     "Visual Basic .NET",
+     "chief executive officer",
+     "?A"
+    ],
+    [
+     "?A",
+     "place of birth",
+     "?B"
+    ],
+    [
+     "?B",
+     "continent",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Oceania"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Visual Basic .NET",
+    "want": [
+     "chief executive officer",
+     "place of birth",
+     "continent"
+    ],
+    "steps": [
+     {
+      "want": "chief executive officer",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 11,
+   "edges": [
+    [
+     "Giulio Alberoni",
+     "religion",
+     "?A"
+    ],
+    [
+     "?B",
+     "founder",
+     "?A"
+    ],
+    [
+     "?B",
+     "place of birth",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Epworth"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Giulio Alberoni",
+    "want": [
+     "religion or worldview",
+     "founder",
+     "place of birth"
+    ],
+    "steps": [
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "founder",
+      "found": [
+       "founder"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "place of birth",
+      "found": null
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Giulio Alberoni is affiliated with the religion of Methodism.",
+    "Methodism was founded by Joseph Goebbels."
+   ]
+  },
+  {
+   "q": 12,
+   "edges": [
+    [
+     "Adventures in Paradise",
+     "original broadcaster",
+     "?A"
+    ],
+    [
+     "?A",
+     "headquarters location",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Knoxville"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Adventures in Paradise",
+    "want": [
+     "original broadcaster",
+     "headquarters location"
+    ],
+    "steps": [
+     {
+      "want": "original broadcaster",
+      "found": [
+       "original broadcaster"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "headquarters location",
+      "found": [
+       "headquarters location"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The origianl broadcaster of Adventures in Paradise is WTTW.",
+    "The headquarters of WTTW is located in the city of Knoxville."
+   ]
+  },
+  {
+   "q": 13,
+   "edges": [
+    [
+     "Miley Stewart",
+     "performer",
+     "?A"
+    ],
+    [
+     "?A",
+     "notable work",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Gundam"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Miley Stewart",
+    "want": [
+     "performer",
+     "notable work"
+    ],
+    "steps": [
+     {
+      "want": "performer",
+      "found": [
+       "performer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "notable work",
+      "found": [
+       "famous for"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "11396. Miley Stewart was performed by John Lennon.",
+    "John Lennon is famous for Gundam."
+   ]
+  },
+  {
+   "q": 14,
+   "edges": [
+    [
+     "Fernando Lugo",
+     "country of citizenship",
+     "?A"
+    ],
+    [
+     "?A",
+     "continent",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Oceania"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Fernando Lugo",
+    "want": [
+     "country of citizenship",
+     "continent"
+    ],
+    "steps": [
+     {
+      "want": "country of citizenship",
+      "found": [
+       "citizen of"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "continent",
+      "found": [
+       "located in the continent"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Fernando Lugo is a citizen of United Kingdom.",
+    "United Kingdom is located in the continent of Oceania."
+   ]
+  },
+  {
+   "q": 15,
+   "edges": [
+    [
+     "Stewart Udall",
+     "educated at",
+     "?A"
+    ],
+    [
+     "?A",
+     "headquarters location",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Long Beach"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Stewart Udall",
+    "want": [
+     "educated at",
+     "headquarters location"
+    ],
+    "steps": [
+     {
+      "want": "educated at",
+      "found": [
+       "educated at"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "headquarters location",
+      "found": [
+       "headquarters location"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The univeristy where Stewart Udall was educated is California State University, Long Beach.",
+    "The headquarters of California State University, Long Beach is located in the city of Long Beach. 16859."
+   ]
+  },
+  {
+   "q": 16,
+   "edges": [
+    [
+     "International Judo Federation",
+     "founded by",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of citizenship",
+     "?B"
+    ],
+    [
+     "?B",
+     "continent",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Europe"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "International Judo Federation",
+    "want": [
+     "location of formation",
+     "country of citizenship",
+     "continent"
+    ],
+    "steps": [
+     {
+      "want": "location of formation",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 17,
+   "edges": [
+    [
+     "Duquesne University",
+     "founded by",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of birth",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Epworth"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Duquesne University",
+    "want": [
+     "location of formation",
+     "place of birth"
+    ],
+    "steps": [
+     {
+      "want": "location of formation",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 18,
+   "edges": [
+    [
+     "Ford Ranger",
+     "manufacturer",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ],
+    [
+     "?B",
+     "capital",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Paris"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Ford Ranger",
+    "want": [
+     "manufacturer",
+     "country of origin",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "manufacturer",
+      "found": [
+       "manufacturer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "capital",
+      "found": null
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The company that produced Ford Ranger is Ford Motor Company.",
+    "Ford Motor Company was created in the country of United States of America."
+   ]
+  },
+  {
+   "q": 19,
+   "edges": [
+    [
+     "Peter Schmeichel",
+     "position played",
+     "?A"
+    ],
+    [
+     "?A",
+     "associated sport",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of origin",
+     "?C"
+    ],
+    [
+     "?C",
+     "capital",
+     "?D"
+    ]
+   ],
+   "gold": [
+    "Dublin"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Peter Schmeichel",
+    "want": [
+     "position played on team / speciality",
+     "associated sport",
+     "country of origin",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "position played on team / speciality",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 20,
+   "edges": [
+    [
+     "Halifax Town A.F.C.",
+     "sport",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ],
+    [
+     "?B",
+     "head of state",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Sergio Mattarella"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Halifax Town A.F.C.",
+    "want": [
+     "sport",
+     "country of origin",
+     "head of state"
+    ],
+    "steps": [
+     {
+      "want": "sport",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 21,
+   "edges": [
+    [
+     "Gustav Vigeland",
+     "country of citizenship",
+     "?A"
+    ],
+    [
+     "?A",
+     "continent",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Asia"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Gustav Vigeland",
+    "want": [
+     "country of citizenship",
+     "continent"
+    ],
+    "steps": [
+     {
+      "want": "country of citizenship",
+      "found": [
+       "citizen of"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "continent",
+      "found": [
+       "located in continent"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Gustav Vigeland is a citizen of Finland.",
+    "Finland is located in the continent of Asia."
+   ]
+  },
+  {
+   "q": 22,
+   "edges": [
+    [
+     "John Beilein",
+     "occupation",
+     "?A"
+    ],
+    [
+     "?A",
+     "associated sport",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of origin",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Japan"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "John Beilein",
+    "want": [
+     "occupation",
+     "associated sport",
+     "country of origin"
+    ],
+    "steps": [
+     {
+      "want": "occupation",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 23,
+   "edges": [
+    [
+     "Lynn Margulis",
+     "spouse",
+     "?A"
+    ],
+    [
+     "?A",
+     "employer",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "British Broadcasting Corporation"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Lynn Margulis",
+    "want": [
+     "spouse",
+     "employer"
+    ],
+    "steps": [
+     {
+      "want": "spouse",
+      "found": [
+       "married to"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "employer",
+      "found": [
+       "employer"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Lynn Margulis is married to Carl Sagan.",
+    "Carl Sagan is employed by British Broadcasting Corporation."
+   ]
+  },
+  {
+   "q": 24,
+   "edges": [
+    [
+     "Tina Charles",
+     "sport",
+     "?A"
+    ],
+    [
+     "Tina Charles",
+     "position played",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "American football"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Tina Charles",
+    "want": [
+     "sport",
+     "position played on team / speciality"
+    ],
+    "steps": [
+     {
+      "want": "sport",
+      "found": [
+       "position played",
+       "associated with sport"
+      ],
+      "how": "bridged"
+     },
+     {
+      "want": "position played on team / speciality",
+      "found": null
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Tina Charles plays the position of defensive back.",
+    "48. defensive back is associated with the sport of American football."
+   ]
+  },
+  {
+   "q": 25,
+   "edges": [
+    [
+     "Please Please Me",
+     "director / manager",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of citizenship",
+     "?B"
+    ],
+    [
+     "?B",
+     "continent",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Oceania"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Please Please Me",
+    "want": [
+     "director",
+     "country of citizenship",
+     "continent"
+    ],
+    "steps": [
+     {
+      "want": "director",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 26,
+   "edges": [
+    [
+     "Bianca Jagger",
+     "spouse",
+     "?A"
+    ],
+    [
+     "?A",
+     "place of birth",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "North Charleston"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Bianca Jagger",
+    "want": [
+     "spouse",
+     "place of birth"
+    ],
+    "steps": [
+     {
+      "want": "spouse",
+      "found": [
+       "spouse"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "place of birth",
+      "found": [
+       "place of birth"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Bianca Jagger is married to Mick Jagger.",
+    "Mick Jagger was born in the city of North Charleston."
+   ]
+  },
+  {
+   "q": 27,
+   "edges": [
+    [
+     "?A",
+     "founder of",
+     "judo"
+    ],
+    [
+     "?A",
+     "participant in",
+     "2014 World Judo Championships"
+    ],
+    [
+     "?A",
+     "country of citizenship",
+     "?B"
+    ],
+    [
+     "?B",
+     "capital",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "New Delhi"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "judo",
+    "want": [
+     "founder",
+     "participant in",
+     "country of citizenship",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "founder",
+      "found": [
+       "founder"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "participant in",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "judo was founded by Charles de Gaulle. 15833."
+   ]
+  },
+  {
+   "q": 28,
+   "edges": [
+    [
+     "Family Force 5",
+     "country of origin",
+     "?A"
+    ],
+    [
+     "?A",
+     "seat of government",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Bondi Junction"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Family Force 5",
+    "want": [
+     "country of origin",
+     "office held by the head of government"
+    ],
+    "steps": [
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "office held by the head of government",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "14971. Family Force 5 was created in the country of Japan."
+   ]
+  },
+  {
+   "q": 29,
+   "edges": [
+    [
+     "Carmilla",
+     "author",
+     "?A"
+    ],
+    [
+     "?A",
+     "place of death",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "New York City"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Carmilla",
+    "want": [
+     "author",
+     "place of death"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "place of death",
+      "found": [
+       "place of death"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The author of Carmilla is Joseph Stein.",
+    "12063. Joseph Stein died in the city of New York City."
+   ]
+  },
+  {
+   "q": 30,
+   "edges": [
+    [
+     "Dave Matthews Band",
+     "genre",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Spain"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Dave Matthews Band",
+    "want": [
+     "genre",
+     "country of origin"
+    ],
+    "steps": [
+     {
+      "want": "genre",
+      "found": [
+       "genre"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The type of music that Dave Matthews Band plays is rock music.",
+    "rock music was created in the country of Spain."
+   ]
+  },
+  {
+   "q": 31,
+   "edges": [
+    [
+     "Stephen Greenblatt",
+     "employer",
+     "?A"
+    ],
+    [
+     "?A",
+     "chairperson",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Mike Cheston"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Stephen Greenblatt",
+    "want": [
+     "employer",
+     "chairperson"
+    ],
+    "steps": [
+     {
+      "want": "employer",
+      "found": [
+       "employer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "chairperson",
+      "found": [
+       "chairperson"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Stephen Greenblatt is employed by X Prize Foundation.",
+    "17945. The chairperson of X Prize Foundation is Mike Cheston."
+   ]
+  },
+  {
+   "q": 32,
+   "edges": [
+    [
+     "?A",
+     "director/manager",
+     "performer ID 1"
+    ],
+    [
+     "?A",
+     "country of citizenship",
+     "?B"
+    ],
+    [
+     "?B",
+     "official language",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Arabic"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "reason": "no start entity"
+   },
+   "chain": []
+  },
+  {
+   "q": 33,
+   "edges": [
+    [
+     "James Michael Curley",
+     "educated at",
+     "?A"
+    ],
+    [
+     "?B",
+     "founded by",
+     "?C"
+    ],
+    [
+     "?B",
+     "has roots in",
+     "?A"
+    ],
+    [
+     "?C",
+     "founder of",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Gérard Blitz"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "James Michael Curley",
+    "want": [
+     "educated at",
+     "location of formation",
+     "has roots in",
+     "founder"
+    ],
+    "steps": [
+     {
+      "want": "educated at",
+      "found": [
+       "educated at"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "location of formation",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "The univeristy where James Michael Curley was educated is The Catholic University of America."
+   ]
+  },
+  {
+   "q": 34,
+   "edges": [
+    [
+     "Metz Cathedral",
+     "founded by",
+     "?A"
+    ],
+    [
+     "?A",
+     "occupation location",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "London"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Metz Cathedral",
+    "want": [
+     "location of formation",
+     "occupation"
+    ],
+    "steps": [
+     {
+      "want": "location of formation",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 35,
+   "edges": [
+    [
+     "Sumie Sakai",
+     "sport",
+     "?A"
+    ],
+    [
+     "?A",
+     "founded by",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of citizenship",
+     "?C"
+    ],
+    [
+     "?C",
+     "capital",
+     "?D"
+    ]
+   ],
+   "gold": [
+    "New Delhi"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Sumie Sakai",
+    "want": [
+     "sport",
+     "location of formation",
+     "country of citizenship",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "sport",
+      "found": [
+       "sport"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "location of formation",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "Sumie Sakai is associated with the sport of judo. 17230."
+   ]
+  },
+  {
+   "q": 36,
+   "edges": [
+    [
+     "Back in the U.S.S.R.",
+     "director",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of citizenship",
+     "?B"
+    ],
+    [
+     "?B",
+     "capital",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Canberra"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Back in the U.S.S.R.",
+    "want": [
+     "director",
+     "country of citizenship",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "director",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 37,
+   "edges": [
+    [
+     "Gabriel Narutowicz",
+     "religion",
+     "?A"
+    ],
+    [
+     "?A",
+     "founded by",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Gérard Blitz"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Gabriel Narutowicz",
+    "want": [
+     "religion or worldview",
+     "location of formation"
+    ],
+    "steps": [
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "location of formation",
+      "found": [
+       "founded by"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Gabriel Narutowicz is affiliated with the religion of Catholic Church.",
+    "Catholic Church was founded by Gérard Blitz."
+   ]
+  },
+  {
+   "q": 38,
+   "edges": [
+    [
+     "Nate \"Tiny\" Archibald",
+     "country of citizenship",
+     "?A"
+    ],
+    [
+     "?A",
+     "official language",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "German"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Nate \"Tiny\" Archibald",
+    "want": [
+     "country of citizenship",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "country of citizenship",
+      "found": [
+       "citizen of"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "official language",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "Nate \"Tiny\" Archibald is a citizen of Sweden."
+   ]
+  },
+  {
+   "q": 39,
+   "edges": [
+    [
+     "La Celestina",
+     "author",
+     "?A"
+    ],
+    [
+     "?A",
+     "educated at",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Princeton University"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "La Celestina",
+    "want": [
+     "author",
+     "educated at"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "educated at",
+      "found": [
+       "educated at"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The author of La Celestina is Sigmund Freud.",
+    "The univeristy where Sigmund Freud was educated is Princeton University."
+   ]
+  },
+  {
+   "q": 40,
+   "edges": [
+    [
+     "Malik Kafur",
+     "religion",
+     "?A"
+    ],
+    [
+     "?A",
+     "official language",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Picard"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Malik Kafur",
+    "want": [
+     "religion or worldview",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "official language",
+      "found": [
+       "official language"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Malik Kafur is affiliated with the religion of Islam.",
+    "The official language of Islam is Picard."
+   ]
+  },
+  {
+   "q": 41,
+   "edges": [
+    [
+     "Yesterday and Today",
+     "performer",
+     "?A"
+    ],
+    [
+     "?B",
+     "director",
+     "?A"
+    ],
+    [
+     "?B",
+     "manager",
+     "?A"
+    ]
+   ],
+   "gold": [
+    "Narendra Modi"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Yesterday and Today",
+    "want": [
+     "performer",
+     "director",
+     "manager"
+    ],
+    "steps": [
+     {
+      "want": "performer",
+      "found": [
+       "performer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "director",
+      "found": [
+       "director"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "manager",
+      "found": null
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Yesterday and Today was performed by Madonna. 18126.",
+    "12455. The director of Madonna is Narendra Modi."
+   ]
+  },
+  {
+   "q": 42,
+   "edges": [
+    [
+     "Derek Holland",
+     "sport",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ],
+    [
+     "?B",
+     "capital",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Ottawa"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Derek Holland",
+    "want": [
+     "sport",
+     "country of origin",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "sport",
+      "found": [
+       "position played",
+       "sport"
+      ],
+      "how": "bridged"
+     },
+     {
+      "want": "country of origin",
+      "found": null
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Derek Holland plays the position of linebacker.",
+    "linebacker is associated with the sport of shinty."
+   ]
+  },
+  {
+   "q": 43,
+   "edges": [
+    [
+     "Muttahida Qaumi Movement",
+     "chairperson",
+     "?A"
+    ],
+    [
+     "?A",
+     "languages spoken, written or signed",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "English"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Muttahida Qaumi Movement",
+    "want": [
+     "chairperson",
+     "languages spoken, written or signed"
+    ],
+    "steps": [
+     {
+      "want": "chairperson",
+      "found": [
+       "chairperson"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "languages spoken, written or signed",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "The chairperson of Muttahida Qaumi Movement is Stephen McNeil."
+   ]
+  },
+  {
+   "q": 44,
+   "edges": [
+    [
+     "Ragini Dwivedi",
+     "country of citizenship",
+     "?A"
+    ],
+    [
+     "?A",
+     "capital",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Rupnagar"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Ragini Dwivedi",
+    "want": [
+     "country of citizenship",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "country of citizenship",
+      "found": [
+       "citizen of"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "capital",
+      "found": [
+       "capital"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Ragini Dwivedi is a citizen of United Kingdom. 14297.",
+    "The capital of United Kingdom is Rupnagar."
+   ]
+  },
+  {
+   "q": 45,
+   "edges": [
+    [
+     "Dubliners",
+     "author",
+     "?A"
+    ],
+    [
+     "?A",
+     "place of death",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "London"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Dubliners",
+    "want": [
+     "author",
+     "place of death"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "place of death",
+      "found": [
+       "place of death"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The author of Dubliners is George Eliot.",
+    "George Eliot died in the city of London."
+   ]
+  },
+  {
+   "q": 46,
+   "edges": [
+    [
+     "Sailfish OS",
+     "developer",
+     "?A"
+    ],
+    [
+     "?A",
+     "headquarters location",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Normanton"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Sailfish OS",
+    "want": [
+     "developer",
+     "headquarters location"
+    ],
+    "steps": [
+     {
+      "want": "developer",
+      "found": [
+       "developed by"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "headquarters location",
+      "found": [
+       "headquarters location"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Sailfish OS was developed by Mitsubishi.",
+    "The headquarters of Mitsubishi is located in the city of Normanton."
+   ]
+  },
+  {
+   "q": 47,
+   "edges": [
+    [
+     "David Price",
+     "sport",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ],
+    [
+     "?B",
+     "capital",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Manila"
+   ],
+   "plan_facts": 4,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "David Price",
+    "want": [
+     "sport",
+     "country of origin",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "sport",
+      "found": [
+       "position played",
+       "sport"
+      ],
+      "how": "bridged"
+     },
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "capital",
+      "found": [
+       "capital"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 4
+   },
+   "chain": [
+    "David Price plays the position of tight end.",
+    "tight end is associated with the sport of field hockey.",
+    "field hockey was created in the country of Philippines.",
+    "The capital of Philippines is Sipirok."
+   ]
+  },
+  {
+   "q": 48,
+   "edges": [
+    [
+     "All of Me",
+     "performer",
+     "?A"
+    ],
+    [
+     "?A",
+     "spouse",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of citizenship",
+     "?C"
+    ],
+    [
+     "?C",
+     "official language",
+     "?D"
+    ]
+   ],
+   "gold": [
+    "Spanish"
+   ],
+   "plan_facts": 4,
+   "gold_in_plan": true,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "All of Me",
+    "want": [
+     "performer",
+     "spouse",
+     "country of citizenship",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "performer",
+      "found": [
+       "performer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "spouse",
+      "found": [
+       "spouse"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of citizenship",
+      "found": [
+       "citizen of"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "official language",
+      "found": [
+       "official language"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 4
+   },
+   "chain": [
+    "All of Me was performed by Bobby Brown.",
+    "Bobby Brown is married to Lois Lane.",
+    "Lois Lane is a citizen of South Korea.",
+    "The official language of South Korea is Spanish."
+   ]
+  },
+  {
+   "q": 49,
+   "edges": [
+    [
+     "Indiana Jones",
+     "creator",
+     "?A"
+    ],
+    [
+     "?A",
+     "place of birth",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Lüftelberg"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Indiana Jones",
+    "want": [
+     "creator",
+     "place of birth"
+    ],
+    "steps": [
+     {
+      "want": "creator",
+      "found": [
+       "creator"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "place of birth",
+      "found": [
+       "place of birth"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Indiana Jones was created by A. A. Milne.",
+    "A. A. Milne was born in the city of Lüftelberg."
+   ]
+  },
+  {
+   "q": 50,
+   "edges": [
+    [
+     "Chevrolet Chevelle",
+     "manufacturer",
+     "?A"
+    ],
+    [
+     "?A",
+     "chief executive officer",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "David Potts"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Chevrolet Chevelle",
+    "want": [
+     "manufacturer",
+     "chief executive officer"
+    ],
+    "steps": [
+     {
+      "want": "manufacturer",
+      "found": [
+       "manufacturer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "chief executive officer",
+      "found": [
+       "chief executive officer"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The company that produced Chevrolet Chevelle is Peugeot.",
+    "The chief executive officer of Peugeot is David Potts."
+   ]
+  },
+  {
+   "q": 51,
+   "edges": [
+    [
+     "Economic Freedom Fighters",
+     "chairperson",
+     "?A"
+    ],
+    [
+     "?A",
+     "occupation",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "composer"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Economic Freedom Fighters",
+    "want": [
+     "chairperson",
+     "occupation"
+    ],
+    "steps": [
+     {
+      "want": "chairperson",
+      "found": [
+       "chairperson"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "occupation",
+      "found": [
+       "occupation"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The chairperson of Economic Freedom Fighters is Roberto Calvi.",
+    "11395. Roberto Calvi works in the field of composer."
+   ]
+  },
+  {
+   "q": 52,
+   "edges": [
+    [
+     "Windows Aero",
+     "developer",
+     "?A"
+    ],
+    [
+     "?A",
+     "chief executive officer",
+     "?B"
+    ],
+    [
+     "?B",
+     "place of birth",
+     "?C"
+    ],
+    [
+     "?C",
+     "continent",
+     "?D"
+    ]
+   ],
+   "gold": [
+    "Africa"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Windows Aero",
+    "want": [
+     "developer",
+     "chief executive officer",
+     "place of birth",
+     "continent"
+    ],
+    "steps": [
+     {
+      "want": "developer",
+      "found": [
+       "developer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "chief executive officer",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "Windows Aero was developed by Electronic Arts."
+   ]
+  },
+  {
+   "q": 53,
+   "edges": [
+    [
+     "Julian Lennon",
+     "genre",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ],
+    [
+     "?B",
+     "head of government",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Ole Johan Vierdal"
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": true,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Julian Lennon",
+    "want": [
+     "genre",
+     "country of origin",
+     "head of government"
+    ],
+    "steps": [
+     {
+      "want": "genre",
+      "found": [
+       "type of music"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "head of government",
+      "found": [
+       "head of government"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "The type of music that Julian Lennon plays is soul music.",
+    "soul music was created in the country of United States of America.",
+    "14719. The name of the current head of the United States of America government is Ole Johan Vierdal."
+   ]
+  },
+  {
+   "q": 54,
+   "edges": [
+    [
+     "Steve Cooley",
+     "religion",
+     "?A"
+    ],
+    [
+     "?A",
+     "founder",
+     "?B"
+    ],
+    [
+     "?B",
+     "work location",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Washington, D.C."
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": true,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Steve Cooley",
+    "want": [
+     "religion or worldview",
+     "founder",
+     "work location"
+    ],
+    "steps": [
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "founder",
+      "found": [
+       "founder"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "work location",
+      "found": [
+       "work location"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "Steve Cooley is affiliated with the religion of Methodism.",
+    "Methodism was founded by Joseph Goebbels.",
+    "Joseph Goebbels worked in the city of Washington, D.C.."
+   ]
+  },
+  {
+   "q": 55,
+   "edges": [
+    [
+     "The Partridge Family",
+     "original broadcaster",
+     "?A"
+    ],
+    [
+     "?A",
+     "director/manager",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of citizenship",
+     "?C"
+    ],
+    [
+     "?C",
+     "capital",
+     "?D"
+    ]
+   ],
+   "gold": [
+    "Oderzo"
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "The Partridge Family",
+    "want": [
+     "original broadcaster",
+     "director",
+     "country of citizenship",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "original broadcaster",
+      "found": [
+       "original broadcaster"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "director",
+      "found": [
+       "director"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of citizenship",
+      "found": [
+       "country of citizenship"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "capital",
+      "found": null
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "The origianl broadcaster of The Partridge Family is British Broadcasting Corporation.",
+    "The director of British Broadcasting Corporation is Narendra Modi.",
+    "Narendra Modi is a citizen of Australia. 12322."
+   ]
+  },
+  {
+   "q": 56,
+   "edges": [
+    [
+     "Philip Agee",
+     "employer",
+     "?A"
+    ],
+    [
+     "?A",
+     "leader",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Christopher A. Wray"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Philip Agee",
+    "want": [
+     "employer",
+     "leader"
+    ],
+    "steps": [
+     {
+      "want": "employer",
+      "found": [
+       "employer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "leader",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "14409. Philip Agee is employed by Federal Bureau of Investigation."
+   ]
+  },
+  {
+   "q": 57,
+   "edges": [
+    [
+     "Saint Eligius",
+     "religion",
+     "?A"
+    ],
+    [
+     "?A",
+     "founded by",
+     "?B"
+    ],
+    [
+     "?B",
+     "place of birth",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Epworth"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Saint Eligius",
+    "want": [
+     "religion or worldview",
+     "location of formation",
+     "place of birth"
+    ],
+    "steps": [
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "location of formation",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "Saint Eligius is affiliated with the religion of Methodism."
+   ]
+  },
+  {
+   "q": 58,
+   "edges": [
+    [
+     "The Age of Reason",
+     "author",
+     "?A"
+    ],
+    [
+     "?A",
+     "notable contribution",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Natya Shastra"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "The Age of Reason",
+    "want": [
+     "author",
+     "notable work"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "notable work",
+      "found": [
+       "famous for"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The author of The Age of Reason is Allen Ginsberg.",
+    "Allen Ginsberg is famous for Natya Shastra."
+   ]
+  },
+  {
+   "q": 59,
+   "edges": [
+    [
+     "Illinois Attorney General",
+     "office holder",
+     "?A"
+    ],
+    [
+     "?A",
+     "place of birth",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Higashiyamanashi District, Yamanashi"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Illinois Attorney General",
+    "want": [
+     "position held",
+     "place of birth"
+    ],
+    "steps": [
+     {
+      "want": "position held",
+      "found": [
+       "office holder"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "place of birth",
+      "found": [
+       "place of birth"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The Illinois Attorney General is Ben Carson.",
+    "Ben Carson was born in the city of Higashiyamanashi District, Yamanashi."
+   ]
+  },
+  {
+   "q": 60,
+   "edges": [
+    [
+     "Nicholas V",
+     "religion",
+     "?A"
+    ],
+    [
+     "?A",
+     "founder",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Lyndon B. Johnson"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Nicholas V",
+    "want": [
+     "religion or worldview",
+     "founder"
+    ],
+    "steps": [
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "founder",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "Nicholas V is affiliated with the religion of The Church of Jesus Christ of Latter-day Saints."
+   ]
+  },
+  {
+   "q": 61,
+   "edges": [
+    [
+     "Ivanhoe",
+     "author",
+     "?A"
+    ],
+    [
+     "?A",
+     "place of birth",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Mexico City"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Ivanhoe",
+    "want": [
+     "author",
+     "place of birth"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "place of birth",
+      "found": [
+       "place of birth"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The author of Ivanhoe is Walter Scott.",
+    "Walter Scott was born in the city of Mexico City."
+   ]
+  },
+  {
+   "q": 62,
+   "edges": [
+    [
+     "Feluda",
+     "creator",
+     "?A"
+    ],
+    [
+     "?A",
+     "child",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Zygmunt Krasiński"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Feluda",
+    "want": [
+     "creator",
+     "child"
+    ],
+    "steps": [
+     {
+      "want": "creator",
+      "found": [
+       "creator"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "child",
+      "found": [
+       "child"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Feluda was created by Terry Pratchett.",
+    "Terry Pratchett's child is Zygmunt Krasiński."
+   ]
+  },
+  {
+   "q": 63,
+   "edges": [
+    [
+     "NHL on ABC",
+     "original broadcaster",
+     "?A"
+    ],
+    [
+     "?A",
+     "director",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of citizenship",
+     "?C"
+    ],
+    [
+     "?C",
+     "capital",
+     "?D"
+    ]
+   ],
+   "gold": [
+    "New Delhi"
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "NHL on ABC",
+    "want": [
+     "original broadcaster",
+     "director",
+     "country of citizenship",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "original broadcaster",
+      "found": [
+       "original broadcaster"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "director",
+      "found": [
+       "director"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of citizenship",
+      "found": [
+       "country of citizenship"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "capital",
+      "found": null
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "The origianl broadcaster of NHL on ABC is British Broadcasting Corporation.",
+    "The director of British Broadcasting Corporation is Narendra Modi.",
+    "Narendra Modi is a citizen of Australia. 12322."
+   ]
+  },
+  {
+   "q": 64,
+   "edges": [
+    [
+     "Yip Harburg",
+     "country of citizenship",
+     "?A"
+    ],
+    [
+     "?A",
+     "official language",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Finnish"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Yip Harburg",
+    "want": [
+     "country of citizenship",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "country of citizenship",
+      "found": [
+       "country of citizenship"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "official language",
+      "found": [
+       "official language"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Yip Harburg is a citizen of United Kingdom.",
+    "The official language of United Kingdom is Finnish."
+   ]
+  },
+  {
+   "q": 65,
+   "edges": [
+    [
+     "Dune",
+     "author",
+     "?A"
+    ],
+    [
+     "?A",
+     "literary genre",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "progressive rock"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Dune",
+    "want": [
+     "author",
+     "genre"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "genre",
+      "found": [
+       "genre"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The author of Dune is William Shakespeare.",
+    "The type of music that William Shakespeare plays is progressive rock."
+   ]
+  },
+  {
+   "q": 66,
+   "edges": [
+    [
+     "Thomas Dolby",
+     "continent of origin",
+     "?A"
+    ]
+   ],
+   "gold": [
+    "South America"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Thomas Dolby",
+    "want": [
+     "continent"
+    ],
+    "steps": [
+     {
+      "want": "continent",
+      "found": [
+       "place of birth",
+       "continent"
+      ],
+      "how": "bridged"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Thomas Dolby was born in the city of Los Angeles.",
+    "9317. Los Angeles is located in the continent of South America."
+   ]
+  },
+  {
+   "q": 67,
+   "edges": [
+    [
+     "House of Bonaparte",
+     "founded by",
+     "?A"
+    ],
+    [
+     "?A",
+     "educated at",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Trinity College Dublin"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "House of Bonaparte",
+    "want": [
+     "location of formation",
+     "educated at"
+    ],
+    "steps": [
+     {
+      "want": "location of formation",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 68,
+   "edges": [
+    [
+     "Chevrolet Caprice",
+     "manufacturer",
+     "?A"
+    ],
+    [
+     "?A",
+     "place of foundation",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Silver Lake"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Chevrolet Caprice",
+    "want": [
+     "manufacturer",
+     "location of formation"
+    ],
+    "steps": [
+     {
+      "want": "manufacturer",
+      "found": [
+       "manufacturer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "location of formation",
+      "found": [
+       "founded by"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The company that produced Chevrolet Caprice is Boeing.",
+    "Boeing was founded by Martin Goodman."
+   ]
+  },
+  {
+   "q": 69,
+   "edges": [
+    [
+     "Benjamin Sisko",
+     "genre",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ],
+    [
+     "?B",
+     "capital",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Rajanpur"
+   ],
+   "plan_facts": 4,
+   "gold_in_plan": true,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Benjamin Sisko",
+    "want": [
+     "genre",
+     "country of origin",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "genre",
+      "found": [
+       "performer",
+       "genre"
+      ],
+      "how": "bridged"
+     },
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "capital",
+      "found": [
+       "capital"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 4
+   },
+   "chain": [
+    "11662. Benjamin Sisko was performed by Extreme.",
+    "5558. The type of music that Extreme plays is jazz.",
+    "jazz was created in the country of Romania.",
+    "The capital of Romania is Rajanpur."
+   ]
+  },
+  {
+   "q": 70,
+   "edges": [
+    [
+     "David Copperfield",
+     "author",
+     "?A"
+    ],
+    [
+     "?A",
+     "spouse",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of citizenship",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Belgium"
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "David Copperfield",
+    "want": [
+     "author",
+     "spouse",
+     "country of citizenship"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "spouse",
+      "found": [
+       "spouse"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of citizenship",
+      "found": [
+       "country of citizenship"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "The author of David Copperfield is Charles Darwin.",
+    "Charles Darwin is married to Amala Paul. 11736.",
+    "Amala Paul is a citizen of Belgium."
+   ]
+  },
+  {
+   "q": 71,
+   "edges": [
+    [
+     "Francis Parkman",
+     "employer",
+     "?A"
+    ],
+    [
+     "?A",
+     "chairperson",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "William J. Donovan"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Francis Parkman",
+    "want": [
+     "employer",
+     "chairperson"
+    ],
+    "steps": [
+     {
+      "want": "employer",
+      "found": [
+       "employer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "chairperson",
+      "found": [
+       "chairperson"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Francis Parkman is employed by Office of Strategic Services.",
+    "The chairperson of Office of Strategic Services is Robert James Carlson."
+   ]
+  },
+  {
+   "q": 72,
+   "edges": [
+    [
+     "Good Morning America",
+     "director",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of citizenship",
+     "?B"
+    ],
+    [
+     "?B",
+     "capital",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Beaumont"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Good Morning America",
+    "want": [
+     "director",
+     "country of citizenship",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "director",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 73,
+   "edges": [
+    [
+     "Pee Wee King",
+     "country of citizenship",
+     "?A"
+    ],
+    [
+     "?A",
+     "official language",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Hebrew"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Pee Wee King",
+    "want": [
+     "country of citizenship",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "country of citizenship",
+      "found": [
+       "citizen of"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "official language",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "Pee Wee King is a citizen of France."
+   ]
+  },
+  {
+   "q": 74,
+   "edges": [
+    [
+     "Tomokazu Seki",
+     "country of citizenship",
+     "?A"
+    ],
+    [
+     "?A",
+     "official language",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "German"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Tomokazu Seki",
+    "want": [
+     "country of citizenship",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "country of citizenship",
+      "found": [
+       "country of citizenship"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "official language",
+      "found": [
+       "official language"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "14560. Tomokazu Seki is a citizen of United States of America.",
+    "The official language of United States of America is American English."
+   ]
+  },
+  {
+   "q": 75,
+   "edges": [
+    [
+     "Taxman",
+     "director",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of citizenship",
+     "?B"
+    ],
+    [
+     "?B",
+     "continent",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Asia"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Taxman",
+    "want": [
+     "director",
+     "country of citizenship",
+     "continent"
+    ],
+    "steps": [
+     {
+      "want": "director",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 76,
+   "edges": [
+    [
+     "centrifugal governor",
+     "creator",
+     "?A"
+    ],
+    [
+     "?A",
+     "place of birth",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Edinburgh"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "centrifugal governor",
+    "want": [
+     "creator",
+     "place of birth"
+    ],
+    "steps": [
+     {
+      "want": "creator",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 77,
+   "edges": [
+    [
+     "Star Trek canon",
+     "author",
+     "?A"
+    ],
+    [
+     "?A",
+     "spouse",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of citizenship",
+     "?C"
+    ],
+    [
+     "?C",
+     "capital",
+     "?D"
+    ]
+   ],
+   "gold": [
+    "Berlin"
+   ],
+   "plan_facts": 4,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Star Trek canon",
+    "want": [
+     "author",
+     "spouse",
+     "country of citizenship",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "spouse",
+      "found": [
+       "spouse"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of citizenship",
+      "found": [
+       "citizen of"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "capital",
+      "found": [
+       "capital"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 4
+   },
+   "chain": [
+    "The author of Star Trek canon is Joseph Goebbels. 15429.",
+    "Joseph Goebbels is married to Edmund Wilson. 10560.",
+    "Edmund Wilson is a citizen of United Kingdom.",
+    "The capital of United Kingdom is Rupnagar."
+   ]
+  },
+  {
+   "q": 78,
+   "edges": [
+    [
+     "Eric Weissberg",
+     "country of citizenship",
+     "?A"
+    ],
+    [
+     "?A",
+     "official language",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Finnish"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Eric Weissberg",
+    "want": [
+     "country of citizenship",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "country of citizenship",
+      "found": [
+       "country of citizenship"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "official language",
+      "found": [
+       "official language"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Eric Weissberg is a citizen of United Kingdom.",
+    "The official language of United Kingdom is Finnish."
+   ]
+  },
+  {
+   "q": 79,
+   "edges": [
+    [
+     "Tom Selleck",
+     "educated at",
+     "?A"
+    ],
+    [
+     "?A",
+     "location",
+     "?B"
+    ],
+    [
+     "?A",
+     "headquarters location",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Vienna"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Tom Selleck",
+    "want": [
+     "educated at",
+     "location",
+     "headquarters location"
+    ],
+    "steps": [
+     {
+      "want": "educated at",
+      "found": [
+       "educated at"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "location",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "The univeristy where Tom Selleck was educated is Academy of Fine Arts Vienna."
+   ]
+  },
+  {
+   "q": 80,
+   "edges": [
+    [
+     "Mario Puzo",
+     "language of work or name",
+     "?A"
+    ],
+    [
+     "?A",
+     "official language",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "American English"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Mario Puzo",
+    "want": [
+     "language of work or name",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "language of work or name",
+      "found": [
+       "famous for",
+       "language of work"
+      ],
+      "how": "bridged"
+     },
+     {
+      "want": "official language",
+      "found": null
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Mario Puzo is famous for Billy Elliot the Musical.",
+    "Billy Elliot the Musical was written in the language of American English."
+   ]
+  },
+  {
+   "q": 81,
+   "edges": [
+    [
+     "Teenage Fanclub",
+     "country of origin",
+     "?A"
+    ],
+    [
+     "?A",
+     "continent",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Oceania"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Teenage Fanclub",
+    "want": [
+     "country of origin",
+     "continent"
+    ],
+    "steps": [
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "continent",
+      "found": [
+       "continent"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Teenage Fanclub was created in the country of Italy.",
+    "Italy is located in the continent of Oceania. 15153."
+   ]
+  },
+  {
+   "q": 82,
+   "edges": [
+    [
+     "Edward Mooney",
+     "religion",
+     "?A"
+    ],
+    [
+     "?B",
+     "founded by",
+     "?A"
+    ],
+    [
+     "?B",
+     "work location",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Riyadh Region"
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Edward Mooney",
+    "want": [
+     "religion or worldview",
+     "location of formation",
+     "work location"
+    ],
+    "steps": [
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "location of formation",
+      "found": [
+       "founded by"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "work location",
+      "found": [
+       "work location"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "Edward Mooney is affiliated with the religion of Christian Science.",
+    "Christian Science was founded by Ibn Saud.",
+    "Ibn Saud worked in the city of London."
+   ]
+  },
+  {
+   "q": 83,
+   "edges": [
+    [
+     "Lalu Prasad Yadav",
+     "spouse",
+     "?A"
+    ],
+    [
+     "?A",
+     "occupation",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "singer"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Lalu Prasad Yadav",
+    "want": [
+     "spouse",
+     "occupation"
+    ],
+    "steps": [
+     {
+      "want": "spouse",
+      "found": [
+       "spouse"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "occupation",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "Lalu Prasad Yadav is married to Goldust."
+   ]
+  },
+  {
+   "q": 84,
+   "edges": [
+    [
+     "Enrico Villanueva",
+     "sport",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ],
+    [
+     "?B",
+     "capital",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Bondi Junction"
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Enrico Villanueva",
+    "want": [
+     "sport",
+     "country of origin",
+     "capital"
+    ],
+    "steps": [
+     {
+      "want": "sport",
+      "found": [
+       "position played",
+       "sport"
+      ],
+      "how": "bridged"
+     },
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "capital",
+      "found": null
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "Enrico Villanueva plays the position of closer.",
+    "3281. closer is associated with the sport of baseball.",
+    "14700. baseball was created in the country of Japan."
+   ]
+  },
+  {
+   "q": 85,
+   "edges": [
+    [
+     "?A",
+     "author",
+     "Julius Caesar"
+    ],
+    [
+     "?A",
+     "field of work",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "philosopher"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Julius Caesar",
+    "want": [
+     "author",
+     "field of work"
+    ],
+    "steps": [
+     {
+      "want": "author",
+      "found": [
+       "author"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "field of work",
+      "found": [
+       "field of work"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "The author of Julius Caesar is Aristotle. 11231.",
+    "Aristotle works in the field of politician."
+   ]
+  },
+  {
+   "q": 86,
+   "edges": [
+    [
+     "Benigno Aquino Jr.",
+     "spouse",
+     "?A"
+    ],
+    [
+     "?A",
+     "religion",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Methodism"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Benigno Aquino Jr.",
+    "want": [
+     "spouse",
+     "religion or worldview"
+    ],
+    "steps": [
+     {
+      "want": "spouse",
+      "found": [
+       "spouse"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Benigno Aquino Jr. is married to Corazon Aquino.",
+    "Corazon Aquino is affiliated with the religion of Methodism."
+   ]
+  },
+  {
+   "q": 87,
+   "edges": [
+    [
+     "WWE Tough Enough",
+     "creator",
+     "?A"
+    ],
+    [
+     "?A",
+     "spouse",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of citizenship",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Ireland"
+   ],
+   "plan_facts": 3,
+   "gold_in_plan": true,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "WWE Tough Enough",
+    "want": [
+     "creator",
+     "spouse",
+     "country of citizenship"
+    ],
+    "steps": [
+     {
+      "want": "creator",
+      "found": [
+       "creator"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "spouse",
+      "found": [
+       "spouse"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of citizenship",
+      "found": [
+       "citizenship"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 3
+   },
+   "chain": [
+    "WWE Tough Enough was created by William Shakespeare.",
+    "William Shakespeare is married to Philip IV of France.",
+    "Philip IV of France is a citizen of Ireland."
+   ]
+  },
+  {
+   "q": 88,
+   "edges": [
+    [
+     "Outsourced",
+     "country of origin",
+     "?A"
+    ],
+    [
+     "?A",
+     "head of state",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Recep Tayyip Erdoğan"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Outsourced",
+    "want": [
+     "country of origin",
+     "head of state"
+    ],
+    "steps": [
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "head of state",
+      "found": [
+       "current head of state"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Outsourced was created in the country of Turkey. 17728.",
+    "The name of the current head of state in Turkey is Guðni Jóhannesson."
+   ]
+  },
+  {
+   "q": 89,
+   "edges": [
+    [
+     "NBA on ABC",
+     "original broadcaster",
+     "?A"
+    ],
+    [
+     "?A",
+     "headquarters location",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Red Bank"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "NBA on ABC",
+    "want": [
+     "original broadcaster",
+     "headquarters location"
+    ],
+    "steps": [
+     {
+      "want": "original broadcaster",
+      "found": [
+       "original broadcaster"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "headquarters location",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "13862. The origianl broadcaster of NBA on ABC is British Broadcasting Corporation."
+   ]
+  },
+  {
+   "q": 90,
+   "edges": [
+    [
+     "Dzhokhar Dudayev",
+     "religion",
+     "?A"
+    ],
+    [
+     "?A",
+     "founder",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "Gérard Blitz"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Dzhokhar Dudayev",
+    "want": [
+     "religion or worldview",
+     "founder"
+    ],
+    "steps": [
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "founder",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "Dzhokhar Dudayev is affiliated with the religion of Catholic Church."
+   ]
+  },
+  {
+   "q": 91,
+   "edges": [
+    [
+     "Brad Stevens",
+     "sport",
+     "?A"
+    ],
+    [
+     "?A",
+     "country",
+     "?B"
+    ],
+    [
+     "?B",
+     "head of state",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Mikhail Gorbachev"
+   ],
+   "plan_facts": 1,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Brad Stevens",
+    "want": [
+     "sport",
+     "country",
+     "head of state"
+    ],
+    "steps": [
+     {
+      "want": "sport",
+      "found": [
+       "sport"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country",
+      "found": null
+     }
+    ],
+    "facts": 1
+   },
+   "chain": [
+    "Brad Stevens is associated with the sport of basketball."
+   ]
+  },
+  {
+   "q": 92,
+   "edges": [
+    [
+     "1985 NBA Draft",
+     "sport",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ],
+    [
+     "?B",
+     "head of government",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Lili Bosse"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "1985 NBA Draft",
+    "want": [
+     "sport",
+     "country of origin",
+     "head of government"
+    ],
+    "steps": [
+     {
+      "want": "sport",
+      "found": [
+       "sport"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "head of government",
+      "found": null
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "1985 NBA Draft is associated with the sport of association football.",
+    "association football was created in the country of Italy."
+   ]
+  },
+  {
+   "q": 93,
+   "edges": [
+    [
+     "Ricky Rubio",
+     "sport",
+     "?A"
+    ],
+    [
+     "?A",
+     "country of origin",
+     "?B"
+    ],
+    [
+     "?B",
+     "capital",
+     "?C"
+    ],
+    [
+     "?C",
+     "located in",
+     "?D"
+    ]
+   ],
+   "gold": [
+    "Bondi Junction"
+   ],
+   "plan_facts": 0,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Ricky Rubio",
+    "want": [
+     "sport",
+     "country of origin",
+     "capital",
+     "location"
+    ],
+    "steps": [
+     {
+      "want": "sport",
+      "found": null
+     }
+    ],
+    "facts": 0
+   },
+   "chain": []
+  },
+  {
+   "q": 94,
+   "edges": [
+    [
+     "Flogging Molly",
+     "country of origin",
+     "?A"
+    ],
+    [
+     "?A",
+     "primary language",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "English"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": false,
+   "right_in_b": true,
+   "log": {
+    "start": "Flogging Molly",
+    "want": [
+     "country of origin",
+     "official language"
+    ],
+    "steps": [
+     {
+      "want": "country of origin",
+      "found": [
+       "country of origin"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "official language",
+      "found": [
+       "official language"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Flogging Molly was created in the country of United States of America.",
+    "The official language of United States of America is American English."
+   ]
+  },
+  {
+   "q": 95,
+   "edges": [
+    [
+     "Link",
+     "creator",
+     "?A"
+    ],
+    [
+     "?A",
+     "employer",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "University of Oxford"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Link",
+    "want": [
+     "creator",
+     "employer"
+    ],
+    "steps": [
+     {
+      "want": "creator",
+      "found": [
+       "creator"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "employer",
+      "found": [
+       "employer"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Link was created by Shigeru Miyamoto.",
+    "Shigeru Miyamoto is employed by University of Oxford."
+   ]
+  },
+  {
+   "q": 96,
+   "edges": [
+    [
+     "Dave Dombrowski",
+     "employer",
+     "?A"
+    ],
+    [
+     "?A",
+     "sport",
+     "?B"
+    ],
+    [
+     "?B",
+     "country of origin",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Australia"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": true,
+   "right_in_b": false,
+   "log": {
+    "start": "Dave Dombrowski",
+    "want": [
+     "employer",
+     "sport",
+     "country of origin"
+    ],
+    "steps": [
+     {
+      "want": "employer",
+      "found": [
+       "employer"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "sport",
+      "found": [
+       "associated with sport"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "country of origin",
+      "found": null
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Dave Dombrowski is employed by Stevenage F.C..",
+    "Stevenage F.C. is associated with the sport of American football. 17287."
+   ]
+  },
+  {
+   "q": 97,
+   "edges": [
+    [
+     "Bobby Hurley",
+     "position played",
+     "?A"
+    ],
+    [
+     "?A",
+     "sport",
+     "?B"
+    ]
+   ],
+   "gold": [
+    "sumo"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": true,
+   "gold_in_mode_c": true,
+   "right_in_b": true,
+   "log": {
+    "start": "Bobby Hurley",
+    "want": [
+     "position played on team / speciality",
+     "sport"
+    ],
+    "steps": [
+     {
+      "want": "position played on team / speciality",
+      "found": [
+       "position played"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "sport",
+      "found": [
+       "sport"
+      ],
+      "how": "direct"
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Bobby Hurley plays the position of midfielder. 8862.",
+    "midfielder is associated with the sport of sumo."
+   ]
+  },
+  {
+   "q": 98,
+   "edges": [
+    [
+     "Jacqueline Kennedy Onassis",
+     "religion",
+     "?A"
+    ],
+    [
+     "?A",
+     "founded by",
+     "?B"
+    ],
+    [
+     "?B",
+     "place of employment",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Edinburgh"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Jacqueline Kennedy Onassis",
+    "want": [
+     "religion or worldview",
+     "location of formation",
+     "work location"
+    ],
+    "steps": [
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "location of formation",
+      "found": [
+       "founded by"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "work location",
+      "found": null
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Jacqueline Kennedy Onassis is affiliated with the religion of Church of Scotland.",
+    "Church of Scotland was founded by Bachir Gemayel."
+   ]
+  },
+  {
+   "q": 99,
+   "edges": [
+    [
+     "Ferdinando I de' Medici",
+     "religion",
+     "?A"
+    ],
+    [
+     "?B",
+     "founder",
+     "?A"
+    ],
+    [
+     "?B",
+     "place of birth",
+     "?C"
+    ]
+   ],
+   "gold": [
+    "Epworth"
+   ],
+   "plan_facts": 2,
+   "gold_in_plan": false,
+   "gold_in_mode_c": false,
+   "right_in_b": false,
+   "log": {
+    "start": "Ferdinando I de' Medici",
+    "want": [
+     "religion or worldview",
+     "founder",
+     "place of birth"
+    ],
+    "steps": [
+     {
+      "want": "religion or worldview",
+      "found": [
+       "religion"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "founder",
+      "found": [
+       "founder"
+      ],
+      "how": "direct"
+     },
+     {
+      "want": "place of birth",
+      "found": null
+     }
+    ],
+    "facts": 2
+   },
+   "chain": [
+    "Ferdinando I de' Medici is affiliated with the religion of Methodism. 11091.",
+    "Methodism was founded by Joseph Goebbels."
+   ]
+  }
+ ]
+}

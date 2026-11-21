@@ -1,0 +1,10 @@
+test: test-06-trex-structure-guide
+runs_configs:
+  - configs/runs/exp/tg/b_guide.yaml
+  - configs/runs/exp/tg/c_bridge.yaml
+  - configs/runs/exp/tg/d_background.yaml
+baseline: configs/runs/exp/wm/a_modec_empty.yaml
+free_steps:
+  - scripts/fir/trex_props.sbatch
+  - scripts/fir/trex_guide.sbatch
+  - scripts/fir/guide_check.sbatch

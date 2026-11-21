@@ -1,0 +1,146 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>T-REx structure guide</title><style>body{font:15px/1.55 -apple-system,Helvetica,Arial,sans-serif;color:#1f2328;background:#fff;margin:0}main{max-width:900px;margin:28px auto;padding:0 18px}h2{border-bottom:2px solid #1f2328;padding-bottom:4px;margin-top:32px}table{border-collapse:collapse;font-size:13.5px;margin:8px 0}th,td{border:1px solid #d1d9e0;padding:5px 9px;text-align:left;vertical-align:top}th{background:#f6f8fa}code{background:#f6f8fa;padding:1px 4px}</style><main><h1>T-REx as a structure guide, not an answer source (design, for review)</h1>
+<p>Test 06 in GRAFT alone. No code yet.</p>
+<h2>Why</h2>
+<p>Test 04: with T-REx facts in the graph, two thirds of the 50 fact slots went to T-REx sentences. The edited document facts were
+crowded out, and a few T-REx facts contradicted the gold (test 04 run-02 analysis). The idea: keep what T-REx knows about how
+facts connect, and never let a T-REx fact reach the answering model.</p>
+<h2>What gets extracted from T-REx (once, a CPU job, no LLM, $0)</h2>
+<p>From the original full T-REx base already on Fir (1,215,416 facts, 45 Wikidata properties), one file <code>trex_guide.json</code>. It holds
+only properties, types and counts, no (subject, object) pairs:</p>
+<ol>
+<li><strong>Relation list.</strong> The 45 property IDs, labels and Wikidata aliases (e.g. P413 &quot;position played on team / speciality&quot;, aliases
+&quot;plays the position of&quot;, &quot;position&quot;).</li>
+<li><strong>Type signatures.</strong> For each property, the most common entity types of its subjects and objects, from P31 instance of and
+P279 subclass of, rolled up to about 30 coarse types (human, sport, country, city, organisation, creative work, language,
+religion...). Example: P413 goes from human to position; P641 goes from anything to sport; P495 goes from work or sport to
+country.</li>
+<li><strong>Chain statistics.</strong> Counts of 2-hop and 3-hop property chains, where the object of one fact is the subject of the next
+(P413 then P641, P641 then P495). They are stored as P(next property | property, type of the middle entity), with the top
+chains per starting type.</li>
+<li><strong>Relation shape.</strong> Whether each property usually has one value per subject (P27 citizenship, P19 birthplace: one) or many
+(P161 cast member). Inverse pairs (P150 contains / P131 located in, P527 has part / P361 part of).</li>
+<li><strong>Name to type, for linking only.</strong> For each T-REx entity name, its coarse types. This is the only entity-level part. It
+says what kind of thing a name is, never what it relates to.</li>
+</ol>
+<p><strong>Step 0, coverage check (free, before anything else).</strong> FactConsolidation uses some relations outside the 45 kept in the base:
+continent, author, founder, religion, chief executive, manufacturer, original broadcaster, notable work, official language.
+Step 0 parses the 100 questions with the existing question parser (test 05 arm B's logged parses if they are complete, otherwise one parse pass, about $0.01) and maps each
+relation to a property. It reports how many chains the guide covers. If coverage is low, the counts in 2 to 4 are redone over
+the raw T-REx dump for those extra properties (CPU job, still free).</p>
+<h2>Where it is used</h2>
+<p><strong>Linking (while the document graph is built).</strong> GRAFT builds its graph from the documents only, as in arm A. The guide is a
+post-pass over that graph, with no LLM:</p>
+<ul>
+<li><strong>Relation canonicalisation.</strong> Each relation label the writer produced (&quot;origianl broadcaster&quot;, &quot;original network&quot;) is mapped
+to one property by embedding similarity to the property labels and aliases. The type signature of its subjects and objects
+then confirms or rejects the match. Labels with no confident match stay as written. Then revisions are recomputed on
+(subject, property). Two versions of one fact written with different labels now become one chain, and &quot;the newer fact wins&quot;
+holds.</li>
+<li><strong>Same-entity decisions.</strong> Two document names are merged only if their types agree. The type comes from the T-REx name lookup
+or from the relation signatures (a name that is the subject of P413 is a human). Merges with conflicting types are refused, and
+every merge is logged.</li>
+</ul>
+<p><strong>Planning (at question time).</strong> The question parser runs as in the question layer (one Haiku call per question, already in
+test 05 arm B). Its relation labels are mapped to properties the same way. The guide then:</p>
+<ul>
+<li>scores the parsed chain: type agreement between hops, and how common the chain is in T-REx. If the parse is unlikely (e.g. a
+middle hop type that never starts the next relation), it picks the most common chain that starts from the question entity's
+type and ends in the type the question asks for (&quot;which continent&quot;, &quot;what language&quot;).</li>
+<li><strong>follows the plan through the document graph.</strong> From the question entity, it takes the current (newest) document fact with
+the first property, moves to its object, takes the current fact with the second property, and so on. These chain facts go
+first in the 50 slots. The rest are filled by mode C retrieval as now. Facts on the planned properties get a higher
+PageRank weight.</li>
+</ul>
+<p><strong>Never.</strong> No T-REx fact, sentence or entity is added to the graph or the prompt. The answering model sees only document facts,
+with the same prompt as arm A. The guide's relation names go only into the internal plan, never to the answering call.</p>
+<h2>Arms (the same 100 FactConsolidation multi-hop questions, Haiku, 256-token answers, 3 repeats each)</h2>
+<table>
+<thead>
+<tr>
+<th>Arm</th>
+<th>Graph</th>
+<th>Guide</th>
+<th>Facts returned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>empty start, documents only</td>
+<td>none</td>
+<td>documents (mode C)</td>
+</tr>
+<tr>
+<td>B</td>
+<td>empty start, documents only</td>
+<td>linking post-pass + planning</td>
+<td>documents: planned chain first, then mode C</td>
+</tr>
+<tr>
+<td>C</td>
+<td>the full T-REx graph from test 04 (original)</td>
+<td>none</td>
+<td>documents only</td>
+</tr>
+</tbody>
+</table>
+<p>Arm C is the bridge test. T-REx edges stay in the PageRank walk at weight 0.2 (document edges 1.0), and only document facts can
+be selected. It reuses the test 04 graph and saved node vectors, so no rebuild.</p>
+<p>A is rerun in the same job as B (same code) rather than reusing 34.7, because retrieval varies from run to run
+(baseline_check.md in test 05). Optional, about $0.10 each: B-link (post-pass only) and B-plan (planning only), to see which part
+helps.</p>
+<p>Keep rule: B (or C) is kept if it beats A by more than the repeat spread.</p>
+<h2>Cost and time</h2>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Where</th>
+<th>API cost</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Guide extraction + step 0</td>
+<td>Fir CPU</td>
+<td>$0 to $0.01</td>
+<td>30 to 60 min</td>
+</tr>
+<tr>
+<td>Code (guide, post-pass, planner, weighted walk, document-only filter) + unit tests</td>
+<td>Mac (small tests only)</td>
+<td>$0</td>
+<td>4 to 6 h</td>
+</tr>
+<tr>
+<td>A and B, 3 repeats each</td>
+<td>Fir CPU</td>
+<td>about $0.08 (A) + $0.12 (B, parser + answer)</td>
+<td>about 30 min each</td>
+</tr>
+<tr>
+<td>C, 3 repeats</td>
+<td>Fir CPU (1.58M-node graph)</td>
+<td>about $0.08</td>
+<td>3 to 5 h, with a 6 h limit</td>
+</tr>
+<tr>
+<td>Total</td>
+<td></td>
+<td>about $0.30, with a $1 cap per job (about $0.50 with both optional arms)</td>
+<td>about a day</td>
+</tr>
+</tbody>
+</table>
+<p>All spend is logged in docs/run_log.md. Keep the halt check (stop if most questions get no facts) in every job.</p>
+<h2>Risks</h2>
+<ul>
+<li>The guide may barely change the documents' graph. FactConsolidation labels are fairly regular, so canonicalisation may merge
+little; step 0 and the post-pass log show this before any paid run.</li>
+<li>Planning that follows a wrong chain could push correct facts out. The planned chain takes at most the first 10 slots, and
+mode C fills the rest.</li>
+<li>The T-REx type lookup is real-world knowledge about names. It says what kind of thing a name is, never a relation value, so
+it cannot contradict an edited fact.</li>
+</ul>
+</main>

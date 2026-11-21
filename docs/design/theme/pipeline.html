@@ -1,0 +1,57 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Nun;src:url(Nunito-600.ttf);font-weight:600}
+@font-face{font-family:Nun;src:url(Nunito-700.ttf);font-weight:700}
+@font-face{font-family:Nun;src:url(Nunito-800.ttf);font-weight:800}
+body{margin:0} svg text{font-family:Nun}
+</style></head><body>
+<svg id="art" width="1240" height="560" viewBox="0 0 1240 560"></svg>
+<script>
+const NAVY='#22344A', IV='#F3EFE6', CARD='#FFFDF8', LINE='#E2DCCF', INK='#2A2723', INK2='#5F5A52', INK3='#8E887D', YEL='#F2C230', RED='#C8362E', GRN='#5FA845';
+let h=`<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 Z" fill="${NAVY}"/></marker>
+<filter id="sh" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#2A2723" flood-opacity=".10"/></filter>
+</defs>`;
+h+=`<rect width="1240" height="560" rx="28" fill="${IV}"/>`;
+function card(x,y,w,ht,title,sub,accent=NAVY,tag=null){
+  let g=`<g filter="url(#sh)"><rect x="${x}" y="${y}" width="${w}" height="${ht}" rx="16" fill="${CARD}" stroke="${LINE}" stroke-width="1.5"/></g>`;
+  g+=`<rect x="${x}" y="${y+14}" width="5" height="${ht-28}" rx="2.5" fill="${accent}"/>`;
+  g+=`<text x="${x+18}" y="${y+(sub?32:ht/2+6)}" font-size="15.5" font-weight="800" fill="${INK}">${title}</text>`;
+  if(sub) sub.forEach((l,i)=>g+=`<text x="${x+18}" y="${y+53+i*17}" font-size="12.5" font-weight="600" fill="${INK2}">${l}</text>`);
+  if(tag) g+=`<rect x="${x+w-tag.length*7.2-24}" y="${y+12}" width="${tag.length*7.2+12}" height="20" rx="10" fill="${accent}"/><text x="${x+w-18}" y="${y+26}" font-size="10.5" font-weight="800" fill="${accent===YEL?INK:'#fff'}" text-anchor="end">${tag}</text>`;
+  return g;
+}
+const arrow=(x1,y1,x2,y2)=>`<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${NAVY}" stroke-width="2.6" fill="none" marker-end="url(#ar)"/>`;
+// titles
+h+=`<text x="34" y="46" font-size="24" font-weight="800" fill="${INK}">How GRAFT remembers and answers</text>`;
+h+=`<text x="34" y="70" font-size="14" font-weight="600" fill="${INK2}">Facts keep their source and time. A newer fact supersedes an older one instead of overwriting it.</text>`;
+// row labels
+h+=`<text x="34" y="116" font-size="13" font-weight="800" fill="${GRN}" letter-spacing="1.5">WRITE · once per document chunk</text>`;
+h+=`<text x="34" y="336" font-size="13" font-weight="800" fill="${NAVY}" letter-spacing="1.5">READ · once per question</text>`;
+// WRITE row
+const wy=132, wh=118;
+h+=card(34,wy,170,wh,'Document chunk',['text arrives','in order'],INK3);
+h+=card(240,wy,190,wh,'Extract facts',['(subject, relation,','object) + source span'],GRN,'LLM');
+h+=card(466,wy,190,wh,'Link names',['to entities already','in the graph'],GRN);
+h+=card(692,wy,232,wh,'Decide each fact',['ADD · MERGE','SUPERSEDE · IGNORE','old versions are kept'],RED,'LLM');
+h+=card(960,wy,246,wh,'Graph memory',['entities, facts, sources,','supersede links'],GRN);
+h+=`<image href="assets/graft.png" x="1138" y="${wy+40}" width="62" height="62"/>`;
+h+=arrow(204,wy+59,236,wy+59)+arrow(430,wy+59,462,wy+59)+arrow(656,wy+59,688,wy+59)+arrow(924,wy+59,956,wy+59);
+// link graph down to the read path (PageRank walks the graph)
+h+=`<path d="M1083 ${wy+wh} L1083 300 L302 300 L302 ${352-4}" stroke="${INK3}" stroke-width="2.4" stroke-dasharray="4 5" fill="none" marker-end="url(#ar)"/>`;
+h+=`<text x="1095" y="288" font-size="12" font-weight="700" fill="${INK3}">walks the graph</text>`;
+// READ row
+const ry=352, rhh=128;
+h+=card(34,ry,150,rhh,'Question',['find its','entities'],INK3);
+h+=card(214,ry,176,rhh,'PageRank',['walk out from the','question\'s entities,','keep 400 nodes'],NAVY);
+h+=card(420,ry,176,rhh,'GCN + GOAt',['score nodes, explain','which edges matter'],NAVY);
+h+=card(626,ry,176,rhh,'Short PageRank',['second walk from','the explainer\'s picks','(mode C)'],NAVY);
+h+=card(832,ry,176,rhh,'Newest version',['follow supersede','links, cut to','50 facts'],RED);
+h+=card(1038,ry,168,rhh,'Answer',['the LLM answers','from those facts'],GRN,'LLM');
+h+=arrow(184,ry+64,210,ry+64)+arrow(390,ry+64,416,ry+64)+arrow(596,ry+64,622,ry+64)+arrow(802,ry+64,828,ry+64)+arrow(1008,ry+64,1034,ry+64);
+// footnote
+h+=`<text x="34" y="526" font-size="12.5" font-weight="600" fill="${INK3}">Tested: a base knowledge graph under the documents (RoG, T-REx), a question layer, and working memory written into the graph. See experiments/INDEX.md.</text>`;
+document.getElementById('art').innerHTML=h;
+</script>
+</body></html>

@@ -1,0 +1,20 @@
+# PAID (Haiku baseline check, 2026-11-21): no retrieval; today's Haiku re-answers the exact facts the 2026-11-13 run (38)
+# retrieved, with the same prompt, 3 repeats. About 38 means retrieval moved; about 35 means the answers moved.
+run_name: exp_real_replay38
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  max_facts: 50
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+  replay_retrieved: /home/khaledmk/scratch/sgar/results/runs/exp_c_real_mh_262k_ans256_20261113-115012/repeat_0/scored.jsonl
+data:
+  length: 262k
+  splits: [mh]
+llm:
+  model: claude-haiku-5-5
+  mode: real
+  answer_max_tokens: 256
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 3

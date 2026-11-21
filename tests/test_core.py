@@ -196,3 +196,217 @@ def test_shared_graph_is_built_once_then_loaded(tmp_path):
     first = GraftAgent(cfg, gw, task).memorize(task.chunks)
     second = GraftAgent(cfg, gw, task).memorize(["2. A is a citizen of C."])
     assert first["graph"]["facts"] == 1 and second["writer"] == {"reused_graph": str(tmp_path / "g.json")}
+
+
+def _small_store():
+    store = GraphStore()
+    store.add_fact("Pee Wee King", "country of citizenship", "France", Provenance(0, store.take_arrival(), 1, "1. a"))
+    store.add_fact("France", "official language", "Hebrew", Provenance(1, store.take_arrival(), 2, "2. b"))
+    for i in range(20):
+        store.add_fact(f"Person {i}", "country of citizenship", "France", Provenance(2, store.take_arrival(), 10 + i, f"x {i}"))
+    return store
+
+
+@pytest.mark.parametrize("explainer", ["goat", "eig"])
+def test_embedding_linking_and_hybrid_on_mode_c(explainer):
+    """link_embed_k keeps the exact matches first and adds k more entities; hybrid interleaves the mode's ranking
+    with embedding search, without duplicates, and still returns only newest facts within the budget."""
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    q = "What language does Pee Wee King's country speak?"
+    base = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=10, explainer=explainer), texts, model)
+    linked = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=10, explainer=explainer,
+                                              link_embed_k=3), texts, model)
+    assert base.link(q) == ["e:pee wee king"]
+    got = linked.link(q)
+    assert got[0] == "e:pee wee king" and len(got) == 4 and len(set(got)) == 4
+    both = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=10, explainer=explainer,
+                                            link_embed_k=3, hybrid=True), texts, model)
+    region = both.retrieve(q)
+    assert region.facts and len(region.facts) == len(set(region.facts)) <= 10
+    ranked = ["f:a", "f:b", "f:c"]
+    both._similar_facts = lambda question: ["f:b", "f:x", "f:y"]
+    assert both._merge(q, ranked) == ["f:a", "f:b", "f:x", "f:c", "f:y"]  # one from each in turn
+
+
+def test_hybrid_labels_sources_and_embed_mode_needs_no_gnn():
+    from baselines.claude_gateway.embeddings import load_embedder
+    from eval.attribution import classify
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    q = "What language does Pee Wee King's country speak?"
+    model = make_model(feature_dim(16), 8).eval()
+    hyb = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, hybrid=True), texts, model).retrieve(q)
+    assert len(hyb.sources) == len(hyb.facts) and set(hyb.sources) <= {"graph", "embed", "both"}
+    emb = Retriever(store, RetrievalConfig(mode="embed", max_facts=5), texts, None).retrieve(q)
+    assert len(emb.facts) == 5 and emb.sources == ["embed"] * 5
+    row = {"answers": ["Hebrew"], "answer_in_retrieved": True, "fact_sources": ["graph", "embed"],
+           "retrieved_text": "Memory 1:\nFrance official language Hebrew\n\nMemory 2:\nsomething else\n"}
+    assert classify(row) == "only_graph"
+    row["fact_sources"] = ["both", "embed"]
+    assert classify(row) == "both"
+
+
+def test_hybrid_k_keeps_graph_head_and_adds_k_new_embedding_facts():
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    r = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, hybrid_k=2, explainer="eig"), texts, model)
+    r._similar_facts = lambda q: ["f:a", "f:x", "f:y", "f:z"]
+    merged = r._merge("q", ["f:a", "f:b", "f:c", "f:d", "f:e", "f:f"])
+    assert merged[:4] == ["f:a", "f:b", "f:c", "f:d"] and merged[4:6] == ["f:x", "f:y"]  # f:a already in the head
+    region = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, hybrid_k=2, explainer="eig"),
+                       texts, model).retrieve("What language does Pee Wee King's country speak?")
+    assert len(region.facts) <= 6 and len(region.sources) == len(region.facts) and set(region.sources) <= {"graph", "embed"}
+
+
+def test_question_graph_is_attached_used_and_removed():
+    """query_graph: parsed edges become temporary nodes linked through matched entities; they seed PPR and enter the
+    GNN subgraph, never appear among retrieved facts, and leave the graph unchanged afterwards."""
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    nodes_before, edges_before = store.g.number_of_nodes(), store.g.number_of_edges()
+    simple_before = store.simple_graph().number_of_nodes()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    q = "What language does Pee Wee King's country speak?"
+    r = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, explainer="eig", query_graph=True),
+                  texts, model)
+    r.prepare_queries([q], lambda question: [("Pee Wee King", "country of citizenship", "?A"),
+                                              ("?A", "official language", "?B")])
+    region = r.retrieve(q)
+    assert region.query_graph["matched"] == ["e:pee wee king"]
+    assert region.facts and not any(f.startswith("qf:") for f in region.facts)
+    assert store.g.number_of_nodes() == nodes_before and store.g.number_of_edges() == edges_before
+    assert store.simple_graph().number_of_nodes() == simple_before
+    assert not any(str(n).startswith(("q:", "qf:")) for n in store.g)
+
+
+def test_question_graph_needs_no_embedding_after_prepare():
+    """Workers are forked and cannot embed: after prepare_queries, retrieval must only read cached vectors."""
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    q = "What language does Pee Wee King's country speak?"
+    texts.embed_texts([n if not n.startswith(("e:", "f:")) else __import__("my_method.gnn.features", fromlist=["node_text"]).node_text(store, n)
+                       for n in store.g.nodes] + [q])  # what the agent embeds before forking
+    r = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, explainer="eig", query_graph=True),
+                  texts, model)
+    r.prepare_queries([q], lambda question: [("Pee Wee King", "Country Of Citizenship", "?A"),
+                                              ("?A", "official language", "?B"), ("Unknown Person", "spouse", "?A")])
+
+    class NoEmbed:
+        dim = texts.dim
+        def embed(self, batch):
+            raise AssertionError(f"embedding after prepare: {batch}")
+    texts.embedder = NoEmbed()
+    region = r.retrieve(q)
+    assert region.facts
+
+
+def test_entity_linker_maps_names_to_base_entities_and_logs():
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder
+    from my_method.writer import EntityLinker, NewFact, WriterStats
+
+    base = GraphStore()
+    f = base.add_fact("United States of America", "capital", "Washington, D.C.", Provenance(-1, base.take_arrival(), None, "x"))
+    for n in base.g.nodes:
+        base.g.nodes[n]["layer"] = "base"
+    calls = []
+
+    class FakeLLM:
+        def complete(self, system, user, max_tokens):
+            calls.append(user)
+            picks, tag, wants_us = [], None, False
+            for l in user.splitlines() + ["N0: end"]:
+                if l.startswith("N"):
+                    if tag and not any(p["name"] == tag for p in picks):
+                        picks.append({"name": tag, "match": "new"})
+                    tag, wants_us = l.split(":")[0], "USA" in l.split("[from:")[0]
+                elif wants_us and l.strip().startswith("c") and l.split(":", 1)[1].strip().startswith("United States"):
+                    picks.append({"name": tag, "match": l.strip().split(":")[0]})
+            return type("R", (), {"text": json.dumps({"links": picks})})()
+
+    texts = TextEmbedder(load_embedder("hash:16"))
+    stats = WriterStats()
+    linker = EntityLinker(FakeLLM(), base, texts, stats, k=3)
+    out = linker.link(0, [NewFact("USA", "official language", "Elvish", 1, "1. USA ...")], base)
+    assert out[0].subject == "United States of America" and out[0].object == "Elvish"
+    assert len(calls) == 1 and stats.linking["matched_base"] == 1 and stats.linking["new"] == 1
+    out2 = linker.link(1, [NewFact("USA", "head of state", "Somebody", 2, "2. USA ...")], base)
+    assert out2[0].subject == "United States of America" and len(calls) == 2  # USA cached; only "Somebody" asked
+    assert {d["name"] for d in linker.log} == {"USA", "Elvish", "Somebody"}
+
+
+def test_question_layer_uses_llm_links_not_the_embedding_threshold():
+    from baselines.claude_gateway.embeddings import load_embedder
+    from my_method.gnn.features import TextEmbedder, feature_dim
+    from my_method.gnn.train import make_model
+    from my_method.retrieval import RetrievalConfig, Retriever
+    store = _small_store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    q = "What language does Pee Wee King's country speak?"
+    cfg = RetrievalConfig(mode="ppr_goat_ppr", max_nodes=12, max_facts=6, explainer="eig", query_graph=True,
+                          query_linking="llm", query_match_min=0.0)
+    r = Retriever(store, cfg, texts, model)
+    r.prepare_queries([q], lambda question: [("PWK", "country of citizenship", "?A")])
+    r.prepare_query_links([q], lambda question, names: {"PWK": "e:pee wee king"})
+    assert r.retrieve(q).query_graph["matched"] == ["e:pee wee king"]
+    r2 = Retriever(store, cfg, texts, model)
+    r2.prepare_queries([q], lambda question: [("PWK", "country of citizenship", "?A")])
+    r2.prepare_query_links([q], lambda question, names: {"PWK": None})  # Haiku said "new": no threshold fallback
+    assert r2.retrieve(q).query_graph["matched"] == []
+
+
+def test_build_resumes_from_checkpoint_after_a_cut_off(tmp_path):
+    """A build cut off mid-way resumes from the last checkpoint: earlier chunks are not written again."""
+    from baselines.common.protocol import Task
+    from my_method.agent import GraftAgent
+    cfg = {"model": "claude-haiku-5-5", "writer": "rule", "revisions": True, "embedding_model": "hash:16",
+           "work_dir": str(tmp_path / "w"), "retrieval": "ppr", "max_facts": 5, "max_tokens": 5120,
+           "include_outdated": False, "goat_targets": 3, "goat_topk": 12, "shared_graph": str(tmp_path / "g.json"),
+           "checkpoint_every": 2}
+    gw = type("G", (), {"anthropic_base_url": "http://unused"})()
+    chunks = [f"{i + 1}. Person {i} is a citizen of Country {i}." for i in range(5)]
+    task = Task(sub_datasets=["factconsolidation_mh_6k"], chunk_size=512, chunks=chunks, questions=[])
+    agent = GraftAgent(cfg, gw, task)
+    seen = []
+    real = agent.writer.write_chunk
+
+    def crash_at_4(chunk_id, text, store):
+        if chunk_id == 4:
+            raise TimeoutError("job time limit")
+        seen.append(chunk_id)
+        real(chunk_id, text, store)
+    agent.writer.write_chunk = crash_at_4
+    with pytest.raises(TimeoutError):
+        agent.memorize(chunks)
+    assert (tmp_path / "g.json.partial.json").exists() and seen == [0, 1, 2, 3]
+    agent2 = GraftAgent(cfg, gw, task)
+    seen2 = []
+    real2 = agent2.writer.write_chunk
+    agent2.writer.write_chunk = lambda c, t, s: (seen2.append(c), real2(c, t, s))
+    info = agent2.memorize(chunks)
+    assert seen2 == [4] and info["graph"]["facts"] == 5  # only the unwritten chunk; all 5 facts present
+    assert not (tmp_path / "g.json.partial.json").exists()  # checkpoint removed once the graph is saved

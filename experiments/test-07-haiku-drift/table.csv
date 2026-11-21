@@ -1,0 +1,5 @@
+date,run,repeats,accuracy_mean,accuracy_sd,per_repeat,gold_in_final_facts,mean_output_tokens,cost_per_100_questions_usd,folder
+2026-11-13,2026-11-13 run (mode C),1,38.0,0,38,51.0,63.0,0.027,runs/run-01/exp_c_real_mh_262k_ans256_20261113-115012
+2026-11-21,"The 2026-11-13 commit, today",3,36.0,0.0,36 / 36 / 36,51.0,67.5,0.027,runs/run-01/exp_c_real_mh_262k_ans256_rerun28d4fd5_20261121-011654
+2026-11-21,Today's code (test 05 arm A),3,34.7,1.5,36 / 33 / 35,50.3,62.9,0.027,../test-05-working-memory/runs/run-02/exp_real_wm_empty_a_modec_rerun1121_20261121-011005
+2026-11-21,"Replay of the 2026-11-13 facts, today",3,34.3,1.5,34 / 36 / 33,51.0,63.8,0.027,runs/run-01/exp_real_replay38_20261121-010340

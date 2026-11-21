@@ -1,0 +1,9 @@
+| run | pass | what | repeats | accuracy_mean | accuracy_sd | per_repeat | gold_in_final_facts | cost_per_100_questions_usd | folder |
+|---|---|---|---|---|---|---|---|---|---|
+| run-02 | EiG | Mode C, EiG | 3 | 17.7 | 2.5 | 18 / 15 / 20 | 33.3 | 0.066 | runs/run-02/exp_c_real_mh_262k_ans256_trexfull_eig_pprfix_20261120-175733 |
+| run-02 | GOAt | Mode C, GOAt (2 of 3 repeats: job time limit) | 2 | 19.0 | 2.8 | 17 / 21 | 34.0 | 0.067 | runs/run-02/exp_c_real_mh_262k_ans256_trexfull_goat_pprfix_20261120-191821 |
+| run-02 | Question layer + EiG | Question layer + EiG | 3 | 17.0 | 1.0 | 18 / 16 / 17 | 28.0 | 0.081 | runs/run-02/exp_c_real_mh_262k_ans256_trexfull_qgraph_eig_pprfix_20261120-214450 |
+| reference | Empty start (test 05 arm A) | Mode C, GOAt, empty-start graph (test 05 arm A) | 3 | 34.7 | 0.6 | 35 / 34 / 35 | 50.7 | 0.027 | ../test-05-working-memory/runs/run-01/exp_wm_empty_a_modec_20261120-192124 |
+| run-01 | EiG (with build) | PageRank bug: not results | 3 | 0.0 | 0.0 | 0 / 0 / 0 | 0.0 | 0.006 | runs/run-01/exp_c_real_mh_262k_ans256_trexfull_link_build_eig_20261120-064644 |
+| run-01 | GOAt | PageRank bug: not results | 3 | 0.0 | 0.0 | 0 / 0 / 0 | 0.0 | 0.006 | runs/run-01/exp_c_real_mh_262k_ans256_trexfull_goat_20261120-105233 |
+| run-01 | Question layer + EiG | PageRank bug: not results | 3 | 0.0 | 0.0 | 0 / 0 / 0 | 0.0 | 0.024 | runs/run-01/exp_c_real_mh_262k_ans256_trexfull_qgraph_eig_20261120-105233 |

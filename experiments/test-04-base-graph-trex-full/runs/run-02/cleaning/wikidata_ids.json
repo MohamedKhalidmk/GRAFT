@@ -1,0 +1,537 @@
+{
+ "005": {
+  "qid": "Q4545526",
+  "how": "Wikipedia article '005'",
+  "description": "1981 video game"
+ },
+ "01011001": {
+  "qid": "Q974456",
+  "how": "Wikipedia article '01011001'",
+  "description": "2008 studio album by Ayreon"
+ },
+ "013": {
+  "qid": "Q2319846",
+  "how": "Wikipedia article '013'",
+  "description": "Music venue in Tilburg, the Netherlands"
+ },
+ "020120": {
+  "qid": "Q4545556",
+  "how": "Wikipedia article '020120'",
+  "description": "2002 live album by The Mad Capsule Markets"
+ },
+ "0304": {
+  "qid": "Q3055389",
+  "how": "Wikipedia article '0304'",
+  "description": "2003 studio album by Jewel"
+ },
+ "04092001": {
+  "qid": "Q4545566",
+  "how": "Wikipedia article '04092001'",
+  "description": "2005 live album by Boris and Merzbow"
+ },
+ "1011001": {
+  "qid": "Q234019",
+  "how": "Wikipedia article 'Anneke van Giersbergen'",
+  "description": "Dutch singer and musician"
+ },
+ "11001001": {
+  "qid": "Q901789",
+  "how": "Wikipedia article '11001001'",
+  "description": "15th episode of the 1st season of Star Trek: The Next Generation"
+ },
+ "144000": {
+  "qid": "Q2807787",
+  "how": "Wikipedia article '144000 (number)'",
+  "description": "Natural number"
+ },
+ "1600": {
+  "qid": "Q6720",
+  "how": "Wikipedia article '1600'",
+  "description": "Calendar year"
+ },
+ "181920": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "1901": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "1902": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "1943": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2004": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2008": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2012": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2016": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2020": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2024": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2028": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2032": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2036": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2541": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "2666": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "285": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "35007": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "4444444444": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "45365": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "456132015": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "522666": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "65001": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "6502": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "65802": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "65816": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "68000": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "68020": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "68030": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "68040": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "68060": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "6809": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "68881": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "68882": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "72826": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "7554": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "8051": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "8085": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "8086": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "8088": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "8701": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "893239": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "8974": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "90125": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "90210": {
+  "qid": "Q4924406",
+  "how": "Wikipedia article 'Blake Hood'",
+  "description": "American actor (born 1985)"
+ },
+ "91025": {
+  "qid": "Q9286874",
+  "how": "Wikipedia article '91025'",
+  "description": "American rock band"
+ },
+ "94124": {
+  "qid": "Q4645942",
+  "how": "Wikipedia article '94124'",
+  "description": "1995 EP by Zip Code Rapists"
+ },
+ "ONE": {
+  "qid": "Q4206809",
+  "how": "Wikipedia article 'ONE TV ASIA'",
+  "description": "Asian pay television channel"
+ },
+ "Seventeen": {
+  "qid": "Q606680",
+  "how": "Wikipedia article 'Cosmogirl'",
+  "description": "American magazine (1999–2008)"
+ },
+ "Themselves": {
+  "qid": "Q2416781",
+  "how": "Wikipedia article 'Themselves'",
+  "description": "American hip-hop group"
+ },
+ "Zero": {
+  "qid": "Q8025310",
+  "how": "Wikipedia article 'Wings of Power II: WWII Fighters'",
+  "description": "Add-on to Flight Simulator 2004"
+ },
+ "footballer": {
+  "qid": "Q7328517",
+  "how": "Wikipedia article 'Richard Prokas'",
+  "description": "English footballer"
+ },
+ "football": {
+  "qid": "Q7927464",
+  "how": "Wikipedia article 'Victory Bell (Cincinnati–Miami)'",
+  "description": "College football rivalry game"
+ },
+ "politician": {
+  "qid": "Q4859203",
+  "how": "Wikipedia article 'Barbara Osborn Kreamer'",
+  "description": "American politician (born 1948)"
+ },
+ "actor": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "defender": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "midfielder": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "striker": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "goalkeeper": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "actress": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "composer": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "village": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "comune": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "river": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "poet": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "journalist": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "soccer": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "jazz": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "municipality": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "basketball": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "songwriter": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "species": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "rock": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "international": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "OR": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "IN": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "UP": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "CAN": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "MI": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "AT": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "BE": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "DE": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "ON": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "census": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "AS": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "TO": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "Debut": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "AND": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "HOME": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "ICE": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "Winning": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "NOW": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "SET": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "BEST": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "SIDE": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "IS": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "THE": {
+  "qid": null,
+  "how": "label search, not verified",
+  "candidates": []
+ },
+ "TIME": {
+  "qid": "Q43297",
+  "how": "Wikipedia article 'Time (magazine)'",
+  "description": "American news magazine and website"
+ }
+}

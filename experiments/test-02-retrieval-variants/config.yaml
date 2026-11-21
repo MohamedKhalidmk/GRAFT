@@ -1,0 +1,4 @@
+test: test-02-retrieval-variants
+runs_configs:
+  - configs/runs/exp/lh/c_real_hybrid_goat.yaml
+  - configs/runs/exp/lh/c_real_qgraph_eig.yaml

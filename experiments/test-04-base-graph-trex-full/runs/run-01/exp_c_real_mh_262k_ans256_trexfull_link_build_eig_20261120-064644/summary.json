@@ -1,0 +1,74 @@
+{
+  "run_name": "exp_c_real_mh_262k_ans256_trexfull_link_build_eig",
+  "method": "graft",
+  "display": "GRAFT (ours)",
+  "family": "Ours (structure-augmented + agentic)",
+  "variant": "explainer=eig, gnn_checkpoint=results/checkpoints/gnn_bge_400w, linking_candidates=10, max_facts=50, retrieval=ppr_goat_ppr, retrieval_workers=8, shared_graph=results/checkpoints/shared_graphs/real_mh_262k_trexfull_link_start.json, start_graph=outside, start_graph_path=results/checkpoints/base_graphs/trex_full_base.json, writer_linking=llm",
+  "paper_row": null,
+  "llm_mode": "real",
+  "model": "claude-haiku-5-5",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "length": "262k",
+  "chunk_size": 512,
+  "repeats": 3,
+  "n_questions": {
+    "mh": 100
+  },
+  "unanswered": 0,
+  "accuracy": {
+    "mh": {
+      "mean": 0.0,
+      "std": 0.0,
+      "per_repeat": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "answer_in_retrieved": {
+    "mh": 0
+  },
+  "tokens_per_question": 372.75,
+  "llm_calls_per_question": 1,
+  "memory_build_time_s": 2397.601537704468,
+  "build_tokens": 3311580,
+  "query_time_s": 5.1845629596710205,
+  "max_tokens_stops": 0,
+  "api_cost_usd": {
+    "build": 1.7411251999999973,
+    "query": 0.0190125,
+    "total": 1.7601376999999974
+  },
+  "build_info": {
+    "input_tokens": 8065612,
+    "output_tokens": 1869128,
+    "cost_usd": 1.7411251999999973,
+    "llm_calls": 1614,
+    "memory_build_time_s": 6807.081022262573,
+    "n_chunks": 537,
+    "graph": {
+      "entities": 348732,
+      "facts": 1230691,
+      "supersedes_edges": 5293,
+      "current_facts": 1225398
+    },
+    "writer": {
+      "ops": {
+        "ADD": 9982,
+        "MERGE": 1992,
+        "SUPERSEDE": 5293,
+        "IGNORE": 286
+      },
+      "rejected": {},
+      "parse_failures": 5,
+      "writer_llm_calls": 1614,
+      "linking": {
+        "calls": 540,
+        "matched_base": 6735,
+        "new": 3987
+      }
+    },
+    "graph_file": "/home/khaledmk/scratch/sgar/results/runs/exp_c_real_mh_262k_ans256_trexfull_link_build_eig_20261120-064644/repeat_0/memory/graph.json"
+  }
+}

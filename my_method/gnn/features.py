@@ -35,6 +35,8 @@ def node_text(store: GraphStore, node: str) -> str:
     d = store.fact(node)
     if d["type"] == "Entity":
         return d["name"]
+    if d["type"] == "Work":  # working-memory node (my_method/working_memory.py): question, step, result or note
+        return d["text"]
     return f"{d['subject']} {d['relation']} {d['object']}"
 
 
@@ -58,6 +60,22 @@ class TextEmbedder:
     def table(self) -> np.ndarray:
         return np.stack([self.cache[t] for t in self.index])  # dict order = row order
 
+    def load_saved(self, graph_path: str) -> int:
+        """Load the vectors scripts/embed_graph.py saved next to a graph (GRAPH.emb.npy + GRAPH.emb.texts.json),
+        if they exist and were made with this model's dimension. Returns how many texts were loaded."""
+        import json
+        from pathlib import Path
+        vec_path, txt_path = Path(str(graph_path) + ".emb.npy"), Path(str(graph_path) + ".emb.texts.json")
+        if not (vec_path.exists() and txt_path.exists()):
+            return 0
+        vecs = np.load(vec_path)
+        texts = json.loads(txt_path.read_text())
+        if vecs.shape != (len(texts), self.dim):
+            raise ValueError(f"{vec_path}: shape {vecs.shape} does not match {len(texts)} texts x {self.dim}")
+        for t, v in zip(texts, vecs):
+            self.cache.setdefault(t, v)
+        return len(texts)
+
     def embed_texts(self, texts: list[str]) -> np.ndarray:
         missing = [t for t in dict.fromkeys(texts) if t not in self.cache]
         if missing:
@@ -66,10 +84,24 @@ class TextEmbedder:
         return np.stack([self.cache[t] for t in texts]) if texts else np.zeros((0, self.dim), np.float32)
 
 
+PPR_MAX_L1 = 0.1  # largest total change between PageRank steps accepted as converged
+
+
+def pagerank(graph: nx.Graph, personalization: dict, alpha: float = 0.85) -> dict[str, float]:
+    """nx.pagerank with a stop rule that holds on big graphs. NetworkX stops when the total (L1) change
+    between steps is below N * tol; with tol = 1e-6 that bound passes 1 once N is over ~1M nodes, and the
+    change after one step is already below it, so on the full T-REx graph (1.58M nodes) it stopped after
+    a single step: the scores were still the uniform start spread one hop, hubs on top, seeds' facts
+    nowhere. Here the bound is min(N * 1e-6, PPR_MAX_L1): unchanged on every graph up to 100,000 nodes
+    (all runs before full T-REx), 0.1 above that (18 to 32 steps; 98 to 100% of the converged top 400)."""
+    tol = min(1e-6, PPR_MAX_L1 / max(graph.number_of_nodes(), 1))
+    return nx.pagerank(graph, alpha=alpha, personalization=personalization, tol=tol, max_iter=1000)
+
+
 def ppr_scores(store: GraphStore, seeds: list[str]) -> dict[str, float]:
     """Personalized PageRank from the seeds over the whole graph. A walker splits its steps across
     a node's links, so hubs (a country linked to 1,000 facts) pass on little to each neighbour."""
-    return nx.pagerank(store.simple_graph(), personalization={s: 1.0 for s in seeds})
+    return pagerank(store.simple_graph(), {s: 1.0 for s in seeds})
 
 
 def select_subgraph(store: GraphStore, seeds: list[str], max_nodes: int) -> list[str]:

@@ -1,0 +1,21 @@
+# FREE CHECK (fake LLM): mode C + hybrid, GOAt, rerun with per-fact source labels (graph / embed / both).
+# link_embed_k 5 and the one-for-one hybrid interleave are fixed before any run (not tuned on these questions).
+run_name: exp_c_fake_mh_262k_hybrid_goat_src
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  explainer: goat
+  hybrid: true
+  max_facts: 50
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+data:
+  length: 262k
+  splits: [mh]
+llm:
+  model: claude-haiku-5-5
+  mode: fake
+  answer_max_tokens: 256
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1

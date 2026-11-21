@@ -1,0 +1,73 @@
+{
+  "run_name": "exp_c_real_mh_262k_ans256_rog_link_build_eig",
+  "method": "graft",
+  "display": "GRAFT (ours)",
+  "family": "Ours (structure-augmented + agentic)",
+  "variant": "explainer=eig, gnn_checkpoint=results/checkpoints/gnn_bge_400w, linking_candidates=10, max_facts=50, retrieval=ppr_goat_ppr, retrieval_workers=8, shared_graph=results/checkpoints/shared_graphs/real_mh_262k_rog_link_start.json, start_graph=outside, start_graph_path=results/checkpoints/base_graphs/rog_base.json, writer_linking=llm",
+  "paper_row": null,
+  "llm_mode": "real",
+  "model": "claude-haiku-5-5",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "length": "262k",
+  "chunk_size": 512,
+  "repeats": 1,
+  "n_questions": {
+    "mh": 100
+  },
+  "unanswered": 0,
+  "accuracy": {
+    "mh": {
+      "mean": 21.0,
+      "std": 0.0,
+      "per_repeat": [
+        21.0
+      ]
+    }
+  },
+  "answer_in_retrieved": {
+    "mh": 0.41
+  },
+  "tokens_per_question": 2382.21,
+  "llm_calls_per_question": 1,
+  "memory_build_time_s": 6263.4836757183075,
+  "build_tokens": 8834748,
+  "query_time_s": 1.1531604647636413,
+  "max_tokens_stops": 0,
+  "api_cost_usd": {
+    "build": 1.6212876000000023,
+    "query": 0.0259029,
+    "total": 1.6471905000000022
+  },
+  "build_info": {
+    "input_tokens": 6990216,
+    "output_tokens": 1844532,
+    "cost_usd": 1.6212876000000023,
+    "llm_calls": 1611,
+    "memory_build_time_s": 6263.4836757183075,
+    "n_chunks": 537,
+    "graph": {
+      "entities": 33767,
+      "facts": 37358,
+      "supersedes_edges": 5706,
+      "current_facts": 31652
+    },
+    "writer": {
+      "ops": {
+        "ADD": 11652,
+        "SUPERSEDE": 5706,
+        "MERGE": 258,
+        "IGNORE": 245
+      },
+      "rejected": {},
+      "parse_failures": 2,
+      "writer_llm_calls": 1611,
+      "linking": {
+        "calls": 537,
+        "new": 8409,
+        "matched_base": 2356,
+        "new_no_reply": 7
+      }
+    },
+    "graph_file": "/home/khaledmk/scratch/sgar/results/runs/exp_c_real_mh_262k_ans256_rog_link_build_eig_20261120-044347/repeat_0/memory/graph.json"
+  }
+}

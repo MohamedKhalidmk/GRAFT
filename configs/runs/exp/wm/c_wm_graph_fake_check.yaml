@@ -1,0 +1,21 @@
+# FREE plumbing check (fake gateway, 5 questions) (test 05, working memory; design docs/design/graft_working_memory_design.md). C: working memory written into the graph.
+# Empty-start document graph, mode C with GOAt, Haiku, 256-token answers, 3 repeats.
+run_name: exp_wm_fake_check_c_wm_graph
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  max_facts: 50
+  retrieval_workers: 8
+  working_memory: graph
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+data:
+  length: 262k
+  splits: [mh]
+  max_questions: 5
+llm:
+  model: claude-haiku-5-5
+  mode: fake
+  answer_max_tokens: 256
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1

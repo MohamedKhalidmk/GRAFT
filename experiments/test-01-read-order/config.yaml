@@ -1,0 +1,4 @@
+test: test-01-read-order
+runs_configs:
+  - configs/runs/exp/a_real_mh_262k.yaml
+  - configs/runs/exp/c_real_mh_262k_ans256.yaml

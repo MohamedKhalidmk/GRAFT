@@ -1,0 +1,42 @@
+{
+ "run": "run-02",
+ "test": "test-04-base-graph-trex-full",
+ "notes": "fixed PageRank and stopword linking, original (uncleaned) graph; Haiku answer passes on Fir CPU: EiG 4762064 (exp_c_real_mh_262k_ans256_trexfull_eig_pprfix_20261120-175733), GOAt 4751804 (..._goat_pprfix_20261120-191821, 2 of 3 repeats, job timed out), question layer 4742454 (..._qgraph_eig_pprfix_20261120-214450); results under $SCRATCH/sgar/results/runs on Fir. Qwen jobs 4742462/4/5 cancelled before start.",
+ "accuracy": {
+  "eig": [
+   18,
+   15,
+   20
+  ],
+  "goat": [
+   17,
+   21
+  ],
+  "qgraph_eig": [
+   18,
+   16,
+   17
+  ]
+ },
+ "gold_in_final_facts": {
+  "eig": [
+   34,
+   32,
+   34
+  ],
+  "goat": [
+   34,
+   34
+  ],
+  "qgraph_eig": [
+   28,
+   28,
+   28
+  ]
+ },
+ "cost_usd": {
+  "eig": 0.198,
+  "goat": 0.134,
+  "qgraph_eig": 0.242
+ }
+}

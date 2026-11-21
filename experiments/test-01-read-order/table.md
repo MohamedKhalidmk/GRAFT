@@ -1,0 +1,15 @@
+| variant | what | answer_tokens | repeats | accuracy_mean | per_repeat | gold_in_final_facts | cut_off | cost_per_100_questions_usd | run |
+|---|---|---|---|---|---|---|---|---|---|
+| A | PPR -> GNN + GOAt | 16 | 1 | 15.0 | 15 | 51.0 | 65 | 0.024 | runs/run-01/exp_a_real_mh_262k_20261113-062554 |
+| B | GNN + GOAt -> PPR | 16 | 1 | 13.0 | 13 | 51.0 | 66 | 0.024 | runs/run-01/exp_b_real_mh_262k_20261113-081123 |
+| C | PPR -> GNN + GOAt -> short PPR | 16 | 1 | 17.0 | 17 | 51.0 | 58 | 0.024 | runs/run-01/exp_c_real_mh_262k_20261113-083214 |
+| D | A, synthetic starting graph | 16 | 1 | 22.0 | 22 | 44.0 | 49 | 0.024 | runs/run-01/exp_d_extend_real_mh_262k_20261113-083936 |
+| BM25 | top 512-token chunks | 16 | 1 | 1.0 | 1 | 32.0 | 84 | 0.094 | runs/run-01/exp_bm25_real_mh_262k_20261113-083728 |
+| HippoRAG 2 | benchmark copy, top 10 passages | 16 | 1 | 0.0 | 0 |  |  | 0.059 | runs/run-01/exp_hipporag_real_mh_262k_20261113-142733 |
+| A | PPR -> GNN + GOAt | 256 | 1 | 37.0 | 37 | 51.0 | 0 | 0.027 | runs/run-02/exp_a_real_mh_262k_ans256_20261113-112253 |
+| B | GNN + GOAt -> PPR | 256 | 1 | 37.0 | 37 | 51.0 | 0 | 0.027 | runs/run-02/exp_b_real_mh_262k_ans256_20261113-114250 |
+| C | PPR -> GNN + GOAt -> short PPR | 256 | 1 | 38.0 | 38 | 51.0 | 1 | 0.027 | runs/run-02/exp_c_real_mh_262k_ans256_20261113-115012 |
+| D | A, synthetic starting graph | 256 | 1 | 37.0 | 37 | 44.0 | 0 | 0.027 | runs/run-02/exp_d_extend_real_mh_262k_ans256_20261113-115555 |
+| BM25 | top 512-token chunks | 256 | 1 | 4.0 | 4 | 32.0 | 4 | 0.098 | runs/run-02/exp_bm25_real_mh_262k_ans256_20261113-120143 |
+| HippoRAG 2 | benchmark copy, top 10 passages | 256 | 1 | 15.0 | 15 |  |  | 0.065 | runs/run-02/exp_hipporag_real_mh_262k_ans256_20261113-142941 |
+| HippoRAG 2 | benchmark copy, top 10 passages | 2048 | 1 | 14.0 | 14 |  |  | 0.072 | runs/run-02/exp_hipporag_real_mh_262k_ans2048_20261113-145119 |

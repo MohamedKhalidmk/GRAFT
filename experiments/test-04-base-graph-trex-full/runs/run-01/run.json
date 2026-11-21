@@ -1,0 +1,5 @@
+{
+ "run": "run-01",
+ "test": "test-04-base-graph-trex-full",
+ "notes": "Fir 4663774/5/6: build $1.75 + 9 answer passes $0.10; all 0.0 (PageRank bug); not results"
+}

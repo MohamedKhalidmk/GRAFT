@@ -16,13 +16,22 @@ export HF_HUB_OFFLINE=1
 : "${ANTHROPIC_API_KEY:?export ANTHROPIC_API_KEY in the shell that runs sbatch}"
 CAP="${COST_CAP_USD:-15}"
 START=$(date +%s)
-setsid .venv/bin/python -m eval.queue --name "slurm_${SLURM_JOB_ID}" "$@" &
+# fixed Haiku check (2026-11-21): a one-repeat replay of the 2026-11-13 run's facts goes first in every batch that calls
+# Haiku, so a change on the API side shows up as a moved score on identical inputs (CANARY=0 skips it)
+CONFIGS=("$@")
+if [[ "${CANARY:-1}" == 1 ]] && grep -qs "model: claude-haiku" "${CONFIGS[@]}"; then
+  CONFIGS=(configs/runs/exp/canary/haiku_replay38.yaml "${CONFIGS[@]}")
+fi
+setsid .venv/bin/python -m eval.queue --name "slurm_${SLURM_JOB_ID}" "${CONFIGS[@]}" &
 QPID=$!
+# only this job's runs: the run_name of every config it was given (other jobs write to the same results folder)
+RUN_NAMES=$(for c in "${CONFIGS[@]}"; do sed -n 's/^run_name: *//p' "$c"; done | tr '\n' ' ')
 spent() {
-  .venv/bin/python - "$START" <<'EOF'
+  .venv/bin/python - "$START" $RUN_NAMES <<'EOF'
 import glob, json, os, sys
 start, total = float(sys.argv[1]), 0.0
-for path in glob.glob(os.environ["RESULTS_DIR"] + "/runs/exp_*real*/repeat_*/usage.jsonl"):
+paths = [p for name in sys.argv[2:] for p in glob.glob(os.environ["RESULTS_DIR"] + f"/runs/{name}_2*/repeat_*/usage.jsonl")]
+for path in paths:
     if os.path.getmtime(path) < start:
         continue  # an earlier job's run
     for line in open(path):
