@@ -51,7 +51,7 @@ def _wm_in_worker(job: tuple) -> tuple[str, dict]:
     q_index, text, query = job
     edges = a.retriever.query_graphs.get(text, [])
     wm = WorkingMemory(a.store, a.retriever, a._wm_llm, a.config["working_memory"] if a.config["working_memory"] != True else "graph",
-                       max_steps=a.config.get("wm_max_steps", 4))
+                       max_steps=a.config.get("wm_max_steps", 4), step_prompt=a.config.get("wm_step_prompt", "v1"))
     return wm.run(text, query, edges, a.sub_dataset, a.config["answer_max_tokens"])
 
 

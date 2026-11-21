@@ -24,11 +24,19 @@ from my_method.answer import AGENT_NAME, fact_line
 from my_method.graph_store import GraphStore, entity_id, is_stopword_name
 from my_method.retrieval import Region, Retriever
 
-STEP_PROMPT = """GRAFT-STEP
+STEP_PROMPT_V1 = """GRAFT-STEP
 You answer ONE step of a multi-step question, using only the numbered facts given. The working memory shows the
 question and the steps already done. Return JSON only:
 {"result": "<the entity or value this step asks for, or unknown>", "facts": [<numbers of the facts you used>],
  "note": "<at most 40 words: why>"}"""
+# v2 (test 05 run-02): round 1's traces showed steps picking the older of two conflicting facts; the benchmark's answer
+# prompt tells the final call that the newer fact wins, the step prompt did not
+STEP_PROMPT_V2 = STEP_PROMPT_V1.replace(
+    "The working memory shows the\nquestion and the steps already done.",
+    "The working memory shows the\nquestion and the steps already done. Facts are numbered in the order they were "
+    "stated: if two facts give\ndifferent values for the same thing, the one with the larger number is newer and is "
+    "the one that counts.")
+STEP_PROMPTS = {"v1": STEP_PROMPT_V1, "v2": STEP_PROMPT_V2}
 
 
 def _json(text: str) -> dict:
@@ -41,10 +49,11 @@ def _json(text: str) -> dict:
 
 class WorkingMemory:
     def __init__(self, store: GraphStore, retriever: Retriever, llm: ClaudeLLM, mode: str = "graph",
-                 max_steps: int = 4, step_max_tokens: int = 256):
+                 max_steps: int = 4, step_max_tokens: int = 256, step_prompt: str = "v1"):
         assert mode in ("graph", "prompt_only"), mode
         self.store, self.retriever, self.llm = store, retriever, llm
         self.mode, self.max_steps, self.step_max_tokens = mode, max_steps, step_max_tokens
+        self.step_prompt = STEP_PROMPTS[step_prompt]
 
     # ---- the work layer ----
 
@@ -133,7 +142,7 @@ class WorkingMemory:
                     region = base_region
                 block, number = self._facts_block(region.facts)
                 prompt = f"{self._memory_text(question, done)}\n\n[Facts]\n{block}\n\n[Step {i}] Find {text}"
-                call = self.llm.complete(STEP_PROMPT, prompt, self.step_max_tokens)
+                call = self.llm.complete(self.step_prompt, prompt, self.step_max_tokens)
                 calls += 1
                 rep = _json(call.text)
                 result = str(rep.get("result") or "unknown").strip()
