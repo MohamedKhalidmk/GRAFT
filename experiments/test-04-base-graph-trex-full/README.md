@@ -16,7 +16,7 @@ Base: 1,215,416 facts, 344,996 entities (leakage-checked). Haiku writes the 537 
 
 run-01 (build + first answer passes): all 9 repeats scored 0.0. Cause: NetworkX PageRank stopped after one step on the 1.58M-node graph, so the 400-node subgraphs held no facts. Fixed (a stop rule that holds on big graphs), plus: never link a single stopword (an entity named "THE" matched 89 of 100 questions), and a run stops if most questions get no facts.
 
-run-02: base cleaning ([everything dropped](runs/run-02/cleaning/dropped_items.md): 60 entities, 107 facts; generic words kept; the first, too-wide rule was caught before use), stopword-link counts ([stopword_links.jsonl](runs/run-02/cleaning/stopword_links.jsonl)), then the 9 Haiku answer passes and 3 Qwen passes: pending.
+run-02: base cleaning ([everything dropped](runs/run-02/cleaning/dropped_items.md): 60 entities, 107 facts; generic words kept; the first, too-wide rule was caught before use), stopword-link counts ([stopword_links.jsonl](runs/run-02/cleaning/stopword_links.jsonl)), then the 9 Haiku answer passes and 3 Qwen passes on the **original, uncleaned** graph (user: the dropped items are mostly real facts, and the linking rule already fixes "THE"; the cleaned graph stays on file, unused): pending.
 
 ## Decision
 
@@ -25,3 +25,4 @@ Pending the run-02 answer passes.
 ## Revisions
 
 - 2026-11-20: test folder created from the existing runs and the Flotilla run log.
+- 2026-11-20: runs use the original graph, not the cleaned one (user). Node vectors are embedded once (scripts/embed_graph.py) and loaded by every pass; GPU and CPU twins per pass, whichever starts first.
