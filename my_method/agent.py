@@ -27,7 +27,8 @@ from baselines.claude_gateway.embeddings import load_embedder
 from baselines.claude_llm import ClaudeLLM
 from baselines.common.protocol import Gateway, Question, Task, run_agent
 from eval.methods import REPO
-from my_method.answer import answer
+from eval.benchmark import format_chat, get_template
+from my_method.answer import AGENT_NAME, answer
 from my_method.gnn.features import TextEmbedder, node_text
 from my_method.gnn.train import load_model
 from my_method.graph_store import GraphStore
@@ -317,6 +318,15 @@ class GraftAgent:
                 f.write(json.dumps({"q_index": i, **meta["working_memory"]}, ensure_ascii=False) + "\n")
 
     def answer(self, question: Question) -> tuple[str, dict]:
+        if self.config.get("replay_retrieved"):  # re-answer a saved run's exact retrieved facts (no retrieval at all)
+            if not hasattr(self, "_replay"):
+                with open(REPO / self.config["replay_retrieved"]) as f:
+                    self._replay = {r["q_index"]: r["retrieved_text"] for r in map(json.loads, f)}
+            memory = self._replay[question.q_index]
+            chat = format_chat(message=memory + "\n" + question.query,
+                               system_message=get_template(self.sub_dataset, "system", AGENT_NAME))
+            call = self.llm.complete(chat[0]["content"], chat[1]["content"], self.config["answer_max_tokens"])
+            return call.text, {"stop_reason": call.stop_reason, "retrieved_text": memory}
         if self.config.get("working_memory"):
             if not getattr(self, "wm", None):
                 self._working_memory_all()

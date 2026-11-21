@@ -21,7 +21,7 @@ spent() {
   .venv/bin/python - "$START" <<'EOF'
 import glob, json, os, sys
 start, total = float(sys.argv[1]), 0.0
-for path in glob.glob(os.environ["RESULTS_DIR"] + "/runs/exp_*real*/repeat_*/usage.jsonl"):
+for path in glob.glob(os.environ["RESULTS_DIR"] + "/runs/*/repeat_*/usage.jsonl"):
     if os.path.getmtime(path) < start:
         continue  # an earlier job's run
     for line in open(path):
