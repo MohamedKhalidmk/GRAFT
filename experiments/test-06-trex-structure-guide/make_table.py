@@ -1,15 +1,23 @@
-"""test-06 table, from the runs only (runs/run-NN/exp_real_tg_<arm>_*/repeat_*/scored.jsonl), with arm A from test 05."""
-import csv, glob, json, statistics
+"""test-06 table, from the runs only (runs/run-NN/exp_real_tg_<arm>_*/repeat_*/scored.jsonl), with arm A from test 05.
+Qwen rows (exp_qwen_empty_b_guide_* here, arm A from test 05's exp_qwen_empty_a_modec_*) appear once those runs exist.
+Also draws figure.png in the shared theme (docs/design/theme/theme.py)."""
+import csv, glob, json, statistics, sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ARMS = [("A", "empty start, mode C (test 05, rerun the same day)", HERE.parent / "test-05-working-memory" / "runs" / "run-02", "exp_real_wm_empty_a_modec_rerun1121_2*"),
-        ("B", "T-REx as a structure guide (linking + planning)", HERE / "runs" / "run-01", "exp_real_tg_b_guide_2*"),
-        ("C", "T-REx as a bridge (walk only, weight 0.2)", HERE / "runs" / "run-01", "exp_real_tg_c_bridge_2*"),
-        ("D", "C + 5 labelled background facts", HERE / "runs" / "run-01", "exp_real_tg_d_background_2*")]
-rows = []
-for arm, what, d, pat in ARMS:
-    runs = sorted(glob.glob(str(d / pat)))
+sys.path.insert(0, str(HERE.parents[1] / "docs" / "design" / "theme"))
+import theme as T  # noqa: E402
+
+T05 = HERE.parent / "test-05-working-memory" / "runs"
+ARMS = [("Haiku", "A", "empty start, mode C (test 05, rerun the same day)", [T05 / "run-02"], "exp_real_wm_empty_a_modec_rerun1121_2*"),
+        ("Haiku", "B", "T-REx as a structure guide (linking + planning)", [HERE / "runs" / "run-01"], "exp_real_tg_b_guide_2*"),
+        ("Haiku", "C", "T-REx as a bridge (walk only, weight 0.2)", [HERE / "runs" / "run-01"], "exp_real_tg_c_bridge_2*"),
+        ("Haiku", "D", "C + 5 labelled background facts", [HERE / "runs" / "run-01"], "exp_real_tg_d_background_2*"),
+        ("Qwen", "A", "empty start, mode C (test 05)", sorted(T05.glob("run-*")), "exp_qwen_empty_a_modec_2*"),
+        ("Qwen", "B", "T-REx as a structure guide (linking + planning)", sorted((HERE / "runs").glob("run-*")), "exp_qwen_empty_b_guide_2*")]
+rows, accs = [], []
+for model, arm, what, dirs, pat in ARMS:
+    runs = sorted(h for d in dirs for h in glob.glob(str(d / pat)))
     if not runs:
         continue
     acc, gold, cost = [], [], 0.0
@@ -18,11 +26,25 @@ for arm, what, d, pat in ARMS:
         acc.append(100 * sum(s["substring_exact_match"] > 0 for s in sc) / len(sc))
         gold.append(100 * sum(bool(s["answer_in_retrieved"]) for s in sc) / len(sc))
         cost += sum(s.get("cost_usd", 0) for s in sc)
-    rows.append({"arm": arm, "what": what, "repeats": len(acc), "accuracy_mean": round(statistics.mean(acc), 1),
-                 "accuracy_sd": round(statistics.stdev(acc), 1), "per_repeat": " / ".join(f"{a:.0f}" for a in acc),
+    if not acc:
+        continue
+    accs.append(acc)
+    rows.append({"model": model, "arm": arm, "what": what, "repeats": len(acc), "accuracy_mean": round(statistics.mean(acc), 1),
+                 "accuracy_sd": round(statistics.stdev(acc), 1) if len(acc) > 1 else 0, "per_repeat": " / ".join(f"{a:.0f}" for a in acc),
                  "gold_in_final_facts": round(statistics.mean(gold), 1), "cost_per_100_questions_usd": round(cost / len(acc), 3)})
 with open(HERE / "table.csv", "w", newline="") as f:
     w = csv.DictWriter(f, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
 md = ["| " + " | ".join(rows[0]) + " |", "|" + "---|" * len(rows[0])] + ["| " + " | ".join(str(v) for v in r.values()) + " |" for r in rows]
 (HERE / "table.md").write_text("\n".join(md) + "\n")
 print("\n".join(md))
+
+COLOUR = {"A": T.NAVY, "B": T.GREEN}
+panels = []
+for model in ("Haiku", "Qwen"):
+    bars = [T.bar(f"{r['arm']} · {r['what']}", a, COLOUR.get(r["arm"], T.STONE)) for r, a in zip(rows, accs) if r["model"] == model]
+    if bars:
+        panels.append({"title": f"{model}: % right", "rows": bars})
+T.bar_chart(HERE / "figure.png", "Test 06 · T-REx as a structure guide",
+            "100 multi-hop questions · 3 repeats per arm · no T-REx fact reaches the answering model as a memory",
+            panels, legend=[T.NAVY, T.GREEN, T.STONE], label_in=4.4,
+            footnote="Guide (B) kept on Haiku: 45.7 vs 34.7. Bridge (C) and labelled background (D) not adopted.")

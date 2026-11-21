@@ -1,0 +1,5 @@
+| kind | variant | repeats | accuracy_mean | per_repeat | gold_in_final_facts | cost_per_100_questions_usd | run |
+|---|---|---|---|---|---|---|---|
+| reference | Mode C, empty-start graph (test 01, 2026-11-13) | 1 | 38.0 | 38 | 51.0 | 0.027 | ../test-01-read-order/runs/run-02/exp_c_real_mh_262k_ans256_20261113-115012 |
+| paid | Mode C (EiG) + RoG base, Haiku linking | 1 | 21.0 | 21 | 41.0 | 0.026 | runs/run-01/exp_c_real_mh_262k_ans256_rog_link_build_eig_20261120-044347 |
+| free check | Same graph, fake answerer | 1 |  |  | 42.0 | 0.014 | runs/run-01/exp_c_fake_mh_262k_rog_link_eig_20261120-064006 |

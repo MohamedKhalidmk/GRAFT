@@ -1,0 +1,49 @@
+{
+  "run_name": "exp_bm25_real_mh_262k_ans256",
+  "method": "bm25",
+  "display": "BM25",
+  "family": "Simple RAG Agents",
+  "variant": "",
+  "paper_row": "BM25",
+  "llm_mode": "real",
+  "model": "claude-haiku-5-5",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "length": "262k",
+  "chunk_size": 512,
+  "repeats": 1,
+  "n_questions": {
+    "mh": 100
+  },
+  "unanswered": 0,
+  "accuracy": {
+    "mh": {
+      "mean": 4.0,
+      "std": 0.0,
+      "per_repeat": [
+        4.0
+      ]
+    }
+  },
+  "answer_in_retrieved": {
+    "mh": 0.32
+  },
+  "tokens_per_question": 9443.83,
+  "llm_calls_per_question": 1,
+  "memory_build_time_s": 0.23237180709838867,
+  "build_tokens": 0,
+  "query_time_s": 1.1701610898971557,
+  "max_tokens_stops": 4,
+  "api_cost_usd": {
+    "build": 0.0,
+    "query": 0.09823670000000001,
+    "total": 0.09823670000000001
+  },
+  "build_info": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "llm_calls": 0,
+    "memory_build_time_s": 0.23237180709838867,
+    "n_chunks": 537
+  }
+}

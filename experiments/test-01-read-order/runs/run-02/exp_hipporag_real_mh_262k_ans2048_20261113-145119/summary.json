@@ -1,0 +1,52 @@
+{
+  "run_name": "exp_hipporag_real_mh_262k_ans2048",
+  "method": "hipporag_bundled",
+  "display": "HippoRAG-v2 (benchmark copy)",
+  "family": "Structure-Augmented RAG Agents",
+  "variant": "cap_answer=True, json_openie=schema, shared_index=results/checkpoints/shared_graphs/hipporag_real_mh_262k_schema",
+  "paper_row": "HippoRAG-v2",
+  "llm_mode": "real",
+  "model": "claude-haiku-5-5",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "length": "262k",
+  "chunk_size": 512,
+  "repeats": 1,
+  "n_questions": {
+    "mh": 100
+  },
+  "unanswered": 0,
+  "accuracy": {
+    "mh": {
+      "mean": 14.000000000000002,
+      "std": 0.0,
+      "per_repeat": [
+        14.000000000000002
+      ]
+    }
+  },
+  "answer_in_retrieved": null,
+  "tokens_per_question": 6235.69,
+  "llm_calls_per_question": 1,
+  "memory_build_time_s": 4.207592964172363,
+  "build_tokens": 0,
+  "query_time_s": 2.0441304802894593,
+  "max_tokens_stops": 0,
+  "api_cost_usd": {
+    "build": 0.0,
+    "query": 0.0723289,
+    "total": 0.0723289
+  },
+  "build_info": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "llm_calls": 0,
+    "memory_build_time_s": 4.207592964172363,
+    "n_chunks": 537,
+    "n_passages": 537,
+    "n_entities": 10843,
+    "n_facts": 18333,
+    "graph_nodes": 11380,
+    "graph_edges": 74333
+  }
+}
