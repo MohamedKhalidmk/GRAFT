@@ -1,5 +1,5 @@
 # FREE (local Qwen3.8-27B W4A16 on vLLM, thinking off, greedy; same prompts as Haiku): answer passes only, after the PageRank stop-rule fix (my_method/gnn/features.py pagerank): reuses the full T-REx
-# graph built by c_real_trexfull_link_build_eig.yaml, cleaned by scripts/fir/clean_base.py (junk one-word base entities dropped),
+# graph built by c_real_trexfull_link_build_eig.yaml, uncleaned (user: the dropped items are mostly real facts),
 # with the single-stopword linking rule. The first runs under the old run_name scored 0.0 (empty retrieval).
 run_name: exp_c_qwen_mh_262k_ans256_trexfull_goat
 method: graft
@@ -13,7 +13,7 @@ method_config:
   max_facts: 50
   retrieval_workers: 8
   gnn_checkpoint: results/checkpoints/gnn_bge_400w
-  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_trexfull_link_start_clean.json
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_trexfull_link_start.json
 data:
   length: 262k
   splits: [mh]
