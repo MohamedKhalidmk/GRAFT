@@ -52,6 +52,9 @@ class GraphStore:
         self.next_fact = 0
         self.next_arrival = 0
         self._simple: nx.Graph | None = None
+        # bridge option (test 06 arm C): walk edges touching an outside-base fact (layer "base") get this weight in
+        # every PageRank walk, document edges 1.0; None = all edges 1.0 (unchanged)
+        self.bridge_weight: float | None = None
 
     # ---- writing ----
 
@@ -95,6 +98,12 @@ class GraphStore:
         """Undirected view with one edge per node pair, for graph walks; cached until the next write."""
         if self._simple is None:
             self._simple = nx.Graph(self.g)
+            w = getattr(self, "bridge_weight", None)
+            if w is not None:
+                base = {n for n, d in self._simple.nodes(data=True) if d.get("type") == "Fact" and d.get("layer") == "base"}
+                for u, v in self._simple.edges():
+                    if u in base or v in base:
+                        self._simple[u][v]["weight"] = w
         return self._simple
 
     def facts(self) -> list[str]:

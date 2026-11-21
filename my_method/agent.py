@@ -199,7 +199,11 @@ class GraftAgent:
                               explainer=c.get("explainer", "goat"), link_embed_k=c.get("link_embed_k", 0),
                               hybrid=c.get("hybrid", False), hybrid_k=c.get("hybrid_k", 0),
                               query_graph=c.get("query_graph", False), query_match_min=c.get("query_match_min", 0.85),
-                              query_linking=c.get("query_linking", "embedding"))
+                              query_linking=c.get("query_linking", "embedding"),
+                              document_facts_only=c.get("document_facts_only", False))
+        if c.get("bridge_weight") is not None:  # test 06 arm C: outside-base edges walk at this weight
+            self.store.bridge_weight = float(c["bridge_weight"])
+            self.store._simple = None
         model = None
         if cfg.mode not in ("ppr", "embed"):
             model, gnn_cfg = load_model(REPO / c["gnn_checkpoint"])

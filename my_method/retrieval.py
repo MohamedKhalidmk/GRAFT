@@ -59,6 +59,7 @@ class RetrievalConfig:
     query_graph: bool = False  # Haiku turns the question into schema nodes/edges, attached for this question only
     query_match_min: float = 0.85  # name-embedding cosine needed to match a question entity to a graph entity
     query_linking: str = "embedding"  # "embedding" (cosine >= query_match_min) | "llm" (Haiku picks among the top 10)
+    document_facts_only: bool = False  # bridge option (test 06 arm C): outside-base facts stay in the walk, never returned
 
 
 @dataclass
@@ -360,6 +361,8 @@ class Retriever:
         for fact in ranked:
             newest = self.store.current(fact)
             if newest in chosen:
+                continue
+            if self.cfg.document_facts_only and self.store.fact(newest).get("layer") == "base":
                 continue
             chosen.append(newest)
             picked.append(fact)
