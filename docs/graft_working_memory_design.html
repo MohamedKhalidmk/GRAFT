@@ -1,0 +1,165 @@
+<!doctype html><meta charset=utf-8><title>GRAFT working memory design</title><style>body{font:15px/1.55 -apple-system,Helvetica,Arial,sans-serif;color:#1f2328;background:#fff;margin:0}main{max-width:980px;margin:30px auto;padding:0 24px}
+table{border-collapse:collapse;margin:10px 0;font-size:13.5px}th,td{border:1px solid #d1d9e0;padding:5px 9px;text-align:left;vertical-align:top}th{background:#f6f8fa}
+code{background:#eff1f3;padding:1px 4px;border-radius:4px;font-size:13px}h2{border-bottom:2px solid #1f2328;padding-bottom:5px;margin-top:34px}</style><main><h1>GRAFT working memory: design (before coding)</h1>
+<p>Status: design for review, 2026-11-20. Nothing is coded yet. Test in GRAFT alone, on the GRAFT questions
+(FactConsolidation 262k, multi-hop, 100 questions), before anything goes into Flotilla's Memory routes.</p>
+<h2>Idea</h2>
+<p>Today GRAFT answers in one step: retrieve a region of the graph, put its facts in the prompt, ask once.
+With working memory the agent answers in several steps and keeps its work <strong>in the graph</strong>: the question, its
+sub-steps, short notes and partial results become nodes linked to the facts they used. Each next step reads that
+chain back, both in its prompt and through the graph walk (retrieval starts from what the agent has found so far).</p>
+<h2>What gets written</h2>
+<p>Per question, a small &quot;work&quot; layer (<code>layer=&quot;work&quot;</code>), attached to the memory graph while that question is answered:</p>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Content</th>
+<th>Written when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Question <code>W:q</code></td>
+<td>the question text</td>
+<td>at the start</td>
+</tr>
+<tr>
+<td>Step <code>W:s1..sK</code></td>
+<td>one sub-question, e.g. &quot;sport played by Christian Abbiati -&gt; ?A&quot;</td>
+<td>after the plan call</td>
+</tr>
+<tr>
+<td>Result <code>W:r1..rK</code></td>
+<td>the step's partial answer, e.g. &quot;football&quot;</td>
+<td>after each step call</td>
+</tr>
+<tr>
+<td>Note <code>W:n1..nK</code></td>
+<td>the step's reasoning note, at most 40 words</td>
+<td>after each step call</td>
+</tr>
+<tr>
+<td>Answer <code>W:a</code></td>
+<td>the final answer</td>
+<td>after the final call</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Edge</th>
+<th>From -&gt; to</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>has_step</code></td>
+<td>q -&gt; s_i</td>
+<td>the plan</td>
+</tr>
+<tr>
+<td><code>next</code></td>
+<td>s_i -&gt; s_(i+1)</td>
+<td>step order</td>
+</tr>
+<tr>
+<td><code>about</code></td>
+<td>s_i -&gt; entity, or s_i -&gt; r_(i-1)</td>
+<td>what the step asks about (a graph entity, or the previous result)</td>
+</tr>
+<tr>
+<td><code>used_fact</code></td>
+<td>s_i -&gt; fact</td>
+<td>each fact the step's call cited by its number</td>
+</tr>
+<tr>
+<td><code>answer</code></td>
+<td>s_i -&gt; r_i, q -&gt; a</td>
+<td>the step's result, the final answer</td>
+</tr>
+<tr>
+<td><code>note</code></td>
+<td>s_i -&gt; n_i</td>
+<td>the note</td>
+</tr>
+<tr>
+<td><code>same_as</code></td>
+<td>r_i -&gt; entity</td>
+<td>the result linked to a graph entity (same top-10 + Haiku linking as the question layer)</td>
+</tr>
+</tbody>
+</table>
+<p>Work nodes are never returned as retrieved facts (<code>_is_fact</code> already skips <code>query</code> nodes), and stored facts are
+never changed. After the question is answered the work layer is removed from the graph and saved, whole, to
+<code>working_memory.jsonl</code> (one record per question) for inspection. Nothing carries over between questions in this
+test (that would leak answers across questions).</p>
+<h2>When, and how it is read back</h2>
+<ol>
+<li><strong>Plan</strong> (1 call). The question layer's parse, already in GRAFT, gives the chain with unknowns:
+(Christian Abbiati, plays sport, ?A), (?A, country of origin, ?B). Each edge becomes a step. If the parse fails,
+one step = the whole question (falls back to today's behaviour).</li>
+<li><strong>Each step i</strong> (1 call per step).
+<ul>
+<li>Retrieval: mode C as today, but seeded from the step's <code>about</code> node (the question entity for step 1,
+<code>same_as</code> of r_(i-1) after that) plus every fact already marked <code>used_fact</code>. The work nodes are in the graph,
+so the PageRank walk passes through the chain built so far.</li>
+<li>Prompt: the working memory serialized as text (question, steps done with their results, notes and cited fact
+numbers), then this step's retrieved facts, then the step. Reply as JSON: result, cited fact numbers, note.</li>
+<li>Write r_i, n_i and the edges; link r_i to a graph entity.</li>
+</ul>
+</li>
+<li><strong>Final</strong> (1 call). The benchmark's own answer prompt, with the facts cited across all steps (latest version
+only, as today) and the working memory chain. The answer is scored exactly as today.</li>
+</ol>
+<p>At most 1 + K + 1 calls per question (K = number of steps, capped at 4).</p>
+<h2>Test</h2>
+<p>Graph: the empty-start document graph first (mode C 38% there, fast, cheap), then the full T-REx graph once its
+fixed run is in. Haiku, 3 repeats per arm, same 100 questions, same scoring.</p>
+<table>
+<thead>
+<tr>
+<th>Arm</th>
+<th>What</th>
+<th>Isolates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>mode C, one call (today)</td>
+<td>baseline</td>
+</tr>
+<tr>
+<td>B</td>
+<td>question layer (today's option)</td>
+<td>the plan as retrieval seeds only</td>
+</tr>
+<tr>
+<td>C</td>
+<td>working memory, full</td>
+<td>the method</td>
+</tr>
+<tr>
+<td>C-</td>
+<td>same steps and calls, but nothing written to the graph: the chain lives only in the prompt, and each step retrieves from the question alone</td>
+<td>whether writing to the graph matters, or only answering in steps</td>
+</tr>
+</tbody>
+</table>
+<p>Reported per arm: accuracy (mean and spread over 3 repeats), gold fact in the final facts, calls, tokens and time
+per question, cost. Plus 10 questions traced by hand: the chain each arm wrote, and where it went right or wrong.</p>
+<p>Kept only if C beats A by more than its repeat spread <strong>and</strong> beats C-; if C only matches C-, the gain is from
+answering in steps, not from the graph, and that is what goes into the Memory routes instead.</p>
+<p>Cost estimate: a one-call pass costs about $0.03 per 100 questions; C and C- make about 5 calls, so about $0.15 per
+repeat, about $1 for all arms and repeats on one graph, cap $3.</p>
+<h2>Implementation notes</h2>
+<ul>
+<li>New <code>my_method/working_memory.py</code> (the loop, writing and reading the work layer); <code>agent.py</code> calls it when
+<code>method_config.working_memory: true</code> (arm C) or <code>&quot;prompt_only&quot;</code> (arm C-).</li>
+<li>Questions run in forked workers, each with its own copy of the graph, so work layers never mix.</li>
+<li>The no-facts stop check applies to every step's retrieval.</li>
+</ul>
+</main>
