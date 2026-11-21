@@ -1,0 +1,2032 @@
+{
+"country": [
+"sovereign state",
+"state",
+"land",
+"host country"
+],
+"member of sports team": [
+"member of team",
+"team",
+"played for",
+"teams played for",
+"of team",
+"club played for",
+"player of",
+"part of team"
+],
+"country of citizenship": [
+"subject of (country)",
+"citizenship",
+"citizen of",
+"nation of citizenship",
+"national of",
+"(legal) nationality",
+"nationality",
+"country"
+],
+"sport": [
+"sports",
+"sport played",
+"play",
+"plays"
+],
+"located in the administrative territorial entity": [
+"located in the administrative unit",
+"located in administrative unit",
+"is in administrative unit",
+"is located in",
+"is in the state of",
+"is in the province of",
+"is in the county of",
+"is in the district of"
+],
+"occupation": [
+"profession",
+"job",
+"work",
+"career",
+"employment",
+"craft",
+"employ",
+"vocation"
+],
+"instance of": [
+"is a",
+"is an",
+"is a[n]",
+"unique individual of",
+"unitary element of class",
+"type",
+"example of",
+"is of type"
+],
+"date of birth": [
+"birthdate",
+"birthyear",
+"born",
+"born on",
+"year of birth",
+"DOB",
+"birth date",
+"birth year"
+],
+"place of birth": [
+"birthplace",
+"born in",
+"POB",
+"birth place",
+"location born",
+"born at",
+"birth location",
+"location of birth"
+],
+"shares border with": [
+"bordered by",
+"adjacent to",
+"next to",
+"border",
+"borders clockwise",
+"shares borders with"
+],
+"cast member": [
+"starring",
+"film starring",
+"actor",
+"actress",
+"contestant of a play",
+"starring (film/play)",
+"feat."
+],
+"genre": [
+"music genre",
+"film genre",
+"artistic genre",
+"literary genre",
+"kind of music",
+"type of film",
+"genre of music",
+"type of music"
+],
+"date of death": [
+"date of the end",
+"died on",
+"DOD",
+"year of death",
+"dead",
+"deathdate",
+"death",
+"died"
+],
+"place of death": [
+"deathplace",
+"died in",
+"death place",
+"POD",
+"location of death",
+"death location",
+"killed in",
+"died"
+],
+"country of origin": [
+"place of origin",
+"comes from",
+"CoO",
+"originates from",
+"origin country",
+"country",
+"homeland"
+],
+"languages spoken, written or signed": [
+"language spoken",
+"languages of expression",
+"languages signed",
+"language signed",
+"language written",
+"language read",
+"language used",
+"language"
+],
+"participant in": [
+"attended",
+"took part",
+"took part in",
+"participated in",
+"competed in",
+"participant of event",
+"takes part",
+"competes in"
+],
+"contains the administrative territorial entity": [
+"contains",
+"divides into",
+"divided into",
+"has towns",
+"has shires",
+"has cities",
+"has rural cities",
+"has municipalities"
+],
+"educated at": [
+"alma mater",
+"education",
+"alumni of",
+"alumna of",
+"college attended",
+"school attended",
+"studied at",
+"graduate of"
+],
+"part of": [
+"meronym of",
+"section of",
+"system of",
+"subsystem of",
+"subassembly of",
+"contained within",
+"assembly of",
+"part of-property"
+],
+"award received": [
+"prize received",
+"awards",
+"honorary title",
+"recognition title",
+"award",
+"honours",
+"honors",
+"medals"
+],
+"director": [
+"directed by",
+"film director",
+"movie director",
+"game director"
+],
+"member of political party": [
+"party",
+"member of",
+"member of party",
+"party membership",
+"political party member",
+"political party"
+],
+"employer": [
+"employed by",
+"works at",
+"working for",
+"worked for",
+"works for",
+"worked at",
+"working place",
+"working at"
+],
+"member of": [
+"membership",
+"band member of",
+"member of musical group",
+"in musical group",
+"of organization",
+"is member of",
+"club"
+],
+"record label": [
+"label",
+"labels"
+],
+"subclass of": [
+"rdfs:subClassOf",
+"has superclass",
+"subtype of",
+"subcategory of",
+"is thereby also a",
+"is necessarily also a",
+"whose instances are among",
+"is a type of"
+],
+"parent taxon": [
+"taxon parent",
+"higher taxon",
+"supertaxon",
+"subtaxon of"
+],
+"position played on team / speciality": [
+"fielding position",
+"specialism",
+"position (on team)",
+"speciality",
+"player position",
+"position"
+],
+"headquarters location": [
+"head office location",
+"HQ",
+"garrison",
+"admin HQ",
+"seat",
+"headquarters",
+"head quarters",
+"HQ location"
+],
+"position held": [
+"political office held",
+"political seat",
+"public office",
+"office held",
+"position occupied",
+"holds position",
+"function",
+"held position"
+],
+"instrument": [
+"musical instrument",
+"plays instrument",
+"instrument played",
+"plays",
+"instrument taught",
+"teaches instrument",
+"player of",
+"instruments"
+],
+"participated in conflict": [
+"war",
+"battle",
+"participant in conflict",
+"in conflict",
+"in action",
+"theater (military)",
+"theatre (military)",
+"military conflict"
+],
+"has part(s)": [
+"formed from",
+"formed out of",
+"assembled from",
+"assembled out of",
+"created from",
+"created out of",
+"amalgamation of",
+"set of"
+],
+"league or competition": [
+"division",
+"sports league",
+"cup",
+"tournament",
+"competition"
+],
+"original language of film or TV show": [
+"original language",
+"language of the original work",
+"created on language",
+"media language"
+],
+"screenwriter": [
+"scriptwriter",
+"screenplay by",
+"teleplay by",
+"writer (of screenplays)",
+"film script by",
+"written by",
+"writing credits",
+"scenarist"
+],
+"performer": [
+"artist",
+"musician",
+"played by",
+"portrayed by",
+"recorded by",
+"recording by",
+"dancer",
+"actor"
+],
+"father": [
+"dad",
+"daddy",
+"has father",
+"parent",
+"is son of",
+"is daughter of",
+"is child of",
+"son of"
+],
+"owned by": [
+"is owned by",
+"owner",
+"belongs to",
+"shareholder",
+"stockholder",
+"shareholders",
+"stockholders",
+"owners"
+],
+"spouse": [
+"wife",
+"married to",
+"marry",
+"marriage partner",
+"married",
+"wedded to",
+"wed",
+"wives"
+],
+"platform": [
+"platforms",
+"computing platform",
+"game platform",
+"environment",
+"runtime",
+"published on",
+"hardware"
+],
+"child": [
+"son",
+"daughter",
+"kid",
+"has child",
+"children",
+"sons",
+"daughters",
+"kids"
+],
+"taxon rank": [
+"taxonomic rank",
+"rank",
+"type of taxon"
+],
+"capital": [
+"capital city",
+"capital town",
+"chef-lieu",
+"principal place",
+"county seat",
+"administrative centre",
+"administrative headquarters",
+"has capital"
+],
+"sibling": [
+"sister",
+"has sister",
+"bro",
+"has brother",
+"brother or sister",
+"sister or brother",
+"sis",
+"sib"
+],
+"follows": [
+"succeeds to",
+"previous is",
+"before was",
+"predecessor",
+"preceded by",
+"prequel is",
+"sequel of",
+"split from"
+],
+"followed by": [
+"continued as",
+"prequel of",
+"next is",
+"precedes",
+"sequel is",
+"successor",
+"comes before",
+"next"
+],
+"native language": [
+"first language",
+"mother tongue",
+"language native",
+"L1 speaker of"
+],
+"operator": [
+"service operator",
+"facility operator",
+"operated by",
+"managed by",
+"administrator",
+"item operator",
+"user",
+"webmaster"
+],
+"producer": [
+"record producer",
+"film producer",
+"produced by",
+"music producer",
+"musical producer",
+"creative producer"
+],
+"capital of": [
+"county seat of",
+"county seat for",
+"administrative seat of",
+"seat of",
+"parish seat of",
+"is capital of",
+"state capital of",
+"national capital of"
+],
+"field of work": [
+"field of study",
+"fields",
+"discipline",
+"subject",
+"area",
+"specialism",
+"domain",
+"academic discipline"
+],
+"twinned administrative body": [
+"twin town",
+"sister town",
+"twin cities",
+"twin city",
+"partner city",
+"partner town",
+"sister city"
+],
+"diplomatic relation": [
+"diplomatic relations",
+"ambassadorial relations",
+"foreign relations",
+"foreign relation",
+"diplomatic relation",
+"ambassadorial relation",
+"political relations",
+"political relation"
+],
+"nominated for": [
+"nominee for",
+"nomination received",
+"nomination to",
+"have nomination to",
+"finalist for",
+"shortlisted for",
+"selected for",
+"nominated for award"
+],
+"military branch": [
+"branch",
+"formation",
+"service branch",
+"unit branch"
+],
+"named after": [
+"eponym",
+"named for",
+"namesake",
+"etymology",
+"toponym",
+"name after",
+"named in honor of",
+"name origin"
+],
+"location": [
+"whereabouts",
+"located in",
+"venue",
+"is in",
+"place held",
+"based in",
+"neighborhood",
+"region"
+],
+"mouth of the watercourse": [
+"watercourse outflow",
+"watercourse drain",
+"outflow",
+"drain",
+"river mouth",
+"outlet",
+"watercourse ends in",
+"flows into"
+],
+"work location": [
+"workplace",
+"place of activity",
+"active in",
+"location of work",
+"place of work",
+"working at",
+"work place",
+"work residence"
+],
+"official language": [
+"language official",
+"spoken in",
+"speaking",
+"language spoken"
+],
+"author": [
+"written by",
+"writer",
+"creator",
+"playwright",
+"poet",
+"maker"
+],
+"religion or worldview": [
+"religious affiliation",
+"faith",
+"life stance",
+"denomination",
+"follower of religion",
+"follows religion",
+"has religion",
+"religion or world view"
+],
+"located in or next to body of water": [
+"on lake",
+"next to lake",
+"located on body of water",
+"on bay",
+"on harbour",
+"on shore of",
+"on the shore of",
+"on the coast of"
+],
+"located in/on physical feature": [
+"takes place in",
+"on geographical feature",
+"on natural feature",
+"is on",
+"is in",
+"location (terrain feature)",
+"loc (terr)",
+"on"
+],
+"original broadcaster": [
+"original channel",
+"channel",
+"TV channel",
+"radio network",
+"network",
+"television channel",
+"radio station",
+"original air channel"
+],
+"developer": [
+"developed by",
+"written by",
+"created by",
+"game developer",
+"game dev",
+"dev",
+"video game developer",
+"video game dev"
+],
+"publisher": [
+"book publisher",
+"video game publisher",
+"software publisher",
+"publishing house",
+"published by",
+"board game publisher",
+"comic publisher",
+"comic book publisher"
+],
+"continent": [],
+"founder": [
+"co-founder",
+"founders",
+"established by",
+"co-founded by",
+"founder",
+"started by",
+"cofounder",
+"cofounded by"
+],
+"composer": [
+"songwriter",
+"composed by",
+"musical score by",
+"music by",
+"written by",
+"film score by",
+"soundtrack by",
+"original music composer"
+],
+"participant": [
+"participants",
+"attendee",
+"player",
+"competitor",
+"party",
+"event participant",
+"agent",
+"belligerents"
+],
+"participating team": [
+"teams"
+],
+"winner": [
+"won by",
+"victor",
+"champion",
+"winners",
+"champ",
+"top dog",
+"leader",
+"titleholder"
+],
+"drafted by": [],
+"applies to jurisdiction": [
+"of jurisdiction",
+"belongs to jurisdiction",
+"jurisdiction",
+"country of jurisdiction",
+"valid in jurisdiction",
+"applies to territorial jurisdiction",
+"applied to jurisdiction",
+"applies to place"
+],
+"family": [
+"house",
+"royal house",
+"dynasty",
+"noble family",
+"member of family"
+],
+"location of formation": [
+"originates from",
+"comes from",
+"place of foundation",
+"founded in",
+"formation location",
+"source location of group/organisation",
+"formed in",
+"from"
+],
+"part of the series": [
+"part of series",
+"listed in",
+"collection",
+"issue of",
+"episode of",
+"subseries",
+"video game series",
+"in series"
+],
+"manufacturer": [
+"manufactured by",
+"maker",
+"built by",
+"builder",
+"made by",
+"product of",
+"provider",
+"provided by"
+],
+"creator": [
+"artist (non-musical)",
+"created by",
+"painter",
+"sculptor",
+"made by",
+"painted by",
+"sculpted by",
+"visual artist"
+],
+"distributed by": [
+"distributor"
+],
+"occupant": [
+"tenant",
+"inhabitant",
+"renter",
+"lessee",
+"houses",
+"location of",
+"resident",
+"home team"
+],
+"parent organization or unit": [
+"parent organisation",
+"owned by (company or organisation)",
+"holding",
+"holding company",
+"part of",
+"parent unit",
+"parent agency",
+"superior formation"
+],
+"production company": [
+"film studio",
+"studio",
+"motion picture studio",
+"movie studio",
+"production house",
+"theatre company",
+"theater company",
+"theatrical troupe"
+],
+"movement": [
+"subculture",
+"school",
+"trend",
+"music scene",
+"artistic movement",
+"philosophical movement",
+"scientific movement",
+"literary movement"
+],
+"narrative location": [
+"setting location",
+"narrative set in",
+"location of narrative",
+"set in location",
+"takes place in",
+"playing in",
+"setting of work",
+"work set in"
+],
+"mother": [
+"mum",
+"mom",
+"mam",
+"has mother",
+"parent",
+"is son of",
+"is daughter of",
+"is child of"
+],
+"cause of death": [
+"method of murder",
+"death cause",
+"die from",
+"murder method",
+"die of",
+"died of"
+],
+"residence": [
+"lives in",
+"hometown",
+"home town",
+"place of residence",
+"resident of",
+"resided in",
+"resided at",
+"lived in"
+],
+"sports discipline competed in": [
+"sport disciplines competed in",
+"sport discipline competed in",
+"sport discipline",
+"sports discipline",
+"sporting event",
+"event in sports",
+"sports event",
+"sports disciplines competed in"
+],
+"industry": [
+"field of exercise",
+"branch",
+"economic branch",
+"field of action",
+"sector"
+],
+"notable work": [
+"artwork",
+"author of",
+"bibliography",
+"books by",
+"creator of",
+"famous books",
+"famous for",
+"famous works"
+],
+"heritage designation": [
+"designation",
+"listing",
+"listed status",
+"protected status",
+"protection",
+"legal protection",
+"heritage designation",
+"heritage status"
+],
+"main subject": [
+"about",
+"artistic theme",
+"content deals with",
+"content describes",
+"content is about",
+"describes",
+"descriptor",
+"focus"
+],
+"language of work or name": [
+"broadcasting language",
+"audio language",
+"available in",
+"language of work",
+"language of the reference",
+"language of website",
+"language of URL",
+"used language"
+],
+"influenced by": [
+"informed by",
+"has influence",
+"favorite player",
+"role model",
+"inspired by"
+],
+"present in work": [
+"from work",
+"from narrative",
+"featured in work",
+"in work",
+"in narrative",
+"appears in",
+"is shown in",
+"appeared in"
+],
+"competition class": [
+"class for competition",
+"qualification class",
+"qualifies for",
+"compclass",
+"weight class",
+"disability sport classifications",
+"rated at"
+],
+"child organization or unit": [
+"subsidiary company",
+"subsidiary entities",
+"imprint",
+"has imprint",
+"subordinate body",
+"subordinate unit",
+"parent company of",
+"owns"
+],
+"religious order": [
+"order",
+"monastic order"
+],
+"replaced by": [
+"heir",
+"next job holder",
+"successor",
+"succeeded by",
+"superseded by",
+"continued by",
+"mediatised to",
+"becomes"
+],
+"filming location": [
+"location of filming",
+"location where filmed",
+"studio where filmed",
+"place of filming",
+"place where filmed",
+"filmed at",
+"shooting location",
+"filming place"
+],
+"place served by transport hub": [
+"serves city",
+"city served",
+"train station serves",
+"area served by transport hub",
+"served by transport hub",
+"place served by transportation hub",
+"area served by transportation hub",
+"served by transportation hub"
+],
+"lyricist": [
+"words by",
+"writer (of song lyrics)",
+"author",
+"text by",
+"text poet",
+"text author",
+"text writer",
+"songwriter"
+],
+"country for sport": [
+"sporting nationality",
+"sports nationality",
+"sport nationality",
+"sport country",
+"sports country",
+"representative nationality"
+],
+"point in time": [
+"date",
+"as of",
+"time of event",
+"at time",
+"when",
+"year",
+"time",
+"during"
+],
+"basin country": [
+"basin countries"
+],
+"home venue": [
+"ground",
+"home field",
+"arena",
+"home ground",
+"stadium",
+"ballpark",
+"home water",
+"venue"
+],
+"tributary": [
+"affluent",
+"has tributary",
+"receives river",
+"has river inflow",
+"has inflow of",
+"receives tributary"
+],
+"inception": [
+"built",
+"commenced on date",
+"commencement date",
+"completed",
+"composed",
+"constructed",
+"construction end date",
+"created"
+],
+"political ideology": [
+"has political ideology",
+"official political ideology",
+"supports political ideology",
+"ideology",
+"political view",
+"supports ideology",
+"official ideology",
+"political viewpoint"
+],
+"organizer": [
+"organiser",
+"event producer",
+"organising body",
+"organizing body",
+"organized by",
+"organised by",
+"promoter",
+"presenter"
+],
+"product or material produced": [
+"material produced",
+"produces",
+"manufactures",
+"makes",
+"has product",
+"product",
+"maker of",
+"manufacturer of"
+],
+"place of burial": [
+"burial place",
+"resting place",
+"place of grave",
+"buried in",
+"grave at",
+"location of burial",
+"tomb",
+"interment"
+],
+"connecting line": [
+"railway line",
+"line connected to",
+"rail line connected to",
+"is on"
+],
+"replaces": [
+"forefather",
+"previous job holder",
+"preceded by",
+"succeeds",
+"supersedes",
+"continues from",
+"continues",
+"deprecates"
+],
+"publication date": [
+"air date",
+"airdate",
+"be published during",
+"be published in",
+"broadcast date",
+"date of first publication",
+"date of publication",
+"date of release"
+],
+"military, police or special rank": [
+"rank",
+"naval rank",
+"police rank",
+"military rank",
+"military or police rank"
+],
+"ethnic group": [
+"ethnicity",
+"culture",
+"people",
+"(cultural) nationality",
+"race",
+"ethnic or cultural origin",
+"tribal affiliation",
+"nationality"
+],
+"discoverer or inventor": [
+"inventor",
+"discoverer",
+"inventor or discoverer",
+"developer",
+"first described",
+"invented by",
+"created by",
+"invented"
+],
+"characters": [
+"protagonist",
+"antagonist",
+"hero",
+"heroine",
+"main character"
+],
+"operating system": [
+"OS",
+"supported OS",
+"supported operating system",
+"supported platform"
+],
+"lowest point": [
+"extreme point lowest",
+"extreme point deepest",
+"deepest point"
+],
+"time period": [
+"era",
+"historic era",
+"epoch",
+"historical period",
+"sports season",
+"theatre season",
+"legislative period",
+"historic period"
+],
+"facet of": [
+"aspect of",
+"subitem of",
+"topic of",
+"subtopic of",
+"main topic",
+"subject in",
+"section in"
+],
+"student of": [
+"teacher",
+"professor",
+"pupil of",
+"supervisor",
+"academic supervisor",
+"disciple of",
+"studied under",
+"master"
+],
+"voice type": [
+"vocal type",
+"range of voice",
+"type of voice",
+"register",
+"tessitura",
+"voice category",
+"vocal range",
+"vocal pitch"
+],
+"manner of death": [
+"death manner",
+"death type",
+"type of death",
+"circumstance of death",
+"nature of death"
+],
+"outflows": [
+"outflow",
+"lake outflow"
+],
+"crosses": [
+"bridge over",
+"tunnel under",
+"over",
+"under",
+"through",
+"spanning",
+"spans"
+],
+"based on": [
+"adaptation of",
+"adapted from",
+"based on work",
+"based upon",
+"copy of",
+"cover of",
+"derivative of",
+"derivative work of"
+],
+"inflows": [
+"inflow",
+"lake inflow",
+"river inflows"
+],
+"end time": [
+"abolished",
+"cease date",
+"cease operation",
+"cease time",
+"closed",
+"completed in",
+"discontinued",
+"dissolved"
+],
+"has use": [
+"function",
+"role",
+"mission",
+"purpose",
+"utility",
+"used for",
+"used in",
+"usage"
+],
+"head of state": [
+"president",
+"king",
+"queen",
+"emperor",
+"monarch",
+"state headed by",
+"governor",
+"leader"
+],
+"writing system": [
+"script",
+"written form",
+"writing script"
+],
+"site of astronomical discovery": [
+"astronomical discovery site",
+"discovered at observatory",
+"observatory of discovery",
+"observatory site of discovery"
+],
+"stock exchange": [
+"exchange",
+"listed on",
+"listed on exchange",
+"listed on stock exchange",
+"stock market",
+"listed on stock market"
+],
+"minor planet group": [
+"asteroid group"
+],
+"given name": [
+"forename",
+"first name",
+"personal name",
+"middle name",
+"Christian name",
+"name",
+"proper name",
+"firstname"
+],
+"unmarried partner": [
+"girlfriend",
+"boyfriend",
+"lover",
+"cohabitant",
+"partner",
+"domestic partner",
+"significant other",
+"enbyfriend"
+],
+"made from material": [
+"medium",
+"made from",
+"constructed from",
+"constructed out of",
+"construction material",
+"media",
+"built from",
+"built out of"
+],
+"significant event": [
+"key event",
+"key incident",
+"significant incident",
+"notable event",
+"notable incident",
+"major event",
+"big event",
+"main events"
+],
+"chairperson": [
+"leader",
+"headed by",
+"chairwoman",
+"president",
+"chair",
+"dean",
+"head of",
+"rector"
+],
+"transport network": [
+"system of routes",
+"transport network",
+"routes system",
+"part of network",
+"road type",
+"network",
+"highway system",
+"trail system"
+],
+"legislative body": [
+"representative body",
+"parliament",
+"council",
+"assembly",
+"diet",
+"rural council",
+"district council",
+"municipal council"
+],
+"depicts": [
+"depicting",
+"pictures",
+"shows",
+"show of",
+"plot",
+"resembles",
+"displays",
+"presents"
+],
+"allegiance": [
+"fidelity",
+"loyalty",
+"supporter of",
+"ally of",
+"loyal to",
+"supports"
+],
+"film editor": [
+"editor",
+"edited by",
+"editing by"
+],
+"pole position": [],
+"relative": [
+"family",
+"family member",
+"kinsman",
+"relation",
+"uncle",
+"aunt",
+"niece",
+"grandfather"
+],
+"currency": [
+"base currency",
+"used money"
+],
+"after a work by": [
+"copy of a work by",
+"artist who inspired this",
+"inspiring artist",
+"inspirational artist",
+"after work by",
+"based on a work by"
+],
+"designed by": [
+"has designer",
+"designer"
+],
+"highest point": [
+"highest peak",
+"zenith",
+"summit",
+"extreme point highest",
+"pinnacle",
+"elevation of highest point",
+"tallest point"
+],
+"architect": [
+"architecture firm",
+"architectural firm"
+],
+"start time": [
+"from",
+"starting",
+"began",
+"from time",
+"since",
+"from date",
+"building date",
+"starttime"
+],
+"librettist": [
+"libretto by",
+"book by"
+],
+"significant person": [
+"notable person",
+"friend",
+"friends",
+"person associated with the subject",
+"associated person",
+"key person",
+"key people",
+"significant people"
+],
+"language used": [
+"working languages",
+"working language",
+"languages used",
+"medium of instruction",
+"used language",
+"uses language"
+],
+"airline hub": [
+"hub",
+"hub airport"
+],
+"architectural style": [
+"style of architecture",
+"architecture",
+"design",
+"building type"
+],
+"director of photography": [
+"cinematographer",
+"DOP"
+],
+"executive producer": [
+"executive producers"
+],
+"connects with": [
+"connected with",
+"attached to",
+"attaches to",
+"connects to",
+"connected to",
+"couples with",
+"mates with",
+"binds to"
+],
+"territory claimed by": [
+"claimed by",
+"sovereignty claimed by",
+"territorial claim by"
+],
+"office held by the head of government": [
+"office of head of government",
+"position of head of government",
+"position held by head of government",
+"title of head of government",
+"head of government's office",
+"office held by head of government"
+],
+"from narrative universe": [
+"from universe",
+"universe",
+"featured in universe",
+"appears in universe",
+"fictional universe where entity is from",
+"from mythology",
+"mythology",
+"continuity"
+],
+"time of discovery or invention": [
+"date discovered",
+"discovery date",
+"date of discovery",
+"discovered on",
+"date of invention",
+"time of discovery",
+"time of invention",
+"discovered"
+],
+"represents": [
+"represents organisation",
+"representing",
+"stands for",
+"symbolizes",
+"symbolises",
+"team of",
+"team for",
+"refers to"
+],
+"maintained by": [
+"maintenance",
+"administered by",
+"maintainer",
+"custodian",
+"administrator",
+"held by",
+"managed by"
+],
+"student": [
+"students",
+"teacher of",
+"pupil",
+"pupils",
+"disciple",
+"disciples",
+"teacher to",
+"had student"
+],
+"said to be the same as": [
+"the same as",
+"equivalent to",
+"equivalent of",
+"is the same as",
+"is said to be the same as",
+"same",
+"conspecific with",
+"said to be equal to"
+],
+"located on astronomical body": [
+"on astronomical location",
+"on astronomical body",
+"astronomical body"
+],
+"successful candidate": [
+"elected person",
+"winner of election",
+"election winner",
+"elected candidate",
+"elected",
+"election won by",
+"winning candidate"
+],
+"head of government": [
+"mayor",
+"prime minister",
+"premier",
+"first minister",
+"head of national government",
+"chancellor",
+"governor",
+"government headed by"
+],
+"worshipped by": [
+"deity of"
+],
+"different from": [
+"is not",
+"distinct from",
+"not the same as",
+"isn't",
+"distinguished from",
+"to be distinguished from",
+"disambiguated from",
+"not same as"
+],
+"terminus location": [
+"destination",
+"departure point",
+"from",
+"to",
+"between"
+],
+"doctoral advisor": [
+"advisor",
+"doctoral supervisor",
+"supervisor",
+"PhD advisor",
+"promotor",
+"PhD supervisor",
+"thesis advisor"
+],
+"medical condition": [
+"disability",
+"ailment",
+"health problem",
+"disorder",
+"illness",
+"disease",
+"paralympic disability",
+"health condition"
+],
+"located in protected area": [
+"protected area location",
+"located in national park",
+"located in state park",
+"located in provincial park",
+"located in territorial park",
+"located in conservation area",
+"located in nature reserve",
+"located in natural reserve"
+],
+"culture": [
+"civilisation",
+"archaeological culture",
+"civilization"
+],
+"basic form of government": [
+"type of government",
+"form of government",
+"government"
+],
+"adjacent station": [
+"next station",
+"previous station",
+"next stop",
+"neighbouring station"
+],
+"place of detention": [
+"prison",
+"jail",
+"gaol",
+"imprisoned in",
+"in jail",
+"penitentiary",
+"detention place",
+"detained at"
+],
+"voice actor": [
+"voice dubber",
+"dubbed by",
+"VO",
+"voiced by",
+"VA",
+"voice actress",
+"voice actors",
+"voice actresses"
+],
+"operating area": [
+"area served",
+"area operated",
+"area of responsibility",
+"area of operations",
+"region served",
+"operating region",
+"service area",
+"geographic area operated"
+],
+"coordinate location": [
+"coordinates",
+"co-ordinate location",
+"co-ordinates",
+"coords",
+"co-ords",
+"geographic coordinate",
+"gps coordinate",
+"gps co-ordinate"
+],
+"legal form": [
+"legal structure",
+"structured as",
+"type of business entity"
+],
+"conferred by": [
+"awarded by",
+"bestowed by",
+"given by",
+"granted by",
+"presented by",
+"from",
+"by",
+"degree from"
+],
+"candidate": [
+"electoral candidate",
+"candidate in this election",
+"election has candidate",
+"has election candidate"
+],
+"copyright license": [
+"licence",
+"content license",
+"content licence",
+"copyright licence",
+"license",
+"software license"
+],
+"lake on watercourse": [
+"reservoir on this river",
+"lake on this river",
+"lakes on river",
+"lake on river",
+"lake on stream"
+],
+"office contested": [
+"position contested",
+"contested office",
+"contested position",
+"position elected"
+],
+"located in time zone": [
+"timezone",
+"time zone",
+"TZ",
+"observes time",
+"observes standard time",
+"standard time observed",
+"time observed"
+],
+"terminus": [
+"termini",
+"end point",
+"terminating connection",
+"trailhead",
+"terminuses",
+"train station at the end of the line"
+],
+"parent club": [
+"parent team",
+"major league affiliate",
+"affiliate of"
+],
+"presenter": [
+"host",
+"hostess",
+"TV presenter",
+"TV host",
+"presented by",
+"hosted by",
+"event presenter",
+"radio presenter"
+],
+"surface played on": [
+"playing surface"
+],
+"item operated": [
+"fleet",
+"aircraft in fleet",
+"aircraft operated",
+"equipment operated",
+"facility operated",
+"service operated",
+"operator of",
+"operated"
+],
+"licensed to broadcast to": [
+"city of license",
+"community of license",
+"broadcasts to",
+"broadcast to"
+],
+"place of publication": [
+"release region",
+"publication region",
+"published in (place)",
+"publication place",
+"publication location",
+"location of publication",
+"released in",
+"publication city"
+],
+"office held by head of state": [
+"state headed by",
+"head of state",
+"position held by head of state"
+],
+"IUCN conservation status": [
+"conservation status"
+],
+"has cause": [
+"cause",
+"has causes",
+"has underlying cause",
+"underlying cause",
+"ultimate cause",
+"ultimate causes",
+"initial cause",
+"effect of"
+],
+"primary destinations": [
+"major destinations",
+"significant destinations",
+"notable destinations"
+],
+"dissolved, abolished or demolished": [
+"abolished",
+"abolishment date",
+"ceased date",
+"ceased on",
+"ceased publication",
+"ceased to exist",
+"cessation date",
+"closed on"
+],
+"biological process": [],
+"collection": [
+"art collection",
+"museum collection",
+"archives",
+"archival holdings",
+"GLAM",
+"bibliographic collection",
+"editorial collection",
+"series"
+],
+"game mode": [
+"mode",
+"gameplay",
+"play mode",
+"player mode",
+"player configuration",
+"gamemode"
+],
+"programmed in": [
+"language",
+"written in",
+"programming language",
+"coded in"
+],
+"enclave within": [
+"enclaved by",
+"surrounded by",
+"enclosed by",
+"is enclave within",
+"enitrely surrounded by",
+"entirely enclaved by"
+],
+"indigenous to": [
+"native to",
+"originating from",
+"spoken by"
+],
+"is the study of": [
+"learning what?",
+"working on what?",
+"academic field for",
+"scholarly field for",
+"study of",
+"research",
+"researches",
+"studies"
+],
+"has effect": [
+"effect",
+"has result",
+"result",
+"has outcome",
+"outcome",
+"has symptom",
+"consequence",
+"causes"
+],
+"has version, edition or translation": [
+"editions",
+"translation(s)",
+"edition",
+"has translation",
+"has edition",
+"version",
+"has version",
+"released as"
+],
+"patron saint": [],
+"constellation": [
+"part of constellation"
+],
+"organizational division": [
+"divisions",
+"has division",
+"has business division",
+"business division",
+"organizational divisions",
+"has organizational division",
+"department",
+"has department"
+],
+"legislated by": [
+"enacted by",
+"passed by",
+"adopted by"
+],
+"parent astronomical body": [
+"parent body",
+"orbits",
+"star",
+"planetary system",
+"primary"
+],
+"physically interacts with": [
+"interact with",
+"interact"
+],
+"noble title": [
+"peerage",
+"title (hereditary)",
+"hereditary title",
+"royal title",
+"royal and noble ranks",
+"title of nobility",
+"nobility title"
+],
+"date of official opening": [
+"opening date",
+"opened",
+"date opened",
+"officially opened on",
+"inaugurated",
+"launch date",
+"official opening",
+"grand opening"
+],
+"title of chess person": [
+"chess title"
+],
+"connecting service": [
+"halt of",
+"stop of"
+],
+"contains settlement": [
+"populated places within",
+"settlement"
+],
+"date of first performance": [
+"premiere",
+"time of first performance",
+"premiere date",
+"date of first performance",
+"first performance date",
+"date of premiere",
+"world premiere",
+"world premiere date"
+],
+"health specialty": [
+"medical speciality",
+"medical specialty",
+"medical field"
+],
+"appointed by": [
+"named by",
+"inaugurated by",
+"appointer"
+],
+"origin of the watercourse": [
+"river source",
+"stream source",
+"source of a stream",
+"water source",
+"water origin",
+"river head",
+"source of watercourse",
+"origin of the water body"
+],
+"field of this occupation": [
+"profession's field",
+"activity corresponding to this occupation",
+"field of this profession",
+"practices",
+"practice",
+"field of occupation",
+"field of profession",
+"works in"
+],
+"cell component": [
+"subcellular localization",
+"present in the cell component"
+],
+"opposite of": [
+"inverse",
+"opposite",
+"is the opposite of",
+"inverse of",
+"contrasted to",
+"contrast of",
+"is opposite of",
+"opposite to"
+],
+"drug or therapy used for treatment": [
+"used for treatment",
+"treatment",
+"prescribed drug",
+"treated by",
+"prescription",
+"cure"
+],
+"killed by": [
+"killer",
+"assassin",
+"murderer",
+"murdered by",
+"executioner",
+"assassinated by",
+"slain by",
+"mortally wounded by"
+],
+"public holiday": [
+"bank holiday",
+"legal holiday",
+"national holiday"
+],
+"standards body": [
+"standards organisation",
+"standards setting organization",
+"standards setting organisation",
+"standards developing organization",
+"standards developing organisation",
+"standards group",
+"standardized by",
+"standardised by"
+],
+"software engine": [
+"engine of software",
+"game engine",
+"powered by",
+"render engine",
+"engine"
+],
+"executive body": [
+"executive branch"
+],
+"history of topic": [
+"timeline of topic",
+"chronology of topic",
+"history of subject",
+"timeline of subject",
+"chronology of subject",
+"history of the topic",
+"timeline of the topic",
+"chronology of the topic"
+],
+"head coach": [
+"manager",
+"club manager",
+"senior coach",
+"team manager",
+"coach",
+"trainer"
+],
+"parent peak": [
+"parent mountain"
+],
+"separated from": [
+"forked from",
+"schism from",
+"seceded from",
+"split from",
+"broke from",
+"branched from",
+"spun off",
+"spin off"
+],
+"location of creation": [
+"assembly location",
+"built at",
+"built in",
+"composed at",
+"created at",
+"creation location",
+"creation place",
+"locality of creation"
+]
+}

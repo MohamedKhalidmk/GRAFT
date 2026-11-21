@@ -59,6 +59,8 @@ class RetrievalConfig:
     query_graph: bool = False  # Haiku turns the question into schema nodes/edges, attached for this question only
     query_match_min: float = 0.85  # name-embedding cosine needed to match a question entity to a graph entity
     query_linking: str = "embedding"  # "embedding" (cosine >= query_match_min) | "llm" (Haiku picks among the top 10)
+    guide_planning: bool = False  # test 06 arm B: follow the parsed relation chain with the T-REx guide, facts first
+    background_facts: int = 0  # test 06 arm D: with document_facts_only, also keep the top k base facts as labelled background
     document_facts_only: bool = False  # bridge option (test 06 arm C): outside-base facts stay in the walk, never returned
 
 
@@ -72,6 +74,8 @@ class Region:
     fallback: bool = False
     sources: list[str] = field(default_factory=list)  # per fact in `facts`: "graph", "embed" or "both" (hybrid / embed)
     query_graph: dict = field(default_factory=dict)  # query_graph option: the parsed edges and matched entities
+    background: list[str] = field(default_factory=list)  # background_facts option: base facts shown apart, labelled
+    plan: dict = field(default_factory=dict)  # guide_planning option: the chain followed and what was found
 
 
 def _words(text: str) -> str:
@@ -111,6 +115,8 @@ class Retriever:
         return exact + extra[: self.cfg.link_embed_k]
 
     def retrieve(self, question: str) -> Region:
+        if self.cfg.guide_planning and not self.cfg.query_graph:
+            return self._with_plan(question, self._retrieve(question))
         if not self.cfg.query_graph:
             return self._retrieve(question)
         added, matched, qfacts = self._attach_query(question)
@@ -152,6 +158,19 @@ class Retriever:
         else:
             ranked = self._by_score(nodes, scores)
         return self._finish(self._merge(question, ranked), region)
+
+    def _with_plan(self, question: str, region: Region) -> Region:
+        """guide_planning: the facts found by following the parsed chain go first (current versions, document facts
+        only), then the mode's facts, within the same max_facts."""
+        edges = getattr(self, "query_graphs", {}).get(question) or []
+        chain, log = self.guide.plan(self.store, edges, self.link(question))
+        rest = [f for f in region.facts if f not in chain]
+        n_rest = max(self.cfg.max_facts - len(chain), 0)
+        srcs = dict(zip(region.facts, region.sources)) if region.sources else {}
+        region.facts = chain + rest[:n_rest]
+        region.sources = ["plan"] * len(chain) + [srcs.get(f, "graph") for f in rest[:n_rest]]
+        region.plan = {"edges": [list(e) for e in edges], **log}
+        return region
 
     def _merge(self, question: str, ranked: list[str]) -> list[str]:
         """hybrid: one fact from the mode's ranking, then one from embedding search, in turn; duplicates dropped.
@@ -363,6 +382,8 @@ class Retriever:
             if newest in chosen:
                 continue
             if self.cfg.document_facts_only and self.store.fact(newest).get("layer") == "base":
+                if len(region.background) < self.cfg.background_facts and newest not in region.background:
+                    region.background.append(newest)
                 continue
             chosen.append(newest)
             picked.append(fact)

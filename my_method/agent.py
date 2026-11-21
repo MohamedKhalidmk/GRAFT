@@ -200,7 +200,8 @@ class GraftAgent:
                               hybrid=c.get("hybrid", False), hybrid_k=c.get("hybrid_k", 0),
                               query_graph=c.get("query_graph", False), query_match_min=c.get("query_match_min", 0.85),
                               query_linking=c.get("query_linking", "embedding"),
-                              document_facts_only=c.get("document_facts_only", False))
+                              document_facts_only=c.get("document_facts_only", False),
+                              background_facts=c.get("background_facts", 0))
         if c.get("bridge_weight") is not None:  # test 06 arm C: outside-base edges walk at this weight
             self.store.bridge_weight = float(c["bridge_weight"])
             self.store._simple = None
@@ -212,7 +213,21 @@ class GraftAgent:
                                  f"this run uses {c['embedding_model']}")
             # the GNN's training size, unless the run sets max_nodes (larger subgraphs than the GNN was trained on)
             cfg.max_nodes = c.get("max_nodes", gnn_cfg["max_nodes"])
-        return Retriever(self.store, cfg, self.texts, model)
+        guide = None
+        if c.get("trex_guide"):  # test 06 arm B: T-REx as a structure guide (my_method/guide.py); no T-REx fact is used
+            from my_method.guide import Guide
+            guide = Guide(REPO / c["trex_guide"], self.texts)
+            if c.get("guide_linking") and not getattr(self, "_guide_linked", False):
+                log = guide.link_pass(self.store)
+                self._guide_linked = True
+                (self.work_dir / "guide_linking.json").write_text(json.dumps(log, ensure_ascii=False, indent=1))
+                print(f"[graft] guide linking: {log['relations_mapped']} of {log['doc_facts']} facts mapped, "
+                      f"{log['revisions_added']} revisions added, {log['entities_merged']} entities merged "
+                      f"({log['merges_refused_count']} refused)", flush=True)
+            cfg.guide_planning = bool(c.get("guide_planning"))
+        r = Retriever(self.store, cfg, self.texts, model)
+        r.guide = guide
+        return r
 
     def _retrieve_all(self, workers: int) -> None:
         """Retrieve every question in parallel on first use, so the time counts as query time."""
@@ -283,10 +298,14 @@ class GraftAgent:
 
     def _prepare_query_graphs(self, texts: list[str]) -> None:
         """query_graph option: parse the questions with Haiku here, in the parent, before workers fork."""
-        if not self.retriever.cfg.query_graph:
+        if not (self.retriever.cfg.query_graph or self.retriever.cfg.guide_planning):
             return
         schema = Schema.load(REPO / self.config["schema_path"]).describe()
         self.retriever.prepare_queries(texts, lambda q: parse_question_graph(self.llm, schema, q))
+        if self.retriever.cfg.guide_planning:  # map every parsed relation now, in the parent (workers never embed)
+            for q in texts:
+                for _, r, _ in self.retriever.query_graphs.get(q, []):
+                    self.retriever.guide.canon(r)
         if self.retriever.cfg.query_linking == "llm":  # link question entities into the graph the way the writer does
             self.query_link_log = getattr(self, "query_link_log", [])
             self.retriever.prepare_query_links(texts, self._link_question)
@@ -339,7 +358,7 @@ class GraftAgent:
         workers = self.config.get("retrieval_workers", 1)
         if workers > 1 and not self.regions:
             self._retrieve_all(workers)
-        if not self.regions and self.retriever.cfg.query_graph:
+        if not self.regions and (self.retriever.cfg.query_graph or self.retriever.cfg.guide_planning):
             self._prepare_query_graphs([question_text(question.query)])
         region = self.regions.get(question.q_index)
         if region is None:
@@ -352,7 +371,8 @@ class GraftAgent:
                            "linked_entities": region.linked_entities, "region_facts": len(region.facts),
                            "subgraph_nodes": region.subgraph_nodes, "fallback": region.fallback,
                            "subgraph_text": "\n".join(self.store.fact(f)["provenance"]["span"] for f in region.subgraph_facts),
-                           "fact_sources": region.sources, "query_graph": region.query_graph}
+                           "fact_sources": region.sources, "query_graph": region.query_graph,
+                           "plan": getattr(region, "plan", None)}
 
 
 SGARAgent = GraftAgent  # old name, kept for older scripts

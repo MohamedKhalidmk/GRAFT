@@ -1,0 +1,27 @@
+# PAID (test 06 arm D, run after A-C): arm C (T-REx as a bridge) plus the top 5 T-REx facts of each question's walk, shown
+# apart as labelled background with the rule that the knowledge pool always wins (my_method/answer.py BACKGROUND_RULE).
+run_name: exp_real_tg_d_background
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  explainer: goat
+  start_graph: outside
+  start_graph_path: results/checkpoints/base_graphs/trex_full_base.json
+  writer_linking: llm
+  linking_candidates: 10
+  max_facts: 50
+  bridge_weight: 0.2
+  document_facts_only: true
+  background_facts: 5
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_trexfull_link_start.json
+data:
+  length: 262k
+  splits: [mh]
+llm:
+  model: claude-haiku-5-5
+  mode: real
+  answer_max_tokens: 256
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 3

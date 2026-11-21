@@ -30,3 +30,13 @@ def test_document_facts_only():
     assert r._finish([base, doc], Region([])).facts == [doc]
     r.cfg.document_facts_only = False
     assert r._finish([base, doc], Region([])).facts == [base, doc]
+
+
+def test_background_facts():
+    from my_method.answer import background_block
+    s, doc, base = toy()
+    r = Retriever(s, RetrievalConfig(mode="ppr", max_facts=10, document_facts_only=True, background_facts=1),
+                  TextEmbedder(HashEmbedder()), None)
+    reg = r._finish([base, doc], Region([]))
+    assert reg.facts == [doc] and reg.background == [base]
+    assert "knowledge pool always wins" in background_block(s, reg.background)

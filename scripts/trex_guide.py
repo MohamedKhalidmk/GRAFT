@@ -26,6 +26,19 @@ from pathlib import Path
 N_TYPES = 40  # coarse types: the most common "instance of" classes
 
 
+def load_parquet(trex_dir: str, labels: dict[str, str]) -> list[tuple[str, str, str]]:
+    """Raw T-REx (relbert/t_rex parquet: relation id, head, tail): every triple whose property has a label."""
+    import glob
+    import pyarrow.parquet as pq
+    out = []
+    for f in sorted(glob.glob(f"{trex_dir}/*.parquet")):
+        t = pq.read_table(f, columns=["relation", "head", "tail"])
+        for r, h, o in zip(*(t.column(c).to_pylist() for c in ("relation", "head", "tail"))):
+            if r in labels and h and o and h != o:
+                out.append((h, labels[r], o))
+    return list(dict.fromkeys(out))
+
+
 def load_facts(path: str) -> list[tuple[str, str, str]]:
     data = json.loads(Path(path).read_text())
     return [(n["subject"], n["relation"], n["object"]) for n in data["nodes"] if n.get("type") == "Fact"]
@@ -33,7 +46,10 @@ def load_facts(path: str) -> list[tuple[str, str, str]]:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--base", required=True)
+    ap.add_argument("--base", default=None, help="a GRAFT base graph (the 45-property T-REx base)")
+    ap.add_argument("--trex-dir", default=None, help="or the raw T-REx parquet files, with --labels")
+    ap.add_argument("--labels", default=None, help="JSON {property id: English label}: every property to keep")
+    ap.add_argument("--aliases", default=None, help="JSON {label: [Wikidata aliases]}: also matched when mapping labels")
     ap.add_argument("--docs", required=True)
     ap.add_argument("--parses", required=True)
     ap.add_argument("--out", required=True)
@@ -41,7 +57,7 @@ def main() -> None:
     ap.add_argument("--cover_min", type=float, default=0.8)
     a = ap.parse_args()
     t0 = time.time()
-    facts = load_facts(a.base)
+    facts = load_parquet(a.trex_dir, json.loads(Path(a.labels).read_text())) if a.trex_dir else load_facts(a.base)
     print(f"{len(facts):,} base facts in {time.time() - t0:.0f} s", flush=True)
     rel_count = Counter(r for _, r, _ in facts)
 
@@ -121,14 +137,17 @@ def main() -> None:
     import numpy as np
     emb = SentenceTransformer(a.embedding_model, device="cpu")
     base_rels = [r for r in rel_count if r not in skip]
-    bv = emb.encode(base_rels, normalize_embeddings=True, batch_size=256)
+    aliases = json.loads(Path(a.aliases).read_text()) if a.aliases else {}
+    names = [(r, r) for r in base_rels] + [(al.lower(), r) for r in base_rels for al in aliases.get(r, [])]
+    bv = emb.encode([n for n, _ in names], normalize_embeddings=True, batch_size=256)
 
     def nearest(labels: list[str]) -> dict:
+        """Each label -> the relation whose label or alias is closest by embedding."""
         if not labels:
             return {}
         v = emb.encode(labels, normalize_embeddings=True, batch_size=256)
         sims = v @ bv.T
-        return {lab: {"relation": base_rels[int(i)], "cosine": round(float(sims[k, i]), 3)}
+        return {lab: {"relation": names[int(i)][1], "via": names[int(i)][0], "cosine": round(float(sims[k, i]), 3)}
                 for k, (lab, i) in enumerate(zip(labels, sims.argmax(1)))}
 
     doc_facts = load_facts(a.docs)
@@ -145,6 +164,7 @@ def main() -> None:
 
     out = {
         "relations": dict(rel_count.most_common()),
+        "aliases": {r: aliases.get(r, []) for r in base_rels},
         "types": top,
         "signature": {r: {"subject": sig_s[r].most_common(5), "object": sig_o[r].most_common(5)} for r in base_rels},
         "chains": {r: chains[r].most_common(15) for r in base_rels},
