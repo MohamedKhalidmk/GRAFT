@@ -200,6 +200,11 @@ class GraftAgent:
         self._prepare_query_graphs(texts)
         # Embed every node and question here, in the parent: workers are forked, and a forked process
         # cannot use CUDA. With everything cached, workers only read vectors.
+        shared = self.config.get("shared_graph")
+        if shared and not getattr(self, "_saved_vectors", False):  # vectors saved once by scripts/embed_graph.py
+            n = self.texts.load_saved(REPO / shared)
+            self._saved_vectors = True
+            print(f"[graft] loaded {n:,} saved node vectors" if n else "[graft] no saved node vectors; embedding here", flush=True)
         self.texts.embed_texts([node_text(self.store, n) for n in self.store.g.nodes] + texts)
         with multiprocessing.get_context("fork").Pool(workers) as pool:
             regions = pool.map(_retrieve_in_worker, texts, chunksize=1)

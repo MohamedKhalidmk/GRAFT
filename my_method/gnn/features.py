@@ -58,6 +58,22 @@ class TextEmbedder:
     def table(self) -> np.ndarray:
         return np.stack([self.cache[t] for t in self.index])  # dict order = row order
 
+    def load_saved(self, graph_path: str) -> int:
+        """Load the vectors scripts/embed_graph.py saved next to a graph (GRAPH.emb.npy + GRAPH.emb.texts.json),
+        if they exist and were made with this model's dimension. Returns how many texts were loaded."""
+        import json
+        from pathlib import Path
+        vec_path, txt_path = Path(str(graph_path) + ".emb.npy"), Path(str(graph_path) + ".emb.texts.json")
+        if not (vec_path.exists() and txt_path.exists()):
+            return 0
+        vecs = np.load(vec_path)
+        texts = json.loads(txt_path.read_text())
+        if vecs.shape != (len(texts), self.dim):
+            raise ValueError(f"{vec_path}: shape {vecs.shape} does not match {len(texts)} texts x {self.dim}")
+        for t, v in zip(texts, vecs):
+            self.cache.setdefault(t, v)
+        return len(texts)
+
     def embed_texts(self, texts: list[str]) -> np.ndarray:
         missing = [t for t in dict.fromkeys(texts) if t not in self.cache]
         if missing:
