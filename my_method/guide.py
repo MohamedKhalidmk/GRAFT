@@ -24,7 +24,9 @@ import numpy as np
 
 from my_method.graph_store import GraphStore, entity_id, is_stopword_name, norm
 
-MAP_MIN = 0.8  # cosine needed to map a relation label to a T-REx relation
+MAP_MIN = 0.8  # cosine needed to map a relation label to a T-REx relation (planning)
+STRICT_MIN = 0.92  # cosine needed before facts with different labels count as versions of one fact (revisions);
+#                    the dry check showed 0.91 joining "founded by" with "founded in city" (location of formation)
 FUNCTIONAL_MIN = 0.5  # a relation counts as single-valued when at least this share of its subjects has one object
 PLAN_MAX = 10
 
@@ -100,7 +102,8 @@ class Guide:
             d = store.fact(f)
             r = d.get("canon")
             if r and self.functional.get(r, 0) >= FUNCTIONAL_MIN and not store.is_superseded(f):
-                groups[(entity_id(d["subject"]), r)].append(f)
+                strict = self.label_map.get(norm(d["relation"]), (None, 0.0))[1] >= STRICT_MIN
+                groups[(entity_id(d["subject"]), r if strict else "label:" + norm(d["relation"]))].append(f)
         added = []
         order = lambda f: (store.fact(f)["provenance"]["serial"] if store.fact(f)["provenance"]["serial"] is not None
                            else -1, store.fact(f)["provenance"]["arrival"])
@@ -186,10 +189,14 @@ class Guide:
         if not start:
             return [], {"reason": "no start entity"}
         want = [self.canon(r) or norm(r) for _, r, _ in edges]
+        raw = [norm(r) for _, r, _ in edges]
         cur, chain, steps = start, [], []
-        for r in want:
+        for r, label in zip(want, raw):
             fs = self._facts_from(store, cur)
             hit = [f for f in fs if self._rel(store, f) == r]
+            same = [f for f in hit if norm(store.fact(f)["relation"]) == label]  # the question's own wording first
+            exact = [f for f in hit if self.label_map.get(norm(store.fact(f)["relation"]), (None, 0.0))[1] >= STRICT_MIN]
+            hit = same or exact or hit
             how = "direct"
             if not hit:  # bridge: a document relation that T-REx chains often lead from into r
                 best, score = None, 0
