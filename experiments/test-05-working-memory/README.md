@@ -2,7 +2,7 @@
 
 | Test | Date | Status | Current run |
 |---|---|---|---|
-| 05 | 2026-11-20 | running | [run-01](runs/run-01/) |
+| 05 | 2026-11-21 | done on Haiku (Qwen pending) | [run-02](runs/run-02/) |
 
 ## Question
 
@@ -32,14 +32,25 @@ where the plan splits one entity into two edges (q41, "directed and managed"). G
 (43 vs 51) because only the cited facts reach the final call. Each arm's working memory is logged per question
 (`runs/run-01/*/repeat_*/memory/working_memory.jsonl`). Spend: $0.66 for all four arms.
 
-run-02 (pending): C and C- with step prompt v2, which adds that the newer fact wins.
+run-02, step prompt v2 (the newer fact wins), with arm A rerun the same day (Fir 4827601, 4827603, 4826810):
+
+| Arm | Accuracy (mean, SD) | Per repeat | Gold fact in final facts | Cost / 100 questions |
+|---|---|---|---|---|
+| A · mode C, rerun the same day | 34.7, 1.5 | 36 / 33 / 35 | 50.3 | $0.027 |
+| C v2 · working memory in the graph | 35.7, 2.1 | 38 / 34 / 35 | 45.3 | $0.080 |
+| C- v2 · same steps, prompt only | 33.0, 0.0 | 33 / 33 / 33 | 41.3 | $0.081 |
+
+The newer-fact rule moves C up by 0.4 (35.3 to 35.7) and C- by 0.3: both inside the spread. C v2 beats A by 1.0 with an
+SD of 2.1, so by the rule it is not kept. C beats C- again (by 2.7), in both rounds: when the work is done in steps,
+writing it into the graph is what helps. Spend $0.49 (C v2 $0.240, C- v2 $0.243).
 
 ## Decision
 
-Kept only if C beats A by more than its repeat spread and beats C-.
+Not kept on Haiku: working memory in the graph is at most about 1 point above mode C in two rounds, inside the repeat spread, for about three times the cost per question. It does beat the prompt-only version by 2.6 to 2.7 in both rounds, so writing to the graph is the useful part if steps are used. The same three arms run on Qwen (Fir 4823564), since Qwen is the model the system ships with.
 
 ## Revisions
 
+- 2026-11-21: run-02 (step prompt v2) and the same-day arm A rerun; decision on Haiku: not kept.
 - 2026-11-21: arm A (34.7) vs test 01's mode C (38) checked: same code path, config, graph, prompt, grader and model; run-to-run noise in retrieval and answers ([baseline_check.md](baseline_check.md)).
 
 - 2026-11-20: test folder created from the existing runs and the Flotilla run log.

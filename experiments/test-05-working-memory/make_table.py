@@ -6,9 +6,10 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ARMS = [("a_modec", "A", "mode C, one answer call"), ("b_qlayer", "B", "question layer"),
         ("c_wm_graph", "C", "working memory in the graph"), ("cm_wm_prompt", "C-", "same steps, prompt only"),
-        ("c_wm_graph_v2", "C v2", "C, step prompt with the newer-fact rule"), ("cm_wm_prompt_v2", "C- v2", "C-, same prompt")]
+        ("c_wm_graph_v2", "C v2", "C, step prompt with the newer-fact rule"), ("cm_wm_prompt_v2", "C- v2", "C-, same prompt"),
+        ("a_modec_rerun1121", "A", "mode C, rerun the same day as round 2")]
 rows = []
-for model, prefix in [("Haiku", "exp_wm_empty"), ("Qwen", "exp_qwen_empty")]:
+for model, prefix in [("Haiku", "exp_wm_empty"), ("Haiku", "exp_real_wm_empty"), ("Qwen", "exp_qwen_empty")]:
   for key, arm, what in ARMS:
       runs = sorted(glob.glob(str(HERE / "runs" / "run-*" / f"{prefix}_{key}_2*")))
       if not runs:

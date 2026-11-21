@@ -1,0 +1,20 @@
+run_name: exp_real_wm_empty_a_modec_rerun1121
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  max_facts: 50
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+data:
+  length: 262k
+  splits:
+  - mh
+  chunk_size: 512
+  max_questions: null
+llm:
+  model: claude-haiku-5-5
+  mode: real
+  answer_max_tokens: 256
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 3
