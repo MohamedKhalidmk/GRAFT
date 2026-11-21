@@ -31,16 +31,17 @@ a. **openai missing from GRAFT's venv** (GRAFT on Qwen failed: Nibi 28252727, $0
 b. **LongMemEval GRAFT build pilot 28263147** may have started before the lme_job.sbatch fix. If it failed, resubmit:
    `bash scripts/fir/submit_longmemeval.sh prepare 1:00:00 00 -- --limit 5` (on Nibi with
    `EXTRA_SBATCH=--gpus-per-node=nvidia_h100_80gb_hbm3_3g.40gb:1`; see the script header).
-c. **LongMemEval judge: open decision.** An older run-log entry says Haiku is the LongMemEval judge (about $0.25 per route);
-   the current code uses Qwen as judge with LongMemEval's official prompts, plus a 50-verdict hand check (stop under
-   90% agreement). Ask the user which, before `submit_longmemeval.sh judge`.
+c. **LongMemEval judge: decided (user, 2026-11-21): Claude Haiku 5.5** with LongMemEval's official judge prompts, the fixed
+   Haiku check before each judge batch, request IDs logged (PROTOCOL.md, protocol-v10 addendum). Left: add the Haiku
+   backend to `memory_route judge` with a cost guard (paid, CPU job, key via the dialog only), and put the canary job
+   before it in `submit_longmemeval.sh judge`. Estimated $2.50 for ten routes plus the checks; ask before running.
 d. **Arm E and the guide rerun are not recorded yet.** When 4874611 finishes, copy both runs into
    `experiments/test-06-trex-structure-guide/runs/run-03/` in GRAFT, add them to `make_table.py` (rows "E" and
    "B (run-03)"), rebuild, update the README and INDEX, log spend in Flotilla `docs/run_log.md`.
 e. **Per-row cost order** (cheapest route judged per question from its own GPU-seconds) was asked of the labelling agent
    for `strategy_labels.py` and `strategy_router.py`; check `git log` in Flotilla for whether it landed, and add it with
    tests if not.
-f. **PROTOCOL.md's status line** says protocol-v8; the changelog is at v10. Fix the line when next editing the protocol.
+f. PROTOCOL.md's status line now names protocol-v10 (fixed 2026-11-21).
 
 ## 3. Next three steps
 
@@ -48,7 +49,7 @@ f. **PROTOCOL.md's status line** says protocol-v8; the changelog is at v10. Fix 
    - the six base routes on all 20 shards: `bash scripts/fir/submit_longmemeval.sh base <route> <time> 00 01 ... 19`
    - GRAFT graphs: `submit_longmemeval.sh prepare <time> <shards>`
    - the four Memory routes: `submit_longmemeval.sh memory <route> <time> <shards>`
-   - grading: `submit_longmemeval.sh judge <time> <name>` (after 2c)
+   - grading with Haiku: `submit_longmemeval.sh judge <time> <name>` (after 2c; paid, key via the dialog)
    - merge into new labels:
      `python -m flotilla.strategy_labels --pool-labels $SCRATCH/flotilla/test04-labels/run-03 --memory-items $SCRATCH/flotilla/data/longmemeval/memory_items.jsonl --verdicts <judge>/verdicts.jsonl --memory-split $SCRATCH/flotilla/data/longmemeval/split.json --runs <route>=<dirs> ... --build-runs $LME/runs/prepare/* --graft-cache $LME/graft_cache --out $SCRATCH/flotilla/test04-labels/run-04-lme`
    Base routes and GRAFT run on 3g.40gb MIG slices (full H100s queue for days); time limits from the pilot +50%.
