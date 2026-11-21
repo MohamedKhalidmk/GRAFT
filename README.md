@@ -12,6 +12,13 @@ old name so the recorded runs stay reproducible; configs that say `method: sgar`
 Paper: Hu, Wang & McAuley, *Evaluating Memory in LLM Agents via Incremental Multi-Turn
 Interactions* (MemoryAgentBench), ICLR 2026, arXiv 2507.05257.
 
+## Experiments and designs
+
+- [experiments/INDEX.md](experiments/INDEX.md): every test (question, setup, result, decision, runs), from read order
+  (test 01) to the full T-REx base (test 04) and working memory (test 05).
+- [docs/design/](docs/design/): designs before code, e.g. [working memory in the graph](docs/design/graft_working_memory_design.md).
+- [docs/experiments.md](docs/experiments.md): the full write-up of the read-order and baseline runs.
+
 ## Quick start
 
 ```bash

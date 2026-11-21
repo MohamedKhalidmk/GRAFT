@@ -1,0 +1,608 @@
+{
+ "rule": {
+  "generic_df": 0.01,
+  "sentences": 1215416
+ },
+ "base": {
+  "by_category": {
+   "generic": 34,
+   "stopword": 25,
+   "number": 59
+  },
+  "facts_by_category": {
+   "generic": 129452,
+   "stopword": 504,
+   "number": 101
+  },
+  "top_by_facts": [
+   [
+    "footballer",
+    "generic",
+    22242
+   ],
+   [
+    "football",
+    "generic",
+    19661
+   ],
+   [
+    "politician",
+    "generic",
+    11475
+   ],
+   [
+    "actor",
+    "generic",
+    7517
+   ],
+   [
+    "defender",
+    "generic",
+    7256
+   ],
+   [
+    "midfielder",
+    "generic",
+    6055
+   ],
+   [
+    "striker",
+    "generic",
+    5989
+   ],
+   [
+    "goalkeeper",
+    "generic",
+    5763
+   ],
+   [
+    "actress",
+    "generic",
+    5670
+   ],
+   [
+    "composer",
+    "generic",
+    5667
+   ],
+   [
+    "village",
+    "generic",
+    3895
+   ],
+   [
+    "comune",
+    "generic",
+    3853
+   ],
+   [
+    "river",
+    "generic",
+    3504
+   ],
+   [
+    "poet",
+    "generic",
+    3281
+   ],
+   [
+    "journalist",
+    "generic",
+    3133
+   ],
+   [
+    "soccer",
+    "generic",
+    2722
+   ],
+   [
+    "jazz",
+    "generic",
+    2331
+   ],
+   [
+    "municipality",
+    "generic",
+    2240
+   ],
+   [
+    "basketball",
+    "generic",
+    2174
+   ],
+   [
+    "songwriter",
+    "generic",
+    1751
+   ],
+   [
+    "species",
+    "generic",
+    1328
+   ],
+   [
+    "rock",
+    "generic",
+    1161
+   ],
+   [
+    "international",
+    "generic",
+    673
+   ],
+   [
+    "OR",
+    "stopword",
+    62
+   ],
+   [
+    "IN",
+    "stopword",
+    61
+   ],
+   [
+    "UP",
+    "stopword",
+    59
+   ],
+   [
+    "CAN",
+    "stopword",
+    41
+   ],
+   [
+    "MI",
+    "generic",
+    34
+   ],
+   [
+    "NO",
+    "stopword",
+    33
+   ],
+   [
+    "AT",
+    "stopword",
+    33
+   ],
+   [
+    "BE",
+    "stopword",
+    32
+   ],
+   [
+    "Ain",
+    "stopword",
+    31
+   ],
+   [
+    "DE",
+    "generic",
+    25
+   ],
+   [
+    "ON",
+    "stopword",
+    25
+   ],
+   [
+    "AM",
+    "stopword",
+    22
+   ],
+   [
+    "Don",
+    "stopword",
+    21
+   ],
+   [
+    "census",
+    "generic",
+    16
+   ],
+   [
+    "AS",
+    "stopword",
+    13
+   ],
+   [
+    "TO",
+    "stopword",
+    12
+   ],
+   [
+    "SO",
+    "stopword",
+    11
+   ]
+  ],
+  "kept_because_documents_use_them": [],
+  "nodes_before": 1560412,
+  "nodes_after": 1428930,
+  "edges_before": 2430832,
+  "edges_after": 2170766,
+  "facts_before": 1215416,
+  "facts_after": 1085383,
+  "junk_entities_removed": 118,
+  "base_facts_removed": 130033,
+  "orphan_base_entities_removed": 1331,
+  "edges_touching_removed_nodes": 390123,
+  "supersedes_edges_removed": 0,
+  "written": "/home/khaledmk/scratch/sgar/results/checkpoints/base_graphs/trex_full_base_clean.json"
+ },
+ "shared": {
+  "by_category": {
+   "generic": 23,
+   "stopword": 25,
+   "number": 58
+  },
+  "facts_by_category": {
+   "generic": 55139,
+   "stopword": 504,
+   "number": 96
+  },
+  "top_by_facts": [
+   [
+    "footballer",
+    "generic",
+    22242
+   ],
+   [
+    "striker",
+    "generic",
+    5989
+   ],
+   [
+    "actress",
+    "generic",
+    5670
+   ],
+   [
+    "village",
+    "generic",
+    3895
+   ],
+   [
+    "comune",
+    "generic",
+    3853
+   ],
+   [
+    "river",
+    "generic",
+    3504
+   ],
+   [
+    "soccer",
+    "generic",
+    2722
+   ],
+   [
+    "municipality",
+    "generic",
+    2240
+   ],
+   [
+    "songwriter",
+    "generic",
+    1751
+   ],
+   [
+    "species",
+    "generic",
+    1328
+   ],
+   [
+    "rock",
+    "generic",
+    1161
+   ],
+   [
+    "international",
+    "generic",
+    673
+   ],
+   [
+    "OR",
+    "stopword",
+    62
+   ],
+   [
+    "IN",
+    "stopword",
+    61
+   ],
+   [
+    "UP",
+    "stopword",
+    59
+   ],
+   [
+    "CAN",
+    "stopword",
+    41
+   ],
+   [
+    "MI",
+    "generic",
+    34
+   ],
+   [
+    "NO",
+    "stopword",
+    33
+   ],
+   [
+    "AT",
+    "stopword",
+    33
+   ],
+   [
+    "BE",
+    "stopword",
+    32
+   ],
+   [
+    "Ain",
+    "stopword",
+    31
+   ],
+   [
+    "DE",
+    "generic",
+    25
+   ],
+   [
+    "ON",
+    "stopword",
+    25
+   ],
+   [
+    "AM",
+    "stopword",
+    22
+   ],
+   [
+    "Don",
+    "stopword",
+    21
+   ],
+   [
+    "census",
+    "generic",
+    16
+   ],
+   [
+    "AS",
+    "stopword",
+    13
+   ],
+   [
+    "TO",
+    "stopword",
+    12
+   ],
+   [
+    "SO",
+    "stopword",
+    11
+   ],
+   [
+    "Debut",
+    "generic",
+    8
+   ],
+   [
+    "ME",
+    "stopword",
+    7
+   ],
+   [
+    "AND",
+    "stopword",
+    7
+   ],
+   [
+    "6502",
+    "number",
+    6
+   ],
+   [
+    "NOR",
+    "stopword",
+    6
+   ],
+   [
+    "HOME",
+    "generic",
+    6
+   ],
+   [
+    "Themselves",
+    "stopword",
+    6
+   ],
+   [
+    "Seventeen",
+    "number",
+    6
+   ],
+   [
+    "ICE",
+    "generic",
+    5
+   ],
+   [
+    "Winning",
+    "generic",
+    5
+   ],
+   [
+    "Zero",
+    "number",
+    5
+   ]
+  ],
+  "kept_because_documents_use_them": [
+   [
+    "football",
+    "generic",
+    19666,
+    5
+   ],
+   [
+    "politician",
+    "generic",
+    11534,
+    59
+   ],
+   [
+    "defender",
+    "generic",
+    7274,
+    18
+   ],
+   [
+    "midfielder",
+    "generic",
+    6128,
+    73
+   ],
+   [
+    "goalkeeper",
+    "generic",
+    5827,
+    64
+   ],
+   [
+    "basketball",
+    "generic",
+    2342,
+    168
+   ],
+   [
+    "journalist",
+    "generic",
+    3134,
+    1
+   ],
+   [
+    "poet",
+    "generic",
+    3284,
+    3
+   ],
+   [
+    "jazz",
+    "generic",
+    2421,
+    90
+   ],
+   [
+    "composer",
+    "generic",
+    5669,
+    2
+   ],
+   [
+    "actor",
+    "generic",
+    7519,
+    2
+   ],
+   [
+    "90210",
+    "number",
+    7,
+    2
+   ]
+  ],
+  "nodes_before": 1579423,
+  "nodes_after": 1523001,
+  "edges_before": 2466675,
+  "edges_after": 2355200,
+  "facts_before": 1230691,
+  "facts_after": 1174959,
+  "junk_entities_removed": 106,
+  "base_facts_removed": 55732,
+  "orphan_base_entities_removed": 584,
+  "edges_touching_removed_nodes": 167214,
+  "supersedes_edges_removed": 11,
+  "written": "/home/khaledmk/scratch/sgar/results/checkpoints/shared_graphs/real_mh_262k_trexfull_link_start_clean.json"
+ },
+ "document_links_to_junk": {
+  "count": 14,
+  "examples": [
+   [
+    "basketball",
+    "basketball",
+    "basketball   [from: 1986 NBA Playoffs | sport | basketball]"
+   ],
+   [
+    "politician",
+    "politician",
+    "politician   [from: N. Chandrababu Naidu | occupation | politician]"
+   ],
+   [
+    "goalkeeper",
+    "goalkeeper",
+    "goalkeeper   [from: Edwin van der Sar | position played on team / speciality | goalkeeper]"
+   ],
+   [
+    "jazz",
+    "jazz",
+    "jazz   [from: Greg Osby | genre | jazz]"
+   ],
+   [
+    "midfielder",
+    "midfielder",
+    "midfielder   [from: Xavi | position played on team / speciality | midfielder]"
+   ],
+   [
+    "defender",
+    "defender",
+    "defender   [from: Alex Song | position played on team / speciality | defender]"
+   ],
+   [
+    "poet",
+    "poet",
+    "poet   [from: Adam Mickiewicz | occupation | poet]"
+   ],
+   [
+    "Maryland Terrapins Men's Basketball",
+    "basketball",
+    "Maryland Terrapins Men's Basketball   [from: Maryland Terrapins Men's Basketball | sport |"
+   ],
+   [
+    "actor",
+    "actor",
+    "actor   [from: Olga Knipper | occupation | actor]"
+   ],
+   [
+    "composer",
+    "composer",
+    "composer   [from: Al Horford | occupation | composer]"
+   ],
+   [
+    "90210",
+    "90210",
+    "90210   [from: 90210 | original broadcaster | The CW]"
+   ],
+   [
+    "football",
+    "football",
+    "football   [from: Neil Lennon | sport | football]"
+   ],
+   [
+    "poetry",
+    "poet",
+    "poetry   [from: T. S. Eliot | genre | poetry]"
+   ],
+   [
+    "journalist",
+    "journalist",
+    "journalist   [from: Stephen McNeil | occupation | journalist]"
+   ]
+  ]
+ }
+}

@@ -1,0 +1,5 @@
+{
+ "run": "run-02",
+ "test": "test-04-base-graph-trex-full",
+ "notes": "fixed PageRank, stopword linking, cleaned graph; Fir 4742452-4 (Haiku), 4742462/4/5 (Qwen); pending"
+}

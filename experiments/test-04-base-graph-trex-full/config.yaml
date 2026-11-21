@@ -1,0 +1,7 @@
+test: test-04-base-graph-trex-full
+runs_configs:
+  - configs/runs/exp/lh/c_real_trexfull_link_build_eig.yaml
+  - configs/runs/exp/lh/c_real_trexfull_eig_pprfix.yaml
+  - configs/runs/exp/lh/c_real_trexfull_goat_pprfix.yaml
+  - configs/runs/exp/lh/c_real_trexfull_qgraph_eig_pprfix.yaml
+  - configs/runs/exp/lh/c_qwen_trexfull_eig.yaml

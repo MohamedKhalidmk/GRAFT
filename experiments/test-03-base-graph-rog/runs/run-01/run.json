@@ -1,0 +1,5 @@
+{
+ "run": "run-01",
+ "test": "test-03-base-graph-rog",
+ "notes": "Haiku-linking write phase + 1 answer pass, $1.65"
+}

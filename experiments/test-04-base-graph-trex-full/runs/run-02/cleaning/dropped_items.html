@@ -1,0 +1,2046 @@
+<!doctype html><meta charset=utf-8><title>T-REx cleaning: dropped</title><style>body{font:14px/1.5 -apple-system,Helvetica,Arial,sans-serif;color:#1f2328;background:#fff;margin:0}
+main{max-width:1050px;margin:28px auto;padding:0 22px} h2{border-bottom:2px solid #1f2328;padding-bottom:5px;margin-top:36px}
+h3{font-size:15px;margin-top:22px;border-top:1px solid #d1d9e0;padding-top:12px} table{border-collapse:collapse;font-size:12.5px;margin:8px 0}
+th,td{border:1px solid #d1d9e0;padding:4px 8px;text-align:left;vertical-align:top} th{background:#f6f8fa} a{color:#0969da}</style><main><h1>T-REx base cleaning: everything dropped</h1>
+<p>Test 04 run-02. The rule (scripts/fir/clean_base.py): a base entity is dropped when its whole name is one stopword (not all-caps, not a contraction fragment like Ain or Don), one number, or punctuation, unless a document fact uses it; its base facts go with it. Generic lower-case words are reported, never dropped. Wikidata IDs: the T-REx export we use stores names only, so each ID is either exact (from the entity's own Wikipedia article, where one of its facts came from it) or a label-search candidate marked not verified.</p>
+<h2>Summary</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Base (T-REx)</th>
+<th>Built graph (base + documents)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entities dropped</td>
+<td>60</td>
+<td>59</td>
+</tr>
+<tr>
+<td>Facts dropped</td>
+<td>107</td>
+<td>102</td>
+</tr>
+<tr>
+<td>Base entities left with no facts, dropped</td>
+<td>5</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Nodes</td>
+<td>1,560,412 -&gt; 1,560,240</td>
+<td>1,579,423 -&gt; 1,579,257</td>
+</tr>
+<tr>
+<td>Edges</td>
+<td>2,430,832 -&gt; 2,430,618</td>
+<td>2,466,675 -&gt; 2,466,471</td>
+</tr>
+<tr>
+<td>Facts</td>
+<td>1,215,416 -&gt; 1,215,309</td>
+<td>1,230,691 -&gt; 1,230,589</td>
+</tr>
+<tr>
+<td>SUPERSEDES edges removed</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>By category (base): {'number': 59, 'stopword': 1}. Kept because documents use them: 90210 (in the built graph). Document links that pointed to a dropped entity: 1 (90210 -&gt; 90210). Base entities left with no facts and dropped with them: 5 (those named in the facts below: natural number, tetrode).</p>
+<h2>The dropped entities and their facts</h2>
+<h3>005 (number, 2 facts)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q4545526">Q4545526</a> (1981 video game; from Wikipedia article '005')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>005</td>
+<td>genre</td>
+<td>stealth game</td>
+<td>005</td>
+</tr>
+<tr>
+<td>005</td>
+<td>platform</td>
+<td>arcade game</td>
+<td>005</td>
+</tr>
+</tbody>
+</table>
+<h3>01011001 (number, 1 fact)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q974456">Q974456</a> (2008 studio album by Ayreon; from Wikipedia article '01011001')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01011001</td>
+<td>performer</td>
+<td>Ayreon</td>
+<td>01011001</td>
+</tr>
+</tbody>
+</table>
+<h3>013 (number, 2 facts)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q2319846">Q2319846</a> (Music venue in Tilburg, the Netherlands; from Wikipedia article '013')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>013</td>
+<td>country</td>
+<td>Netherlands</td>
+<td>013</td>
+</tr>
+<tr>
+<td>013</td>
+<td>located in the administrative territorial entity</td>
+<td>Tilburg</td>
+<td>013</td>
+</tr>
+</tbody>
+</table>
+<h3>020120 (number, 1 fact)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q4545556">Q4545556</a> (2002 live album by The Mad Capsule Markets; from Wikipedia article '020120')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>020120</td>
+<td>instance of</td>
+<td>live album</td>
+<td>020120</td>
+</tr>
+</tbody>
+</table>
+<h3>0304 (number, 2 facts)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q3055389">Q3055389</a> (2003 studio album by Jewel; from Wikipedia article '0304')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0304</td>
+<td>instance of</td>
+<td>studio album</td>
+<td>0304</td>
+</tr>
+<tr>
+<td>0304</td>
+<td>record label</td>
+<td>Atlantic Records</td>
+<td>0304</td>
+</tr>
+</tbody>
+</table>
+<h3>04092001 (number, 1 fact)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q4545566">Q4545566</a> (2005 live album by Boris and Merzbow; from Wikipedia article '04092001')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>04092001</td>
+<td>instance of</td>
+<td>live album</td>
+<td>04092001</td>
+</tr>
+</tbody>
+</table>
+<h3>1011001 (number, 2 facts)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q234019">Q234019</a> (Dutch singer and musician; from Wikipedia article 'Anneke van Giersbergen')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1011001</td>
+<td>performer</td>
+<td>Ayreon</td>
+<td>Anneke van Giersbergen</td>
+</tr>
+<tr>
+<td>1011001</td>
+<td>instance of</td>
+<td>studio album</td>
+<td>01011001</td>
+</tr>
+</tbody>
+</table>
+<h3>11001001 (number, 2 facts)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q901789">Q901789</a> (15th episode of the 1st season of Star Trek: The Next Generation; from Wikipedia article '11001001')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>11001001</td>
+<td>country of origin</td>
+<td>United States</td>
+<td>11001001</td>
+</tr>
+<tr>
+<td>11001001</td>
+<td>country of origin</td>
+<td>American</td>
+<td>11001001</td>
+</tr>
+</tbody>
+</table>
+<h3>144000 (number, 1 fact)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q2807787">Q2807787</a> (Natural number; from Wikipedia article '144000 (number)')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>144000</td>
+<td>instance of</td>
+<td>natural number</td>
+<td>144000 (number)</td>
+</tr>
+</tbody>
+</table>
+<h3>1600 (number, 1 fact)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q6720">Q6720</a> (Calendar year; from Wikipedia article '1600')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1600</td>
+<td>instance of</td>
+<td>leap year</td>
+<td>1600</td>
+</tr>
+</tbody>
+</table>
+<h3>181920 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>181920</td>
+<td>performer</td>
+<td>Namie Amuro</td>
+<td>181920</td>
+</tr>
+<tr>
+<td>181920</td>
+<td>record label</td>
+<td>avex trax</td>
+<td>181920</td>
+</tr>
+</tbody>
+</table>
+<h3>1901 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1901</td>
+<td>part of</td>
+<td>CE</td>
+<td>1901</td>
+</tr>
+<tr>
+<td>1901</td>
+<td>part of</td>
+<td>AD</td>
+<td>1901</td>
+</tr>
+</tbody>
+</table>
+<h3>1902 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1902</td>
+<td>part of</td>
+<td>AD</td>
+<td>1902</td>
+</tr>
+<tr>
+<td>1902</td>
+<td>part of</td>
+<td>CE</td>
+<td>1902</td>
+</tr>
+</tbody>
+</table>
+<h3>1943 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1943</td>
+<td>part of</td>
+<td>CE</td>
+<td>1943</td>
+</tr>
+<tr>
+<td>1943</td>
+<td>part of</td>
+<td>AD</td>
+<td>1943</td>
+</tr>
+</tbody>
+</table>
+<h3>2004 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2004</td>
+<td>instance of</td>
+<td>leap year</td>
+<td>2004</td>
+</tr>
+</tbody>
+</table>
+<h3>2008 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2008</td>
+<td>instance of</td>
+<td>leap year</td>
+<td>2008</td>
+</tr>
+</tbody>
+</table>
+<h3>2012 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2012</td>
+<td>instance of</td>
+<td>leap year</td>
+<td>2012</td>
+</tr>
+</tbody>
+</table>
+<h3>2016 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2016</td>
+<td>instance of</td>
+<td>leap year</td>
+<td>2016</td>
+</tr>
+</tbody>
+</table>
+<h3>2020 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2020</td>
+<td>instance of</td>
+<td>leap year</td>
+<td>2020</td>
+</tr>
+</tbody>
+</table>
+<h3>2024 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2024</td>
+<td>instance of</td>
+<td>leap year</td>
+<td>2024</td>
+</tr>
+</tbody>
+</table>
+<h3>2028 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2028</td>
+<td>instance of</td>
+<td>leap year</td>
+<td>2028</td>
+</tr>
+</tbody>
+</table>
+<h3>2032 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2032</td>
+<td>instance of</td>
+<td>leap year</td>
+<td>2032</td>
+</tr>
+</tbody>
+</table>
+<h3>2036 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2036</td>
+<td>instance of</td>
+<td>leap year</td>
+<td>2036</td>
+</tr>
+</tbody>
+</table>
+<h3>2541 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2541</td>
+<td>instance of</td>
+<td>EP</td>
+<td>2541</td>
+</tr>
+</tbody>
+</table>
+<h3>2666 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2666</td>
+<td>original language of film or tv show</td>
+<td>Spanish</td>
+<td>2666</td>
+</tr>
+</tbody>
+</table>
+<h3>285 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>285</td>
+<td>instance of</td>
+<td>manuscript</td>
+<td>Uncial 0285</td>
+</tr>
+</tbody>
+</table>
+<h3>35007 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>35007</td>
+<td>genre</td>
+<td>space rock</td>
+<td>35007</td>
+</tr>
+<tr>
+<td>35007</td>
+<td>country of origin</td>
+<td>Netherlands</td>
+<td>35007</td>
+</tr>
+</tbody>
+</table>
+<h3>4444444444 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4444444444</td>
+<td>director</td>
+<td>Takashi Shimizu</td>
+<td>Katasumi and 4444444444</td>
+</tr>
+<tr>
+<td>4444444444</td>
+<td>screenwriter</td>
+<td>Takashi Shimizu</td>
+<td>Katasumi and 4444444444</td>
+</tr>
+</tbody>
+</table>
+<h3>45365 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>45365</td>
+<td>genre</td>
+<td>documentary film</td>
+<td>45365</td>
+</tr>
+</tbody>
+</table>
+<h3>456132015 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>456132015</td>
+<td>instance of</td>
+<td>EP</td>
+<td>456132015</td>
+</tr>
+</tbody>
+</table>
+<h3>522666 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>522666</td>
+<td>director</td>
+<td>David Nutter</td>
+<td>522666</td>
+</tr>
+<tr>
+<td>522666</td>
+<td>screenwriter</td>
+<td>Glen Morgan</td>
+<td>522666</td>
+</tr>
+</tbody>
+</table>
+<h3>65001 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>65001</td>
+<td>instance of</td>
+<td>character encoding</td>
+<td>Code page</td>
+</tr>
+</tbody>
+</table>
+<h3>6502 (number, 6 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6502</td>
+<td>subclass of</td>
+<td>CPU</td>
+<td>Hudson Soft HuC6280</td>
+</tr>
+<tr>
+<td>6502</td>
+<td>subclass of</td>
+<td>microprocessor</td>
+<td>Chuck Peddle</td>
+</tr>
+<tr>
+<td>6502</td>
+<td>instance of</td>
+<td>microprocessor</td>
+<td>Chuck Peddle</td>
+</tr>
+<tr>
+<td>6502</td>
+<td>instance of</td>
+<td>CPU</td>
+<td>Hudson Soft HuC6280</td>
+</tr>
+<tr>
+<td>6502</td>
+<td>instance of</td>
+<td>MPU</td>
+<td>WDC 65816/65802</td>
+</tr>
+<tr>
+<td>6502</td>
+<td>subclass of</td>
+<td>MPU</td>
+<td>WDC 65816/65802</td>
+</tr>
+</tbody>
+</table>
+<h3>65802 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>65802</td>
+<td>subclass of</td>
+<td>microprocessor</td>
+<td>Apple Assembly Line</td>
+</tr>
+</tbody>
+</table>
+<h3>65816 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>65816</td>
+<td>subclass of</td>
+<td>microprocessor</td>
+<td>Apple Assembly Line</td>
+</tr>
+<tr>
+<td>65816</td>
+<td>subclass of</td>
+<td>MPU</td>
+<td>WDC 65816/65802</td>
+</tr>
+</tbody>
+</table>
+<h3>68000 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>68000</td>
+<td>subclass of</td>
+<td>m68k</td>
+<td>Xcopilot</td>
+</tr>
+</tbody>
+</table>
+<h3>68020 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>68020</td>
+<td>instance of</td>
+<td>CPU</td>
+<td>Miracle Systems</td>
+</tr>
+</tbody>
+</table>
+<h3>68030 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>68030</td>
+<td>instance of</td>
+<td>CPU</td>
+<td>Amiga 3000</td>
+</tr>
+</tbody>
+</table>
+<h3>68040 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>68040</td>
+<td>instance of</td>
+<td>processing unit</td>
+<td>VMac</td>
+</tr>
+<tr>
+<td>68040</td>
+<td>instance of</td>
+<td>CPU</td>
+<td>NeXT Laser Printer</td>
+</tr>
+</tbody>
+</table>
+<h3>68060 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>68060</td>
+<td>instance of</td>
+<td>CPU</td>
+<td>Amiga 4000T</td>
+</tr>
+</tbody>
+</table>
+<h3>6809 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6809</td>
+<td>subclass of</td>
+<td>CPU</td>
+<td>Aamber Pegasus</td>
+</tr>
+</tbody>
+</table>
+<h3>68881 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>68881</td>
+<td>subclass of</td>
+<td>floating point unit</td>
+<td>Motorola 68030</td>
+</tr>
+<tr>
+<td>68881</td>
+<td>subclass of</td>
+<td>FPU</td>
+<td>Macintosh IIx</td>
+</tr>
+</tbody>
+</table>
+<h3>68882 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>68882</td>
+<td>subclass of</td>
+<td>floating point unit</td>
+<td>Motorola 68030</td>
+</tr>
+<tr>
+<td>68882</td>
+<td>subclass of</td>
+<td>FPU</td>
+<td>Macintosh IIci</td>
+</tr>
+</tbody>
+</table>
+<h3>72826 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>72826</td>
+<td>country of origin</td>
+<td>American</td>
+<td>72826</td>
+</tr>
+</tbody>
+</table>
+<h3>7554 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7554</td>
+<td>instance of</td>
+<td>video game</td>
+<td>7554</td>
+</tr>
+</tbody>
+</table>
+<h3>8051 (number, 2 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8051</td>
+<td>subclass of</td>
+<td>microcontroller</td>
+<td>Keil (company)</td>
+</tr>
+<tr>
+<td>8051</td>
+<td>subclass of</td>
+<td>MCU</td>
+<td>MCU 8051 IDE</td>
+</tr>
+</tbody>
+</table>
+<h3>8085 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8085</td>
+<td>subclass of</td>
+<td>microprocessor</td>
+<td>Z-DOS</td>
+</tr>
+</tbody>
+</table>
+<h3>8086 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8086</td>
+<td>instance of</td>
+<td>microprocessor</td>
+<td>Masatoshi Shima</td>
+</tr>
+</tbody>
+</table>
+<h3>8088 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8088</td>
+<td>subclass of</td>
+<td>CPU</td>
+<td>Imagineering Australia</td>
+</tr>
+</tbody>
+</table>
+<h3>8701 (number, 4 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8701</td>
+<td>record label</td>
+<td>Arista Records</td>
+<td>8701</td>
+</tr>
+<tr>
+<td>8701</td>
+<td>country of origin</td>
+<td>American</td>
+<td>8701</td>
+</tr>
+<tr>
+<td>8701</td>
+<td>country of origin</td>
+<td>United States</td>
+<td>8701</td>
+</tr>
+<tr>
+<td>8701</td>
+<td>instance of</td>
+<td>studio album</td>
+<td>8701</td>
+</tr>
+</tbody>
+</table>
+<h3>893239 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>893239</td>
+<td>country of origin</td>
+<td>Japan</td>
+<td>893239</td>
+</tr>
+</tbody>
+</table>
+<h3>8974 (number, 1 fact)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8974</td>
+<td>subclass of</td>
+<td>tetrode</td>
+<td>8974</td>
+</tr>
+</tbody>
+</table>
+<h3>90125 (number, 4 facts)</h3>
+<p>Wikidata: no Wikidata match by label</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>90125</td>
+<td>genre</td>
+<td>progressive rock</td>
+<td>Halcyon (Orbital song)</td>
+</tr>
+<tr>
+<td>90125</td>
+<td>instance of</td>
+<td>studio album</td>
+<td>Big Generator</td>
+</tr>
+<tr>
+<td>90125</td>
+<td>record label</td>
+<td>Atco Records</td>
+<td>90125</td>
+</tr>
+<tr>
+<td>90125</td>
+<td>record label</td>
+<td>Atco</td>
+<td>Big Generator</td>
+</tr>
+</tbody>
+</table>
+<h3>90210 (number, 5 facts)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q4924406">Q4924406</a> (American actor (born 1985); from Wikipedia article 'Blake Hood')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>90210</td>
+<td>country of origin</td>
+<td>US</td>
+<td>E4 (TV channel)</td>
+</tr>
+<tr>
+<td>90210</td>
+<td>genre</td>
+<td>soap opera</td>
+<td>Blake Hood</td>
+</tr>
+<tr>
+<td>90210</td>
+<td>country of origin</td>
+<td>United States</td>
+<td>We're Not in Kansas Anymore</td>
+</tr>
+<tr>
+<td>90210</td>
+<td>original language of film or tv show</td>
+<td>English</td>
+<td>Terri Hawkes</td>
+</tr>
+<tr>
+<td>90210</td>
+<td>country of origin</td>
+<td>American</td>
+<td>Make It Right</td>
+</tr>
+</tbody>
+</table>
+<h3>91025 (number, 1 fact)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q9286874">Q9286874</a> (American rock band; from Wikipedia article '91025')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>91025</td>
+<td>instance of</td>
+<td>EP</td>
+<td>91025</td>
+</tr>
+</tbody>
+</table>
+<h3>94124 (number, 1 fact)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q4645942">Q4645942</a> (1995 EP by Zip Code Rapists; from Wikipedia article '94124')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>94124</td>
+<td>instance of</td>
+<td>EP</td>
+<td>94124</td>
+</tr>
+</tbody>
+</table>
+<h3>ONE (number, 2 facts)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q4206809">Q4206809</a> (Asian pay television channel; from Wikipedia article 'ONE TV ASIA')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ONE</td>
+<td>owned by</td>
+<td>Sony Pictures Entertainment</td>
+<td>ONE TV ASIA</td>
+</tr>
+<tr>
+<td>ONE</td>
+<td>owned by</td>
+<td>Sony</td>
+<td>GEM TV ASIA</td>
+</tr>
+</tbody>
+</table>
+<h3>Seventeen (number, 6 facts)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q606680">Q606680</a> (American magazine (1999–2008); from Wikipedia article 'Cosmogirl')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Seventeen</td>
+<td>owned by</td>
+<td>Hearst</td>
+<td>Cosmogirl</td>
+</tr>
+<tr>
+<td>Seventeen</td>
+<td>country of origin</td>
+<td>American</td>
+<td>Seventeen (Serafin novel)</td>
+</tr>
+<tr>
+<td>Seventeen</td>
+<td>owned by</td>
+<td>Hearst Corporation</td>
+<td>Hearst Tower (Manhattan)</td>
+</tr>
+<tr>
+<td>Seventeen</td>
+<td>country of origin</td>
+<td>United States</td>
+<td>Seventeen (Tarkington novel)</td>
+</tr>
+<tr>
+<td>Seventeen</td>
+<td>original language of film or tv show</td>
+<td>English</td>
+<td>Farrukh Khan Pitafi</td>
+</tr>
+<tr>
+<td>Seventeen</td>
+<td>country of origin</td>
+<td>US</td>
+<td>Shan Serafin</td>
+</tr>
+</tbody>
+</table>
+<h3>Zero (number, 5 facts)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q8025310">Q8025310</a> (Add-on to Flight Simulator 2004; from Wikipedia article 'Wings of Power II: WWII Fighters')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zero</td>
+<td>participated in conflict</td>
+<td>WWII</td>
+<td>Wings of Power II: WWII Fighters</td>
+</tr>
+<tr>
+<td>Zero</td>
+<td>participated in conflict</td>
+<td>World War 2</td>
+<td>Brewster F2A Buffalo</td>
+</tr>
+<tr>
+<td>Zero</td>
+<td>participated in conflict</td>
+<td>World War II</td>
+<td>Jiro Horikoshi</td>
+</tr>
+<tr>
+<td>Zero</td>
+<td>participated in conflict</td>
+<td>Second World War</td>
+<td>1944: The Loop Master</td>
+</tr>
+<tr>
+<td>Zero</td>
+<td>participated in conflict</td>
+<td>II</td>
+<td>Wings of Power II: WWII Fighters</td>
+</tr>
+</tbody>
+</table>
+<h3>Themselves (stopword, 6 facts)</h3>
+<p>Wikidata: <a href="https://www.wikidata.org/wiki/Q2416781">Q2416781</a> (American hip-hop group; from Wikipedia article 'Themselves')</p>
+<table>
+<thead>
+<tr>
+<th>Subject</th>
+<th>Relation</th>
+<th>Object</th>
+<th>Wikipedia article</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Themselves</td>
+<td>record label</td>
+<td>Anticon</td>
+<td>Themselves</td>
+</tr>
+<tr>
+<td>Themselves</td>
+<td>country of origin</td>
+<td>US</td>
+<td>Too Big to Fail (book)</td>
+</tr>
+<tr>
+<td>Themselves</td>
+<td>country of origin</td>
+<td>American</td>
+<td>The Free Houdini</td>
+</tr>
+<tr>
+<td>Themselves</td>
+<td>genre</td>
+<td>underground hip hop</td>
+<td>Themselves</td>
+</tr>
+<tr>
+<td>Themselves</td>
+<td>genre</td>
+<td>indie hip hop</td>
+<td>13 &amp; God</td>
+</tr>
+<tr>
+<td>Themselves</td>
+<td>has part(s)</td>
+<td>Doseone</td>
+<td>Soft Skulls</td>
+</tr>
+</tbody>
+</table>
+<h2>Generic words reported but kept</h2>
+<p>One-word names written in lower case in at least 1% of the base's Wikipedia sentences, or all-caps short names. Kept: on T-REx they are Wikidata concepts that are real answers (occupation, position, genre).</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Facts</th>
+<th>Wikidata</th>
+<th>Example fact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>footballer</td>
+<td>22,242</td>
+<td><a href="https://www.wikidata.org/wiki/Q7328517">Q7328517</a> (English footballer; from Wikipedia article 'Richard Prokas')</td>
+<td>India / sport / footballer</td>
+</tr>
+<tr>
+<td>football</td>
+<td>19,661</td>
+<td><a href="https://www.wikidata.org/wiki/Q7927464">Q7927464</a> (College football rivalry game; from Wikipedia article 'Victory Bell (Cincinnati–Miami)')</td>
+<td>United States / sport / football</td>
+</tr>
+<tr>
+<td>politician</td>
+<td>11,475</td>
+<td><a href="https://www.wikidata.org/wiki/Q4859203">Q4859203</a> (American politician (born 1948); from Wikipedia article 'Barbara Osborn Kreamer')</td>
+<td>politician / country / American</td>
+</tr>
+<tr>
+<td>actor</td>
+<td>7,517</td>
+<td>no Wikidata match by label</td>
+<td>Mohanlal / occupation / actor</td>
+</tr>
+<tr>
+<td>defender</td>
+<td>7,256</td>
+<td>no Wikidata match by label</td>
+<td>United States / sport / defender</td>
+</tr>
+<tr>
+<td>midfielder</td>
+<td>6,055</td>
+<td>no Wikidata match by label</td>
+<td>India / sport / midfielder</td>
+</tr>
+<tr>
+<td>striker</td>
+<td>5,989</td>
+<td>no Wikidata match by label</td>
+<td>United States / sport / striker</td>
+</tr>
+<tr>
+<td>goalkeeper</td>
+<td>5,763</td>
+<td>no Wikidata match by label</td>
+<td>goalkeeper / country of origin / English</td>
+</tr>
+<tr>
+<td>actress</td>
+<td>5,670</td>
+<td>no Wikidata match by label</td>
+<td>actress / country / French</td>
+</tr>
+<tr>
+<td>composer</td>
+<td>5,667</td>
+<td>no Wikidata match by label</td>
+<td>Manitoba / occupation / composer</td>
+</tr>
+<tr>
+<td>village</td>
+<td>3,895</td>
+<td>no Wikidata match by label</td>
+<td>village / country / US</td>
+</tr>
+<tr>
+<td>comune</td>
+<td>3,853</td>
+<td>no Wikidata match by label</td>
+<td>comune / country / Italy</td>
+</tr>
+<tr>
+<td>river</td>
+<td>3,504</td>
+<td>no Wikidata match by label</td>
+<td>river / country / United States</td>
+</tr>
+<tr>
+<td>poet</td>
+<td>3,281</td>
+<td>no Wikidata match by label</td>
+<td>Latin / subclass of / poet</td>
+</tr>
+<tr>
+<td>journalist</td>
+<td>3,133</td>
+<td>no Wikidata match by label</td>
+<td>journalist / place of birth / Iraq</td>
+</tr>
+<tr>
+<td>soccer</td>
+<td>2,722</td>
+<td>no Wikidata match by label</td>
+<td>soccer / country of origin / English</td>
+</tr>
+<tr>
+<td>jazz</td>
+<td>2,331</td>
+<td>no Wikidata match by label</td>
+<td>Columbia / genre / jazz</td>
+</tr>
+<tr>
+<td>municipality</td>
+<td>2,240</td>
+<td>no Wikidata match by label</td>
+<td>municipality / country / Germany</td>
+</tr>
+<tr>
+<td>basketball</td>
+<td>2,174</td>
+<td>no Wikidata match by label</td>
+<td>USA / sport / basketball</td>
+</tr>
+<tr>
+<td>songwriter</td>
+<td>1,751</td>
+<td>no Wikidata match by label</td>
+<td>songwriter / country / American</td>
+</tr>
+<tr>
+<td>species</td>
+<td>1,328</td>
+<td>no Wikidata match by label</td>
+<td>Buffalo / taxon rank / species</td>
+</tr>
+<tr>
+<td>rock</td>
+<td>1,161</td>
+<td>no Wikidata match by label</td>
+<td>RCA Records / genre / rock</td>
+</tr>
+<tr>
+<td>international</td>
+<td>673</td>
+<td>no Wikidata match by label</td>
+<td>Munich / instance of / international</td>
+</tr>
+<tr>
+<td>OR</td>
+<td>62</td>
+<td>no Wikidata match by label</td>
+<td>OR / country / US</td>
+</tr>
+<tr>
+<td>IN</td>
+<td>61</td>
+<td>no Wikidata match by label</td>
+<td>US / contains the administrative territorial entity / IN</td>
+</tr>
+<tr>
+<td>UP</td>
+<td>59</td>
+<td>no Wikidata match by label</td>
+<td>UP / shares border with / Chhattisgarh</td>
+</tr>
+<tr>
+<td>CAN</td>
+<td>41</td>
+<td>no Wikidata match by label</td>
+<td>CAN / contains the administrative territorial entity / Quebec</td>
+</tr>
+<tr>
+<td>MI</td>
+<td>34</td>
+<td>no Wikidata match by label</td>
+<td>MI / country / USA</td>
+</tr>
+<tr>
+<td>AT</td>
+<td>33</td>
+<td>no Wikidata match by label</td>
+<td>Slovenia / shares border with / AT</td>
+</tr>
+<tr>
+<td>BE</td>
+<td>32</td>
+<td>no Wikidata match by label</td>
+<td>Brussels / country / BE</td>
+</tr>
+<tr>
+<td>DE</td>
+<td>25</td>
+<td>no Wikidata match by label</td>
+<td>DE / located in the administrative territorial entity / USA</td>
+</tr>
+<tr>
+<td>ON</td>
+<td>25</td>
+<td>no Wikidata match by label</td>
+<td>Manitoba / shares border with / ON</td>
+</tr>
+<tr>
+<td>census</td>
+<td>16</td>
+<td>no Wikidata match by label</td>
+<td>Asian / instance of / census</td>
+</tr>
+<tr>
+<td>AS</td>
+<td>13</td>
+<td>no Wikidata match by label</td>
+<td>AS / country / Australia</td>
+</tr>
+<tr>
+<td>TO</td>
+<td>12</td>
+<td>no Wikidata match by label</td>
+<td>Vinovo / located in the administrative territorial entity / TO</td>
+</tr>
+<tr>
+<td>Debut</td>
+<td>8</td>
+<td>no Wikidata match by label</td>
+<td>Debut / genre / jazz</td>
+</tr>
+<tr>
+<td>AND</td>
+<td>7</td>
+<td>no Wikidata match by label</td>
+<td>AND / subclass of / OR</td>
+</tr>
+<tr>
+<td>HOME</td>
+<td>6</td>
+<td>no Wikidata match by label</td>
+<td>HOME / located in the administrative territorial entity / American</td>
+</tr>
+<tr>
+<td>ICE</td>
+<td>5</td>
+<td>no Wikidata match by label</td>
+<td>ICE / country / Germany</td>
+</tr>
+<tr>
+<td>Winning</td>
+<td>5</td>
+<td>no Wikidata match by label</td>
+<td>Winning / cast member / Paul Newman</td>
+</tr>
+<tr>
+<td>NOW</td>
+<td>4</td>
+<td>no Wikidata match by label</td>
+<td>NOW / headquarters location / Chicago</td>
+</tr>
+<tr>
+<td>SET</td>
+<td>4</td>
+<td>no Wikidata match by label</td>
+<td>SET / headquarters location / Bangkok</td>
+</tr>
+<tr>
+<td>BEST</td>
+<td>3</td>
+<td>no Wikidata match by label</td>
+<td>BEST / headquarters location / Bombay</td>
+</tr>
+<tr>
+<td>SIDE</td>
+<td>3</td>
+<td>no Wikidata match by label</td>
+<td>SIDE / country / Argentine Republic</td>
+</tr>
+<tr>
+<td>IS</td>
+<td>3</td>
+<td>no Wikidata match by label</td>
+<td>IS / participated in conflict / World War II</td>
+</tr>
+<tr>
+<td>THE</td>
+<td>2</td>
+<td>no Wikidata match by label</td>
+<td>THE / instance of / Operating System</td>
+</tr>
+<tr>
+<td>TIME</td>
+<td>2</td>
+<td><a href="https://www.wikidata.org/wiki/Q43297">Q43297</a> (American news magazine and website; from Wikipedia article 'Time (magazine)')</td>
+<td>TIME / headquarters location / NYC</td>
+</tr>
+</tbody>
+</table>
+<h2>The first, too-wide run (never used)</h2>
+<p>The first rule also dropped every generic word and every stopword-shaped name, all-caps included. It would have removed 118 entities and 130,033 base facts ({'generic': 129452, 'stopword': 504, 'number': 101}), plus 1,331 orphaned entities: facts 1,215,416 -&gt; 1,085,383. Almost all of it hung on real answers. It was caught before any run used it; its files are kept as <em>_clean_v1_too_wide</em>.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Category</th>
+<th>Facts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>footballer</td>
+<td>generic</td>
+<td>22,242</td>
+</tr>
+<tr>
+<td>football</td>
+<td>generic</td>
+<td>19,661</td>
+</tr>
+<tr>
+<td>politician</td>
+<td>generic</td>
+<td>11,475</td>
+</tr>
+<tr>
+<td>actor</td>
+<td>generic</td>
+<td>7,517</td>
+</tr>
+<tr>
+<td>defender</td>
+<td>generic</td>
+<td>7,256</td>
+</tr>
+<tr>
+<td>midfielder</td>
+<td>generic</td>
+<td>6,055</td>
+</tr>
+<tr>
+<td>striker</td>
+<td>generic</td>
+<td>5,989</td>
+</tr>
+<tr>
+<td>goalkeeper</td>
+<td>generic</td>
+<td>5,763</td>
+</tr>
+<tr>
+<td>actress</td>
+<td>generic</td>
+<td>5,670</td>
+</tr>
+<tr>
+<td>composer</td>
+<td>generic</td>
+<td>5,667</td>
+</tr>
+<tr>
+<td>village</td>
+<td>generic</td>
+<td>3,895</td>
+</tr>
+<tr>
+<td>comune</td>
+<td>generic</td>
+<td>3,853</td>
+</tr>
+<tr>
+<td>river</td>
+<td>generic</td>
+<td>3,504</td>
+</tr>
+<tr>
+<td>poet</td>
+<td>generic</td>
+<td>3,281</td>
+</tr>
+<tr>
+<td>journalist</td>
+<td>generic</td>
+<td>3,133</td>
+</tr>
+<tr>
+<td>soccer</td>
+<td>generic</td>
+<td>2,722</td>
+</tr>
+<tr>
+<td>jazz</td>
+<td>generic</td>
+<td>2,331</td>
+</tr>
+<tr>
+<td>municipality</td>
+<td>generic</td>
+<td>2,240</td>
+</tr>
+<tr>
+<td>basketball</td>
+<td>generic</td>
+<td>2,174</td>
+</tr>
+<tr>
+<td>songwriter</td>
+<td>generic</td>
+<td>1,751</td>
+</tr>
+<tr>
+<td>species</td>
+<td>generic</td>
+<td>1,328</td>
+</tr>
+<tr>
+<td>rock</td>
+<td>generic</td>
+<td>1,161</td>
+</tr>
+<tr>
+<td>international</td>
+<td>generic</td>
+<td>673</td>
+</tr>
+<tr>
+<td>OR</td>
+<td>stopword</td>
+<td>62</td>
+</tr>
+<tr>
+<td>IN</td>
+<td>stopword</td>
+<td>61</td>
+</tr>
+<tr>
+<td>UP</td>
+<td>stopword</td>
+<td>59</td>
+</tr>
+<tr>
+<td>CAN</td>
+<td>stopword</td>
+<td>41</td>
+</tr>
+<tr>
+<td>MI</td>
+<td>generic</td>
+<td>34</td>
+</tr>
+<tr>
+<td>NO</td>
+<td>stopword</td>
+<td>33</td>
+</tr>
+<tr>
+<td>AT</td>
+<td>stopword</td>
+<td>33</td>
+</tr>
+<tr>
+<td>BE</td>
+<td>stopword</td>
+<td>32</td>
+</tr>
+<tr>
+<td>Ain</td>
+<td>stopword</td>
+<td>31</td>
+</tr>
+<tr>
+<td>DE</td>
+<td>generic</td>
+<td>25</td>
+</tr>
+<tr>
+<td>ON</td>
+<td>stopword</td>
+<td>25</td>
+</tr>
+<tr>
+<td>AM</td>
+<td>stopword</td>
+<td>22</td>
+</tr>
+<tr>
+<td>Don</td>
+<td>stopword</td>
+<td>21</td>
+</tr>
+<tr>
+<td>census</td>
+<td>generic</td>
+<td>16</td>
+</tr>
+<tr>
+<td>AS</td>
+<td>stopword</td>
+<td>13</td>
+</tr>
+<tr>
+<td>TO</td>
+<td>stopword</td>
+<td>12</td>
+</tr>
+<tr>
+<td>SO</td>
+<td>stopword</td>
+<td>11</td>
+</tr>
+</tbody>
+</table>
+</main>

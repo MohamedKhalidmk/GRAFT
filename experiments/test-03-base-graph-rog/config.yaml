@@ -1,0 +1,3 @@
+test: test-03-base-graph-rog
+runs_configs:
+  - configs/runs/exp/lh/c_real_rog_link_build_eig.yaml
