@@ -40,5 +40,7 @@ Kept only if C beats A by more than its repeat spread and beats C-.
 
 ## Revisions
 
+- 2026-11-21: arm A (34.7) vs test 01's mode C (38) checked: same code path, config, graph, prompt, grader and model; run-to-run noise in retrieval and answers ([baseline_check.md](baseline_check.md)).
+
 - 2026-11-20: test folder created from the existing runs and the Flotilla run log.
 - 2026-11-20: run-01 (four arms, 3 repeats). Step prompt v2 (newer fact wins) for run-02, from the run-01 traces.

@@ -27,7 +27,7 @@ run-02 answer passes (Haiku, mode C, 100 multi-hop questions per repeat, origina
 | Question layer + EiG | 18 / 16 / 17 | 17.0 (1.0) | 28.0 | $0.081 | 3.1 s |
 | Reference: mode C GOAt, empty-start document graph (test 05 arm A) | 35 / 34 / 35 | 34.7 (0.6) | 50.7 | $0.027 | |
 
-The facts now reach Haiku (49 per question on average, none empty), but the base pulls PageRank toward T-REx facts that are not about the documents: the gold fact is in the final facts for about a third of questions, against half on the document graph alone, and accuracy halves. GOAt's third repeat hit the job's 2 h limit and was not rerun: the gap to the reference (about 15 points) is far beyond the repeat spread.
+The facts now reach Haiku (49 per question on average, none empty), but the base pulls PageRank toward T-REx facts that are not about the documents: the gold fact is in the final facts for about a third of questions, against half on the document graph alone, and accuracy halves. Why: [analysis](runs/run-02/analysis/why_accuracy_halved.md), mostly crowding out (T-REx sentences take two thirds of the slots and push out the edited document facts), sometimes a T-REx fact that contradicts the gold. GOAt's third repeat hit the job's 2 h limit and was not rerun: the gap to the reference (about 15 points) is far beyond the repeat spread.
 
 ## Decision
 
@@ -36,5 +36,6 @@ Not adopted. A full T-REx base under the documents halves GRAFT's accuracy (17 t
 ## Revisions
 
 - 2026-11-20: test folder created from the existing runs and the Flotilla run log.
+- 2026-11-21: why accuracy halved, 10 failed questions checked (runs/run-02/analysis/).
 - 2026-11-21: run-02 answer passes done; decision: not adopted; Qwen moved to the empty-start graph.
 - 2026-11-20: runs use the original graph, not the cleaned one (user). Node vectors are embedded once (scripts/embed_graph.py) and loaded by every pass; GPU and CPU twins per pass, whichever starts first.
