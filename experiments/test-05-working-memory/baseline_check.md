@@ -32,6 +32,17 @@ not use.
 2. **Haiku's answers vary.** Of the 38 run's right answers, only 2 (q13, q80) are wrong in all three arm A repeats, and arm A
    gets 2 to 4 questions right in each repeat that the 38 run missed.
 
-A single run at 38 against three runs at 34 to 35 fits that spread. The baseline for comparisons is arm A's 34.7, run with the
+   The gateway cannot fix Haiku's sampling: the API rejects temperature and other sampling parameters since 2026-10-21
+   (baselines/claude_llm.py). 13 questions flip between right and wrong across arm A's three repeats, which gives a spread of
+   about 1.8 points per run. In the four questions that differ most (q13, q80, q21, q49) the gold fact was in the pool in
+   both runs, and the only difference was whether Haiku picked the newer serial.
+
+A single run at 38 against three runs at 34 to 35 fits that spread (about 1.8 SD above the mean). A second, independent check
+from the other session found the same thing (fact-set Jaccard between repeats 0.770 to 0.778, old run vs repeats 0.764 to
+0.774; no scorer commits since Sep 25).
+
+For Haiku vs Qwen: compare 3 or more repeats each and report mean and range. Qwen runs greedy (temperature 0 on vLLM), so its
+repeats vary only through retrieval; a smaller spread there is not a quality difference. The cleanest comparison gives both
+models the same retrieved facts per question (save one retrieval pass, answer it with each model). The baseline for comparisons is arm A's 34.7, run with the
 same code as the arms it is compared with. The nondeterministic retrieval is worth fixing (seeded GOAt and stable ordering) so
 that repeats measure the model, not the walk.
