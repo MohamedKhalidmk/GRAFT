@@ -46,3 +46,24 @@ repeats vary only through retrieval; a smaller spread there is not a quality dif
 models the same retrieved facts per question (save one retrieval pass, answer it with each model). The baseline for comparisons is arm A's 34.7, run with the
 same code as the arms it is compared with. The nondeterministic retrieval is worth fixing (seeded GOAt and stable ordering) so
 that repeats measure the model, not the walk.
+
+## Rerun on 2026-11-21 (user: the old modes all scored 37-38, so check the code)
+
+Three Haiku runs on the same day, 3 repeats each, same 100 questions, same graph:
+
+| Run | Per repeat | Mean |
+|---|---|---|
+| The 2026-11-13 commit (28d4fd5), its config unchanged except 3 repeats (Fir 4828272) | 36 / 36 / 36 | 36.0 |
+| Today's code, arm A config (Fir 4826810) | 36 / 33 / 35 | 34.7 |
+| Today's Haiku re-answering the exact facts the 2026-11-13 run retrieved, no retrieval at all (replay_retrieved, Fir 4826810) | 34 / 36 / 33 | 34.3 |
+| For reference: the 2026-11-13 run itself | 38 | 38 |
+
+**The drop came from outside the code.** Given the very facts that scored 38 on 2026-11-13, with the same prompt, today's Haiku
+scores 34.3. The model alias is the same (claude-haiku-5-5 requested and returned), so Haiku's behaviour behind the alias has
+changed, or 2026-11-13 was a good day for it; either way the code cannot cause a drop on identical inputs.
+
+Old code against today's code, on the same day: 36.0 vs 34.7, a 1.3-point gap inside today's spread (33 to 36; 12 to 17
+answers flip between repeats of each run, and the old code's retrieval also varies run to run: identical for 1 of 100
+questions, so its three 36s are a coincidence). Not significant with 3 repeats each, so no code change is reverted.
+
+**Haiku's best setup stays mode C as in arm A**, and the Qwen run on that setup was released (Fir 4823564). Spend $0.244.
