@@ -67,3 +67,32 @@ answers flip between repeats of each run, and the old code's retrieval also vari
 questions, so its three 36s are a coincidence). Not significant with 3 repeats each, so no code change is reverted.
 
 **Haiku's best setup stays mode C as in arm A**, and the Qwen run on that setup was released (Fir 4823564). Spend $0.244.
+
+## Is anything outside the commit different? (2026-11-21)
+
+Checked the 2026-11-13 run (job 3845944) against today's replay of its exact facts (exp_real_replay38) and the
+2026-11-13 session transcript:
+
+| What | 2026-11-13 (38) | Today (replay) | Same? |
+|---|---|---|---|
+| Model string sent / returned | claude-haiku-5-5 / claude-haiku-5-5 | the same, all 300 calls | yes |
+| Request text | system template + memories + query | the same builder; input tokens identical for 100 of 100 questions (e.g. q0: 2,255 both) | yes |
+| max_tokens | 256 | 256 | yes |
+| Thinking / effort / sampling | thinking disabled; no effort, temperature or stop sequences (baselines/claude_llm.py, gateway RealBackend unchanged) | the same | yes |
+| Endpoint | https://api.anthropic.com, hard-coded in the gateway (no environment variable can redirect it) | the same | yes |
+| Anthropic SDK | anthropic 2.8.0, installed 2026-11-13 04:10, before the run at 11:50; nothing installed in the venv since | the same files (venv.tar packs that install) | yes |
+| Job script | scripts/fir/run_real_guarded.sbatch, key pasted hidden by the user, COST_CAP_USD=2; one job ran A, B, C, D and BM25 in a row | the guarded script, key from a hidden dialog | yes, for the request |
+| Questions and data | task.json | byte-identical | yes |
+| Answer extraction and scoring | substring_exact_match (MemoryAgentBench, no commits since Sep 25) | the same; the 38 run rescored today gives 38 | yes |
+| Answer length | mean 63 output tokens; 37 answers of 12 tokens or fewer; 1 hit the cap | mean 60-66; 37-40 short answers; 0-1 at the cap | yes |
+| Answers | 38 right | 34 / 36 / 33 right | no |
+
+The only thing that differs is which answer Haiku picks on about 13 coin-flip questions. 3 questions are right in the 38
+run and right in at most 1 of 3 replays (q4: English, the newer fact, then; Sanskrit, the older fact, now; q62; q80), and 1 goes the
+other way (q49). Not saved, so not comparable: response IDs and HTTP headers.
+
+Across runs the shift may still be real: test 01's four GRAFT modes on 2026-11-13 averaged 37.3 (one run each), while today's
+mode C runs average 35.0 (9 repeats); with about 1.8 points of spread per run that is about 2 standard errors. With every
+input identical, a real shift could only come from the API side (what serves claude-haiku-5-5), which we cannot inspect.
+To catch it next time: log each call's request ID and a hash of the request, and replay the 38 run's facts ($0.027) at the
+start of each paid batch as a fixed check on Haiku.
