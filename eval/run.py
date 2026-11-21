@@ -171,16 +171,53 @@ def summarize(cfg: dict, repeats: list[dict]) -> dict:
     }
 
 
+def _me() -> dict:
+    return {"job": os.environ.get("SLURM_JOB_ID"), "host": socket.gethostname(), "pid": os.getpid()}
+
+
+def _owner_alive(run_dir: Path) -> bool:
+    """Is the process that owns this run folder still running? Folders from before owner files count as free."""
+    f = run_dir / "owner.json"
+    if not f.exists():
+        return False
+    o = json.loads(f.read_text())
+    if o.get("job"):
+        if o["job"] == os.environ.get("SLURM_JOB_ID"):
+            return False  # this job's own earlier attempt
+        try:
+            r = subprocess.run(["squeue", "-h", "-j", str(o["job"]), "-o", "%T"], capture_output=True, text=True, timeout=30)
+            return r.returncode == 0 and r.stdout.strip() in ("RUNNING", "PENDING", "CONFIGURING", "COMPLETING")
+        except (OSError, subprocess.TimeoutExpired):
+            return True  # cannot tell: leave it alone
+    if o.get("host") == socket.gethostname():
+        try:
+            os.kill(int(o["pid"]), 0)
+            return int(o["pid"]) != os.getpid()
+        except (OSError, ValueError):
+            return False
+    return True
+
+
+def _claim(run_dir: Path) -> None:
+    (run_dir / "owner.json").write_text(json.dumps(_me()))
+
+
 def run(config_path: str) -> Path:
     cfg = load_config(config_path)
     spec = METHODS[cfg["method"]]
     runs_dir = Path(os.environ.get("RESULTS_DIR", REPO / "results")) / "runs"
     # resume: the newest unfinished run of this config (no summary.json, same config) is continued, keeping its
     # finished repeats; otherwise a new run folder
+    # A run folder is owned by one process (owner.json: Slurm job id or host + pid). Two jobs of one config started in
+    # the same second used to share a folder and break each other (twins on one cluster, the Haiku check in two batches):
+    # new folders now carry the job id, and an unfinished folder is resumed only when its owner is gone.
     unfinished = [d for d in sorted(runs_dir.glob(f"{cfg['run_name']}_2*")) if not (d / "summary.json").exists()
-                  and (d / "config.yaml").exists() and yaml.safe_load((d / "config.yaml").read_text()) == cfg]
-    out = unfinished[-1] if unfinished else runs_dir / f"{cfg['run_name']}_{time.strftime('%Y%m%d-%H%M%S')}"
-    out.mkdir(parents=True, exist_ok=True)
+                  and (d / "config.yaml").exists() and yaml.safe_load((d / "config.yaml").read_text()) == cfg
+                  and not _owner_alive(d)]
+    tag = f"j{os.environ['SLURM_JOB_ID']}" if os.environ.get("SLURM_JOB_ID") else f"p{os.getpid()}"
+    out = unfinished[-1] if unfinished else runs_dir / f"{cfg['run_name']}_{time.strftime('%Y%m%d-%H%M%S')}_{tag}"
+    out.mkdir(parents=True, exist_ok=bool(unfinished))
+    _claim(out)
     (out / "config.yaml").write_text(yaml.safe_dump(cfg, sort_keys=False))
     repeats = []
     with open(out / "run.log", "a", buffering=1) as log:
