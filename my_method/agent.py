@@ -37,6 +37,22 @@ from my_method.writer import LLMWriter, RuleWriter
 
 
 _worker_retriever: Retriever | None = None  # set before forking, read in each worker
+_worker_agent = None  # working memory: the agent, set before forking
+
+
+def _wm_in_worker(job: tuple) -> tuple[str, dict]:
+    """One question with working memory (my_method/working_memory.py); a fresh API client per process."""
+    from my_method.working_memory import WorkingMemory
+    torch.set_num_threads(1)
+    a = _worker_agent
+    if getattr(a, "_wm_pid", None) != multiprocessing.current_process().pid:
+        a._wm_llm = ClaudeLLM(a.llm_base_url, a.config["model"])
+        a._wm_pid = multiprocessing.current_process().pid
+    q_index, text, query = job
+    edges = a.retriever.query_graphs.get(text, [])
+    wm = WorkingMemory(a.store, a.retriever, a._wm_llm, a.config["working_memory"] if a.config["working_memory"] != True else "graph",
+                       max_steps=a.config.get("wm_max_steps", 4))
+    return wm.run(text, query, edges, a.sub_dataset, a.config["answer_max_tokens"])
 
 
 def _retrieve_in_worker(question: str) -> Region:
@@ -80,6 +96,7 @@ class GraftAgent:
     def __init__(self, config: dict, gateway: Gateway, task: Task):
         self.config = config
         self.llm = ClaudeLLM(gateway.anthropic_base_url, config["model"])
+        self.llm_base_url = gateway.anthropic_base_url
         self.sub_dataset = task.sub_datasets[0]
         self.work_dir = Path(config["work_dir"])
         self.work_dir.mkdir(parents=True, exist_ok=True)
@@ -272,7 +289,39 @@ class GraftAgent:
                 f.writelines(json.dumps(d, ensure_ascii=False) + "\n" for d in self.query_link_log)
             self.query_link_log = []
 
+    def _working_memory_all(self) -> None:
+        """working_memory: "graph" (arm C) or "prompt_only" (arm C-): every question answered in steps
+        (my_method/working_memory.py), in forked workers (each with its own copy of the graph) when
+        retrieval_workers > 1 and the embedder runs on the CPU; otherwise one at a time."""
+        from my_method.working_memory import WorkingMemory
+        global _worker_agent
+        texts = [question_text(q.query) for q in self.questions]
+        schema = Schema.load(REPO / self.config["schema_path"]).describe()
+        self.retriever.prepare_queries(texts, lambda q: parse_question_graph(self.llm, schema, q))  # the plan
+        shared = self.config.get("shared_graph")
+        if shared:
+            self.texts.load_saved(REPO / shared)
+        self.texts.embed_texts([node_text(self.store, n) for n in self.store.g.nodes] + texts)
+        self.retriever._entity_matrix()
+        _worker_agent = self
+        jobs = [(q.q_index, question_text(q.query), q.query) for q in self.questions]
+        workers = self.config.get("retrieval_workers", 1)
+        if workers > 1 and not torch.cuda.is_available():
+            with multiprocessing.get_context("fork").Pool(workers) as pool:
+                out = pool.map(_wm_in_worker, jobs, chunksize=1)
+        else:
+            out = [_wm_in_worker(j) for j in jobs]
+        self.wm = dict(zip((j[0] for j in jobs), out))
+        with open(self.work_dir / "working_memory.jsonl", "w") as f:
+            for i, (_, meta) in sorted(self.wm.items()):
+                f.write(json.dumps({"q_index": i, **meta["working_memory"]}, ensure_ascii=False) + "\n")
+
     def answer(self, question: Question) -> tuple[str, dict]:
+        if self.config.get("working_memory"):
+            if not getattr(self, "wm", None):
+                self._working_memory_all()
+            text, meta = self.wm[question.q_index]
+            return text, {k: v for k, v in meta.items() if k != "working_memory"}
         workers = self.config.get("retrieval_workers", 1)
         if workers > 1 and not self.regions:
             self._retrieve_all(workers)

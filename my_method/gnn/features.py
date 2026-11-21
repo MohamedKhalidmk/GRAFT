@@ -35,6 +35,8 @@ def node_text(store: GraphStore, node: str) -> str:
     d = store.fact(node)
     if d["type"] == "Entity":
         return d["name"]
+    if d["type"] == "Work":  # working-memory node (my_method/working_memory.py): question, step, result or note
+        return d["text"]
     return f"{d['subject']} {d['relation']} {d['object']}"
 
 
