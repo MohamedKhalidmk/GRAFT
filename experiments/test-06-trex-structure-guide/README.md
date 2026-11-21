@@ -55,6 +55,16 @@ in test 04. D's labelled background facts change nothing on top of C. Spend $0.2
 The Haiku checks at the start of the B and D batches collided in one run folder (both started in the same second; fixed
 in eval/run.py since), so this round has no clean check.
 
+run-02, the same-day confirmation (user): arm A and the guide rerun side by side on 2026-11-21, after a clean fixed Haiku
+check on its own (36, inside its 33-36 range; [test 07](../test-07-haiku-drift/haiku_canary.md)). Fir 4868000, 4868003:
+
+| Arm | Accuracy (mean, SD) | Per repeat | Gold fact in final facts |
+|---|---|---|---|
+| A · mode C | 34.0, 0.0 | 34 / 34 / 34 | 50.7 |
+| B · T-REx structure guide | **46.0**, 3.0 | 46 / 43 / 49 | 60.0 |
+
+The gain holds: +12.0 the same day (+11.0 in run-01). Spend $0.217 (A $0.080, B $0.109, Haiku check $0.027).
+
 ## Decision
 
 **B is kept: the T-REx structure guide becomes GRAFT's default on top of mode C** (11 points over A on Haiku). C and D
@@ -63,6 +73,7 @@ system ships with, and which of B's two parts carries the gain (linking only, pl
 
 ## Revisions
 
+- 2026-11-21: run-02, same-day A vs B confirmation (+12.0); the guide is GRAFT's default (user).
 - 2026-11-21: run-01 paid arms done; B kept, C and D not adopted.
 - 2026-11-21: design approved (user); arm D added (user); guide built from the raw T-REx parquet after the 45-property
   base covered too few question relations; revision threshold raised to 0.92 after the dry check; arm C reran with

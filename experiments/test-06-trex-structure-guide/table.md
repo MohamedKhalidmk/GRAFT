@@ -4,3 +4,5 @@
 | Haiku | B | T-REx as a structure guide (linking + planning) | 3 | 45.7 | 1.5 | 47 / 46 / 44 | 60.3 | 0.037 |
 | Haiku | C | T-REx as a bridge (walk only, weight 0.2) | 3 | 17.3 | 1.2 | 18 / 16 / 18 | 32.0 | 0.022 |
 | Haiku | D | C + 5 labelled background facts | 3 | 17.7 | 1.5 | 19 / 16 / 18 | 33.0 | 0.029 |
+| Haiku | A (run-02) | empty start, mode C, rerun the same day as B (run-02) | 3 | 34.0 | 0.0 | 34 / 34 / 34 | 50.7 | 0.027 |
+| Haiku | B (run-02) | the structure guide, rerun the same day as A (run-02) | 3 | 46.0 | 3.0 | 46 / 43 / 49 | 60.0 | 0.036 |
