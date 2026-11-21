@@ -11,7 +11,7 @@ New knowledge is grafted onto a graph that remembers where every fact came from 
   <img src="https://img.shields.io/badge/benchmark-MemoryAgentBench-22344A?style=flat-square" alt="MemoryAgentBench">
   <img src="https://img.shields.io/badge/task-FactConsolidation-5FA845?style=flat-square" alt="FactConsolidation">
   <img src="https://img.shields.io/badge/status-research%20in%20progress-F2C230?style=flat-square" alt="status">
-  <img src="https://img.shields.io/badge/license-MIT-C8362E?style=flat-square" alt="license">
+  <img src="https://img.shields.io/badge/license-Apache--2.0-C8362E?style=flat-square" alt="license">
 </p>
 
 ---
@@ -105,8 +105,31 @@ Every test has a README (Question · Setup · Result · Decision · Revisions), 
 
 Setup, fake mode and the full pipeline are in [docs/USAGE.md](docs/USAGE.md). GRAFT was called **SGAR** during development; some files and configs keep that name so recorded runs stay reproducible.
 
+## Built on
+
+GRAFT's explainer step uses **GOAt** (Lu et al., ICLR 2024; https://github.com/sluxsr/GOAt) and, as an option,
+**EiG-Search** (Lu et al., ICML 2024; https://github.com/sluxsr/EiG-Search). Benchmark data and baselines come from
+**MemoryAgentBench** (https://github.com/HUST-AI-HYZ/MemoryAgentBench). GOAt and MemoryAgentBench are git
+submodules and keep their own terms; see `NOTICE` for full citations.
+
+```bibtex
+@inproceedings{lu2024goat,
+  title     = {{GOAt}: Explaining Graph Neural Networks via Graph Output Attribution},
+  author    = {Shengyao Lu and Keith G. Mills and Jiao He and Bang Liu and Di Niu},
+  booktitle = {The Twelfth International Conference on Learning Representations},
+  year      = {2024}
+}
+@inproceedings{lu2024eig,
+  title     = {{EiG-Search}: Generating Edge-Induced Subgraphs for {GNN} Explanation in Linear Time},
+  author    = {Shengyao Lu and Bang Liu and Keith G Mills and Jiao He and Di Niu},
+  booktitle = {Forty-first International Conference on Machine Learning},
+  year      = {2024}
+}
+```
+
 ## License
 
-MIT, copyright 2026 Mohamed Khaled. See [`LICENSE`](LICENSE). The MemoryAgentBench submodule and the baselines keep their own licenses.
+Apache License 2.0, copyright 2026 Mohamed Khaled. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). Earlier versions
+were MIT-licensed. The MemoryAgentBench and GOAt submodules and the baselines keep their own terms.
 
 Paper this builds on: Hu, Wang & McAuley, *Evaluating Memory in LLM Agents via Incremental Multi-Turn Interactions* (MemoryAgentBench), ICLR 2026, arXiv 2507.05257.

@@ -1,0 +1,17 @@
+GRAFT
+Copyright 2026 Mohamed Khaled
+
+Licensed under the Apache License, Version 2.0 (see LICENSE). Versions released before this change were
+under the MIT License and stay available under it.
+
+GRAFT builds on the following work. It does not copy their code; it uses GOAt and MemoryAgentBench as
+git submodules pointing at their own repositories, which keep their own terms (at the time of writing the
+GOAt and EiG-Search repositories carry no license file).
+
+- GOAt: Shengyao Lu, Keith G. Mills, Jiao He, Bang Liu, Di Niu. "GOAt: Explaining Graph Neural Networks via
+  Graph Output Attribution." ICLR 2024. https://github.com/sluxsr/GOAt (submodule my_method/gnn/GOAt)
+- EiG-Search: Shengyao Lu, Bang Liu, Keith G. Mills, Jiao He, Di Niu. "EiG-Search: Generating Edge-Induced
+  Subgraphs for GNN Explanation in Linear Time." ICML 2024. https://github.com/sluxsr/EiG-Search
+  (GRAFT's my_method/gnn/eig.py is an independent batched implementation of the EiG-Search edge scoring)
+- MemoryAgentBench (FactConsolidation data and baselines): https://github.com/HUST-AI-HYZ/MemoryAgentBench
+  (submodule baselines/memoryagentbench)
