@@ -14,7 +14,7 @@ only (C), or as a few clearly labelled background facts that the knowledge pool 
 
 Design: [docs/design/graft_trex_structure_guide_design.md](../../docs/design/graft_trex_structure_guide_design.md). The
 same 100 FactConsolidation multi-hop questions, Haiku, 256-token answers, 3 repeats per arm, mode C (`ppr_goat_ppr`).
-Each paid batch starts with the fixed Haiku check ([haiku_canary.md](../haiku_canary.md)).
+Each paid batch starts with the fixed Haiku check ([haiku_canary.md](../test-07-haiku-drift/haiku_canary.md)).
 
 | Arm | Graph | T-REx used for | Facts Haiku sees | Config |
 |---|---|---|---|---|

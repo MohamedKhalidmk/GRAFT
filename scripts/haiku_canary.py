@@ -2,7 +2,7 @@
 runs), with its date, score, answer length and whether Haiku's replies changed. Identical inputs, so a moved score
 means something changed on the API side (or chance: about 1.8 points of spread per run).
 
-    python scripts/haiku_canary.py [--runs $RESULTS_DIR/runs] [--out experiments/haiku_canary.md]
+    python scripts/haiku_canary.py [--runs $RESULTS_DIR/runs] [--out experiments/test-07-haiku-drift/haiku_canary.md]
 """
 import argparse
 import glob

@@ -19,7 +19,7 @@ Each test has a README (Question, Setup, Result, Decision, Revisions), `config.y
 ## Reports
 
 - [Why the T-REx base halved accuracy](test-04-base-graph-trex-full/runs/run-02/analysis/why_accuracy_halved.md) (test 04 run-02)
-- [Fixed Haiku check, history](haiku_canary.md) (the same 100 prompts in every paid Haiku batch)
-- [Why arm A scored 34.7 when mode C scored 38](test-05-working-memory/baseline_check.md) (test 05): nothing on our side changed; identical inputs score about 34 today on Haiku
+- [Fixed Haiku check, history](test-07-haiku-drift/haiku_canary.md) (the same 100 prompts in every paid Haiku batch)
+- [Why arm A scored 34.7 when mode C scored 38](test-07-haiku-drift/baseline_check.md) (test 05): nothing on our side changed; identical inputs score about 34 today on Haiku
 - [T-REx cleaning: everything dropped](test-04-base-graph-trex-full/runs/run-02/cleaning/dropped_items.md) (test 04 run-02, also .pdf)
 - [Read order, starting graph and baselines, full write-up](../docs/experiments.md) (test 01)

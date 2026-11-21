@@ -1,0 +1,105 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Nun;src:url(Nunito-800.ttf);font-weight:800}
+body{margin:0;background:#fff;font-family:Nun}
+#sheet{display:flex;gap:28px;padding:28px;background:#fff;width:fit-content}
+.c{text-align:center;font-weight:800;font-size:18px;color:#2A2723}
+</style></head><body>
+<div id="sheet">
+ <div class="c"><svg id="l1" width="400" height="400" viewBox="0 0 400 400"></svg><div>1 · Elephant</div></div>
+ <div class="c"><svg id="l2" width="400" height="400" viewBox="0 0 400 400"></svg><div>2 · Abstract</div></div>
+ <div class="c"><svg id="l3" width="400" height="400" viewBox="0 0 400 400"></svg><div>3 · Graft</div></div>
+</div>
+<script>
+const O='#2A2723', NAVY='#22344A', RED='#C8362E', IV='#F3EFE6';
+const defs=`<defs>
+<radialGradient id="gEle" cx="35%" cy="28%" r="85%"><stop offset="0" stop-color="#D3DCE6"/><stop offset=".55" stop-color="#A9B7C6"/><stop offset="1" stop-color="#7F92A7"/></radialGradient>
+<radialGradient id="gEar" cx="40%" cy="35%" r="80%"><stop offset="0" stop-color="#F2E6E0"/><stop offset="1" stop-color="#D9C7BE"/></radialGradient>
+<radialGradient id="gNode" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E1DCD1"/></radialGradient>
+<radialGradient id="gNavy" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#3E5677"/><stop offset="1" stop-color="#1A2840"/></radialGradient>
+<radialGradient id="gGold" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#FFE98A"/><stop offset=".55" stop-color="#F6C93A"/><stop offset="1" stop-color="#DFA21C"/></radialGradient>
+<linearGradient id="gRib" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E5574C"/><stop offset="1" stop-color="#A9271F"/></linearGradient>
+<linearGradient id="gBark" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B7814A"/><stop offset=".6" stop-color="#94612F"/><stop offset="1" stop-color="#6F4622"/></linearGradient>
+<radialGradient id="gWood" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#F1D9A8"/><stop offset="1" stop-color="#D9B57A"/></radialGradient>
+<radialGradient id="gSoil" cx="40%" cy="25%" r="90%"><stop offset="0" stop-color="#9A7452"/><stop offset="1" stop-color="#6B4D33"/></radialGradient>
+<linearGradient id="gShoot" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8FD06A"/><stop offset="1" stop-color="#4E9A3C"/></linearGradient>
+<radialGradient id="gLeaf" cx="35%" cy="28%" r="85%"><stop offset="0" stop-color="#A8DE7A"/><stop offset="1" stop-color="#4E9A3C"/></radialGradient>
+</defs>`;
+const card=`<rect width="400" height="400" rx="88" fill="${IV}"/>`;
+const node=(x,y,r,fill='url(#gNode)',stroke=NAVY,sw=3.2)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/><ellipse cx="${x-r*.32}" cy="${y-r*.36}" rx="${r*.32}" ry="${r*.2}" fill="#fff" opacity=".75"/>`;
+const edge=(a,b,w=3,dash=false)=>`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${NAVY}" stroke-width="${w}" stroke-linecap="round" ${dash?'stroke-dasharray="6 5"':''}/>`;
+const bow=(x,y,rot,s=1)=>`<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">
+ <rect x="-8" y="-11" width="16" height="22" rx="4" fill="url(#gRib)" stroke="${O}" stroke-width="3"/>
+ <path d="M0 -10 C-14 -28 -26 -20 -16 -10 C-10 -6 -4 -8 0 -10 Z" fill="url(#gRib)" stroke="${O}" stroke-width="2.8"/>
+ <path d="M0 -10 C14 -28 26 -20 16 -10 C10 -6 4 -8 0 -10 Z" fill="url(#gRib)" stroke="${O}" stroke-width="2.8"/></g>`;
+
+// ---------- 1. Elephant ----------
+let e=defs+card;
+e+=`<ellipse cx="205" cy="338" rx="130" ry="14" fill="#000" opacity=".08"/>`;
+// back legs
+e+=`<rect x="250" y="268" width="40" height="70" rx="18" fill="url(#gEle)" stroke="${O}" stroke-width="5"/>`;
+// tail
+e+=`<path d="M318 218 C336 226 340 246 332 258" stroke="${O}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+// body
+e+=`<path d="M120 230 C118 160 170 136 238 138 C302 140 330 180 326 236 C322 290 282 306 220 306 C160 306 122 290 120 230 Z" fill="url(#gEle)" stroke="${O}" stroke-width="5" stroke-linejoin="round"/>`;
+// front legs
+e+=`<rect x="150" y="262" width="42" height="76" rx="18" fill="url(#gEle)" stroke="${O}" stroke-width="5"/>`;
+e+=`<rect x="214" y="270" width="40" height="68" rx="18" fill="url(#gEle)" stroke="${O}" stroke-width="5"/>`;
+e+=`<path d="M156 330 L186 330 M220 330 L248 330" stroke="#fff" stroke-width="3" opacity=".5" stroke-linecap="round"/>`;
+// head
+e+=`<circle cx="130" cy="176" r="64" fill="url(#gEle)" stroke="${O}" stroke-width="5"/>`;
+// trunk (curled up)
+e+=`<path d="M86 200 C70 240 60 272 82 288 C98 298 116 286 110 270" stroke="${O}" stroke-width="30" fill="none" stroke-linecap="round"/>`;
+e+=`<path d="M86 200 C70 240 60 272 82 288 C98 298 116 286 110 270" stroke="#A9B7C6" stroke-width="20" fill="none" stroke-linecap="round"/>`;
+e+=`<path d="M78 232 L92 236 M72 252 L86 254 M74 272 L88 270" stroke="${O}" stroke-width="2.4" opacity=".35" stroke-linecap="round"/>`;
+// tusk
+e+=`<path d="M122 222 C116 238 124 248 138 244 C133 237 133 230 134 224 Z" fill="#FFFDF7" stroke="${O}" stroke-width="3.2" stroke-linejoin="round"/>`;
+// ear with graph
+e+=`<path d="M160 120 C210 104 250 128 248 176 C246 222 214 246 176 236 C156 230 150 214 156 196 C150 170 146 140 160 120 Z" fill="url(#gEar)" stroke="${O}" stroke-width="5" stroke-linejoin="round"/>`;
+const EN={a:[182,142],b:[220,150],c:[198,182],d:[232,196],f:[180,214]};
+[['a','b'],['a','c'],['b','c'],['c','d'],['c','f'],['b','d']].forEach(([p,q])=>e+=edge(EN[p],EN[q],2.8));
+Object.values(EN).forEach(([x,y])=>e+=node(x,y,8));
+e+=edge(EN.d,[268,118],2.8,true)+node(268,118,11,'url(#gGold)',O,3.4);
+// eye (no mouth)
+e+=`<ellipse cx="114" cy="160" rx="6.5" ry="8" fill="${O}"/><circle cx="116.5" cy="157" r="2.4" fill="#fff"/>`;
+e+=`<ellipse cx="100" cy="128" rx="16" ry="8" transform="rotate(-25 100 128)" fill="#fff" opacity=".5"/>`;
+document.getElementById('l1').innerHTML=e;
+
+// ---------- 2. Abstract ----------
+let a=defs+card;
+a+=`<rect x="56" y="56" width="288" height="288" rx="64" fill="url(#gNavy)"/>`;
+a+=`<ellipse cx="150" cy="96" rx="70" ry="18" fill="#fff" opacity=".08"/>`;
+const AN={p:[132,150],q:[200,112],r:[250,168],s:[176,214],t:[120,262],u:[228,262]};
+const W=(p,q,dash)=>{const A=AN[p]||p,B=AN[q]||q;return `<line x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="#F3EFE6" stroke-width="5" stroke-linecap="round" ${dash?'stroke-dasharray="9 8"':''} opacity=".9"/>`;};
+[['p','q'],['q','r'],['p','s'],['q','s'],['r','s'],['s','t'],['s','u'],['t','u']].forEach(([p,q])=>a+=W(p,q));
+a+=W('r',[296,222],true);
+Object.values(AN).forEach(([x,y])=>a+=node(x,y,15,'url(#gNode)',O,4));
+a+=node(296,222,22,'url(#gGold)',O,4.5);
+a+=bow(273,195,-40,0.9);
+document.getElementById('l2').innerHTML=a;
+
+// ---------- 3. Graft emblem ----------
+let g=defs+card;
+g+=`<ellipse cx="200" cy="338" rx="128" ry="26" fill="url(#gSoil)" stroke="${O}" stroke-width="5"/>`;
+g+=`<ellipse cx="160" cy="330" rx="22" ry="5" fill="#fff" opacity=".2"/>`;
+// stock: a cut stem
+g+=`<path d="M160 336 L164 236 L236 236 L240 336 Z" fill="url(#gBark)" stroke="${O}" stroke-width="5" stroke-linejoin="round"/>`;
+g+=`<ellipse cx="200" cy="236" rx="36" ry="12" fill="url(#gWood)" stroke="${O}" stroke-width="4.5"/>`;
+g+=`<ellipse cx="200" cy="236" rx="22" ry="7" fill="none" stroke="#B48A55" stroke-width="2"/><ellipse cx="200" cy="236" rx="10" ry="3.2" fill="none" stroke="#B48A55" stroke-width="2"/>`;
+g+=`<path d="M182 300 C184 280 184 268 183 256" stroke="${O}" stroke-width="2.4" opacity=".3" fill="none" stroke-linecap="round"/>`;
+// scion: green shoot set into the cut, taped
+g+=`<path d="M192 252 C190 200 196 160 204 116" stroke="${O}" stroke-width="22" fill="none" stroke-linecap="round"/>`;
+g+=`<path d="M192 252 C190 200 196 160 204 116" stroke="url(#gShoot)" stroke-width="13" fill="none" stroke-linecap="round"/>`;
+// tape wrap at the union
+g+=`<path d="M176 226 L214 214 L216 228 L178 240 Z" fill="url(#gRib)" stroke="${O}" stroke-width="3.2" stroke-linejoin="round"/>`;
+g+=`<path d="M177 212 L213 200 L215 214 L179 226 Z" fill="url(#gRib)" stroke="${O}" stroke-width="3.2" stroke-linejoin="round"/>`;
+// side shoots ending in node-leaves
+g+=`<path d="M196 196 C176 184 158 182 140 186" stroke="${O}" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M196 196 C176 184 158 182 140 186" stroke="#6DB84A" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+g+=`<path d="M200 158 C220 146 238 144 256 150" stroke="${O}" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M200 158 C220 146 238 144 256 150" stroke="#6DB84A" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+// leaves as graph: edges between tips
+g+=edge([140,186],[204,104],2.6,true)+edge([256,150],[204,104],2.6,true)+edge([140,186],[256,150],2.6,true);
+g+=node(140,186,15,'url(#gLeaf)',O,4)+node(256,150,15,'url(#gLeaf)',O,4)+node(204,100,19,'url(#gGold)',O,4.5);
+document.getElementById('l3').innerHTML=g;
+</script>
+</body></html>
