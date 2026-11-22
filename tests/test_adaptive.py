@@ -75,3 +75,18 @@ def test_ask_loop_adds_batches_within_the_limits(monkeypatch):
     region = Region(pool[:150], pool=pool, shown=150)
     call, _, log = agent._answer_asking(region, NS(query="q"))
     assert shown == [150, 180] and log["asks"] == 1 and log["still_asking"]  # pool used up after one batch of 30
+
+
+def test_user_node_links_first_person_questions():
+    store = GraphStore()
+    store.add_fact("user", "bought", "a bike", Provenance(0, store.take_arrival(), None, "I bought a bike"))
+    store.add_fact("Paris", "capital of", "France", Provenance(1, store.take_arrival(), None, "Paris is the capital"))
+    texts = TextEmbedder(load_embedder("hash:16"))
+    off = Retriever(store, RetrievalConfig(mode="ppr"), texts, None)
+    on = Retriever(store, RetrievalConfig(mode="ppr", user_node=True), texts, None)
+    assert off.link("What did I buy last week?") == []
+    assert on.link("What did I buy last week?") == ["e:user"]
+    assert on.link("Where is my bike from Paris?") == ["e:user", "e:paris"]
+    assert on.link("What is the capital of France?") == ["e:france"]            # no first person: unchanged
+    assert on.link("Tell me about Mimi") == ["e:user"]                          # "me" counts
+    assert on.link("Timing of the immigration") == []                          # "i" only as a whole word

@@ -203,7 +203,8 @@ class GraftAgent:
                               query_linking=c.get("query_linking", "embedding"),
                               document_facts_only=c.get("document_facts_only", False),
                               background_facts=c.get("background_facts", 0),
-                              adaptive=c.get("adaptive", ""), min_facts=c.get("min_facts", 10), drop_max=c.get("drop_max", 100))
+                              adaptive=c.get("adaptive", ""), min_facts=c.get("min_facts", 10), drop_max=c.get("drop_max", 100),
+                              user_node=c.get("user_node", False))
         if c.get("bridge_weight") is not None:  # test 06 arm C: outside-base edges walk at this weight
             self.store.bridge_weight = float(c["bridge_weight"])
             self.store._simple = None

@@ -67,6 +67,7 @@ class RetrievalConfig:
     #                      show the first k, k at the largest score drop between min_facts and drop_max
     min_facts: int = 10
     drop_max: int = 100
+    user_node: bool = False  # G43: a first-person question ("I", "my", "me") also links the writer's "user" entity
 
 
 @dataclass
@@ -88,6 +89,10 @@ class Region:
 
 def _words(text: str) -> str:
     return " " + " ".join(re.findall(r"[a-z0-9]+", text.lower())) + " "
+
+
+USER = "e:user"  # the writer names the person in a chat history "user"
+FIRST_PERSON = re.compile(r"\b(i|me|my|mine|myself|i'm|i've|i'd|i'll)\b", re.IGNORECASE)
 
 
 def drop_cut(scores: list[float], lo: int, hi: int) -> int:
@@ -129,6 +134,8 @@ class Retriever:
             if words in q and not any(words in longer for _, longer in found):
                 found.append((entity, words))
         exact = [e for e, _ in found]
+        if self.cfg.user_node and FIRST_PERSON.search(question) and self.store.g.has_node(USER) and USER not in exact:
+            exact = [USER] + exact  # chat histories: the user is the entity most questions are about
         if self.cfg.link_embed_k <= 0:
             return exact
         if self._entity_vecs is None:
