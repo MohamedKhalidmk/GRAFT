@@ -118,7 +118,8 @@ class GraftAgent:
         else:
             schema = Schema.load(REPO / config["schema_path"])
             self.writer = LLMWriter(self.llm, schema, config["schema"], config["revisions"], config["writer_max_tokens"],
-                                   pattern)
+                                   pattern, prompt=config.get("writer_prompt", "default"),
+                                   reply_log=(self.work_dir / "writer_replies.jsonl") if config.get("log_writer_replies") else None)
         self.texts = TextEmbedder(load_embedder(config["embedding_model"]))
         if config.get("writer_linking") == "llm" and isinstance(self.writer, LLMWriter):  # Haiku links names to base entities
             from my_method.writer import EntityLinker

@@ -47,11 +47,12 @@ class WriterStats:
     ops: Counter = field(default_factory=Counter)
     rejected: Counter = field(default_factory=Counter)  # facts dropped by schema validation, by reason
     parse_failures: int = 0
+    salvaged: int = 0  # failed parses whose complete facts were kept (salvage_facts)
     llm_calls: int = 0
     linking: Counter = field(default_factory=Counter)  # entity linking outcomes (EntityLinker)
 
     def as_dict(self) -> dict:
-        return {"ops": dict(self.ops), "rejected": dict(self.rejected), "parse_failures": self.parse_failures,
+        return {"ops": dict(self.ops), "rejected": dict(self.rejected), "parse_failures": self.parse_failures, "salvaged": self.salvaged,
                 "writer_llm_calls": self.llm_calls, "linking": dict(self.linking)}
 
 
@@ -178,6 +179,19 @@ below, and nothing that does not fit it.
 (null if it has none), and span: the exact sentence the fact comes from.
 Return JSON only: {{"facts": [{{"subject": "...", "relation": "...", "object": "...", "serial": 12, "span": "..."}}]}}"""
 
+# Writer prompt v2 for chat histories (G41/G42, docs/design/graft_longmemeval_plan_design.md): added after the schema.
+CHAT_RULES = """
+This text is one session of a chat between a user and an assistant; its first line gives the session's date.
+- The user is the entity named "user". Extract the user's own details first: what they did, own, plan, prefer, like or
+  dislike, their numbers and amounts, people and pets they mention, and changes ("I switched to ...").
+- Keep exact numbers, amounts, durations, counts, prices, titles and links (URLs) in the object, word for word.
+- Dates: when the text says when something happened, put the date in the fact. Resolve relative dates ("yesterday",
+  "last week", "two days ago") against the session date and write the absolute date (e.g. "2023/05/20").
+- Also extract what the assistant said that the user may ask about later: recommendations, named items, list entries
+  (with their position, e.g. relation "list item 7" for the 7th item), and answers to the user's questions.
+
+"""
+
 # Experiment D ("extend" mode): the writer starts from a ready-made graph and must follow its pattern.
 PATTERN_BLOCK = """The memory graph already exists; you only extend it. Follow its pattern: when a fact fits one \
 of the graph's relation labels below, use that label exactly, word for word. Name a new relation only \
@@ -218,6 +232,29 @@ Return JSON only, one decision per NEW fact: \
 SUPERSEDE_LINE = ("- SUPERSEDE: the fact is a newer version of a stored fact with the same subject and "
                   "relation and a different object; give that fact's id as target. The old fact is kept "
                   "and marked outdated.\n")
+
+
+def salvage_facts(text: str) -> dict | None:
+    """From an extraction reply cut off at the token cap (or otherwise broken), every complete fact object of its
+    "facts" list: {"facts": [...]} with those, or None if there is none."""
+    i = (text or "").find('"facts"')
+    if i < 0:
+        return None
+    dec, facts, pos = json.JSONDecoder(), [], text.find("[", i) + 1
+    if pos <= 0:
+        return None
+    while True:
+        j = text.find("{", pos)
+        if j < 0:
+            break
+        try:
+            obj, end = dec.raw_decode(text, j)
+        except json.JSONDecodeError:
+            break
+        if isinstance(obj, dict):
+            facts.append(obj)
+        pos = end
+    return {"facts": facts} if facts else None
 
 
 def parse_json(text: str) -> dict:
@@ -328,32 +365,58 @@ class EntityLinker:
 
 class LLMWriter:
     def __init__(self, llm: ClaudeLLM, schema: Schema, mode: str, revisions: bool, max_tokens: int = 8192,
-                 pattern: str = ""):
-        """pattern: graph_pattern() of a ready-made starting graph (experiment D), or "" (from scratch)."""
+                 pattern: str = "", prompt: str = "default", reply_log: str | Path | None = None):
+        """pattern: graph_pattern() of a ready-made starting graph (experiment D), or "" (from scratch).
+        prompt: "default", or "chat_v2" (CHAT_RULES added: chat histories, G41/G42). reply_log: a JSONL file that gets
+        every raw writer reply (chunk, call, stop reason, parsed or not)."""
         assert mode in ("fixed", "free"), mode
+        assert prompt in ("default", "chat_v2"), prompt
         self.llm, self.schema, self.mode, self.revisions = llm, schema, mode, revisions
         self.max_tokens = max_tokens
         self.pattern = pattern
+        self.prompt = prompt
+        self.reply_log = Path(reply_log) if reply_log else None
+        self._chunk = None
         self.stats = WriterStats()
 
     def write_chunk(self, chunk_id: int, text: str, store: GraphStore) -> None:
+        self._chunk = chunk_id
         facts = self.extract(text)
         if getattr(self, "linker", None) is not None:  # Haiku links new names to base-graph entities first
             facts = self.linker.link(chunk_id, facts, store)
         apply_decisions(store, chunk_id, facts, self.decide(facts, store), self.stats)
 
-    def _ask_json(self, system: str, user: str) -> dict | None:
-        for _ in range(2):  # one retry: replies are not deterministic
+    def _ask_json(self, system: str, user: str, kind: str = "") -> dict | None:
+        for attempt in range(2):  # one retry: replies are not deterministic
             self.stats.llm_calls += 1
+            call = self.llm.complete(system, user, self.max_tokens)
+            text, stop = call.text, getattr(call, "stop_reason", None)
             try:
-                return parse_json(self.llm.complete(system, user, self.max_tokens).text)
+                out, how = parse_json(text), "parsed"
             except (ValueError, json.JSONDecodeError):
+                out = salvage_facts(text) if kind == "extract" else None
+                how = "salvaged" if out else "failed"
                 self.stats.parse_failures += 1
+                if out:
+                    self.stats.salvaged += 1
+            self._log_reply(kind, attempt, text, stop, how)
+            if out is not None:
+                return out
         return None
+
+    def _log_reply(self, kind: str, attempt: int, text: str, stop, how: str) -> None:
+        if self.reply_log is None:
+            return
+        with open(self.reply_log, "a") as f:
+            f.write(json.dumps({"chunk_id": self._chunk, "kind": kind, "attempt": attempt, "stop_reason": stop,
+                                "result": how, "chars": len(text or ""), "reply": text}, ensure_ascii=False) + "\n")
 
     def extract(self, text: str) -> list[NewFact]:
         if self.mode == "fixed":
-            reply = self._ask_json(EXTRACT_FIXED.format(schema=self.schema.describe(), pattern=self.pattern), text) or {}
+            system = EXTRACT_FIXED.format(schema=self.schema.describe(), pattern=self.pattern)
+            if self.prompt == "chat_v2":
+                system = system.replace("Return JSON only:", CHAT_RULES + "Return JSON only:", 1)
+            reply = self._ask_json(system, text, "extract") or {}
             raw = [f for f in reply.get("facts", []) if isinstance(f, dict)]
         else:
             reply = self._ask_json(EXTRACT_FREE, text) or {}
