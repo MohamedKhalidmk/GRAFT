@@ -254,4 +254,5 @@ setup column.
 - Setup IDs are one sequence across both repos (GRAFT S01-S101, Flotilla S102 onward); free-check setups have IDs too.
 - Qwen setups that never finished (S50, S52, S54: Qwen on the full T-REx candidates, jobs cancelled before an answer)
   keep their IDs.
+- Long-history study (design 2026-11-22, [graft_long_history_design.md](../design/graft_long_history_design.md)): no new candidate; G35, the writer-v2 winner and Flotilla's F15 get setups at run time. Flotilla's F35 (reasoning-graph route) uses GRAFT's work layer on an empty graph.
 - Next free IDs: G47, S163 (S shared with Flotilla; S147-S162 are Flotilla setups). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
