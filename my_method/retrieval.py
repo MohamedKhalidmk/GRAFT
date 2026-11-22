@@ -26,6 +26,7 @@
 5. Cut to the budget (max facts and max approximate tokens).
 """
 
+import math
 import re
 from dataclasses import dataclass, field
 
@@ -62,6 +63,10 @@ class RetrievalConfig:
     guide_planning: bool = False  # test 06 arm B: follow the parsed relation chain with the T-REx guide, facts first
     background_facts: int = 0  # test 06 arm D: with document_facts_only, also keep the top k base facts as labelled background
     document_facts_only: bool = False  # bridge option (test 06 arm C): outside-base facts stay in the walk, never returned
+    adaptive: str = ""  # "drop" (G39/G40, docs/design/graft_adaptive_retrieval_design.md): rank a pool of max_facts,
+    #                      show the first k, k at the largest score drop between min_facts and drop_max
+    min_facts: int = 10
+    drop_max: int = 100
 
 
 @dataclass
@@ -76,10 +81,33 @@ class Region:
     query_graph: dict = field(default_factory=dict)  # query_graph option: the parsed edges and matched entities
     background: list[str] = field(default_factory=list)  # background_facts option: base facts shown apart, labelled
     plan: dict = field(default_factory=dict)  # guide_planning option: the chain followed and what was found
+    pool: list[str] = field(default_factory=list)  # adaptive: the whole ranked pool; facts = its first `shown`
+    shown: int = 0  # adaptive: how many pool facts are shown (the drop cutoff)
+    fact_scores: dict = field(default_factory=dict)  # adaptive: shown/pool fact -> its ranking score
 
 
 def _words(text: str) -> str:
     return " " + " ".join(re.findall(r"[a-z0-9]+", text.lower())) + " "
+
+
+def drop_cut(scores: list[float], lo: int, hi: int) -> int:
+    """How many facts to show (G39): sort the scores high to low and cut at the largest drop between neighbours,
+    measured as a ratio (largest log s[i] - log s[i+1]), with the cut after position lo..hi. A score of 0 (never reached
+    by the walk) after a positive one is an infinite drop. Fewer than lo scores: all of them."""
+    s = sorted((max(float(x), 0.0) for x in scores), reverse=True)
+    n = len(s)
+    if n <= lo:
+        return n
+    hi = min(hi, n)
+    best, cut = -1.0, lo  # no drop found (flat, or nothing scored): the minimum
+    for i in range(lo - 1, hi - 1):
+        a, b = s[i], s[i + 1]
+        if a <= 0:
+            break
+        gap = float("inf") if b <= 0 else math.log(a) - math.log(b)
+        if gap > best:
+            best, cut = gap, i + 1
+    return cut
 
 
 class Retriever:
@@ -115,6 +143,24 @@ class Retriever:
         return exact + extra[: self.cfg.link_embed_k]
 
     def retrieve(self, question: str) -> Region:
+        self._fact_score = {}
+        region = self._retrieve_ranked(question)
+        if self.cfg.adaptive == "drop":
+            self._drop_cutoff(region)
+        return region
+
+    def _drop_cutoff(self, region: Region) -> None:
+        """G39: keep G35's order, show only the first k facts of the pool, k at the largest score drop."""
+        pool = list(region.facts)
+        scores = [region.fact_scores.get(f, 0.0) for f in pool]
+        n_plan = sum(1 for s in region.sources if s == "plan") if region.sources else 0
+        k = max(drop_cut(scores, self.cfg.min_facts, self.cfg.drop_max), n_plan)
+        region.pool, region.shown = pool, min(k, len(pool))
+        region.facts = pool[:region.shown]
+        if region.sources:
+            region.sources = region.sources[:region.shown]
+
+    def _retrieve_ranked(self, question: str) -> Region:
         if self.cfg.guide_planning and not self.cfg.query_graph:
             return self._with_plan(question, self._retrieve(question))
         if not self.cfg.query_graph:
@@ -136,7 +182,7 @@ class Retriever:
         linked = list(dict.fromkeys(self.link(question) + list(extra_entities)))
         seeds = list(dict.fromkeys(linked + list(extra_seeds)))
         if not seeds:
-            return self._finish(self._similar_facts(question), Region([], fallback=True))
+            return self._finish(self._similar_facts(question, record=True), Region([], fallback=True))
         if self.cfg.mode == "ppr":
             return self._finish(self._merge(question, self._ppr(linked)),
                                 Region([], linked_entities=linked, subgraph_nodes=self.store.g.number_of_nodes()))
@@ -353,6 +399,7 @@ class Retriever:
         graph = self.store.simple_graph() if whole_graph else self.store.simple_graph().subgraph(sub.nodes)
         seeds = {n: w for n, w in picks.items() if n in graph and w > 0} or {sub.nodes[int(np.argmax(scores))]: 1.0}
         rank = pagerank(graph, seeds, alpha=self.cfg.expand_alpha)
+        self._fact_score = {n: float(v) for n, v in rank.items()}  # the second walk's mass, for the drop cutoff
         picked = sorted((n for n in picks if self._is_fact(n)), key=lambda n: -picks[n])
         walked = sorted((n for n in rank if n not in picks and self._is_fact(n)), key=lambda n: -rank[n])
         rest = [n for n in self._by_score(sub.nodes, scores) if n not in picks and n not in rank]
@@ -362,12 +409,14 @@ class Retriever:
         rank = ppr_scores(self.store, seeds)
         return sorted((n for n in rank if self._is_fact(n)), key=lambda n: -rank[n])
 
-    def _similar_facts(self, question: str) -> list[str]:
+    def _similar_facts(self, question: str, record: bool = False) -> list[str]:
         current = [f for f in self.store.facts() if not self.store.is_superseded(f)]
         if not current:
             return []
         vecs = self.texts.embed_texts([node_text(self.store, f) for f in current])
         sims = vecs @ self.texts.embed_one(question)
+        if record:  # the fallback ranking's scores (cosine), for the drop cutoff
+            self._fact_score = {current[i]: float(sims[i]) for i in range(len(current))}
         return [current[i] for i in np.argsort(-sims)]
 
     # ---- latest-version rule and budget ----
@@ -387,6 +436,8 @@ class Retriever:
                 continue
             chosen.append(newest)
             picked.append(fact)
+            region.fact_scores[newest] = max(getattr(self, "_fact_score", {}).get(fact, 0.0),
+                                             getattr(self, "_fact_score", {}).get(newest, 0.0))
             if self.cfg.include_outdated and fact != newest and fact not in outdated:
                 outdated.append(fact)
             text = sum(len(self.store.fact(f)["provenance"]["span"]) for f in chosen + outdated)

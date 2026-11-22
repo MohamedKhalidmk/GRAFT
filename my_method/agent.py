@@ -18,6 +18,7 @@ Config keys (defaults in eval/methods.py, all switchable in the UI):
 """
 
 import json
+import re
 import multiprocessing
 from pathlib import Path
 
@@ -201,7 +202,8 @@ class GraftAgent:
                               query_graph=c.get("query_graph", False), query_match_min=c.get("query_match_min", 0.85),
                               query_linking=c.get("query_linking", "embedding"),
                               document_facts_only=c.get("document_facts_only", False),
-                              background_facts=c.get("background_facts", 0))
+                              background_facts=c.get("background_facts", 0),
+                              adaptive=c.get("adaptive", ""), min_facts=c.get("min_facts", 10), drop_max=c.get("drop_max", 100))
         if c.get("bridge_weight") is not None:  # test 06 arm C: outside-base edges walk at this weight
             self.store.bridge_weight = float(c["bridge_weight"])
             self.store._simple = None
@@ -373,14 +375,54 @@ class GraftAgent:
             region = self.retriever.retrieve(question_text(question.query))
             self._seen_regions = getattr(self, "_seen_regions", []) + [region]
             self._check_regions(self._seen_regions, final=False)
-        call, memory = answer(self.llm, self.store, region, question.query, self.sub_dataset,
-                              self.config["answer_max_tokens"])
-        return call.text, {"stop_reason": call.stop_reason, "retrieved_text": memory,
+        if self.config.get("ask_more"):  # G40: Qwen may ask for the next batch of the pool
+            call, memory, asks = self._answer_asking(region, question)
+        else:
+            call, memory = answer(self.llm, self.store, region, question.query, self.sub_dataset,
+                                  self.config["answer_max_tokens"])
+            asks = None
+        return call.text, {"stop_reason": call.stop_reason, "retrieved_text": memory, "facts_shown": len(region.facts),
+                           "pool_facts": len(region.pool) if region.pool else None, "asks": asks,
                            "linked_entities": region.linked_entities, "region_facts": len(region.facts),
                            "subgraph_nodes": region.subgraph_nodes, "fallback": region.fallback,
                            "subgraph_text": "\n".join(self.store.fact(f)["provenance"]["span"] for f in region.subgraph_facts),
                            "fact_sources": region.sources, "query_graph": region.query_graph,
                            "plan": getattr(region, "plan", None)}
+
+
+    def _answer_asking(self, region: Region, question: Question):
+        """G40 (docs/design/graft_adaptive_retrieval_design.md): show the drop-cutoff facts; on NEED MORE MEMORIES add
+        the next ask_batch pool facts and ask again; at most ask_max asks and ask_cap facts; stop when the pool is used up."""
+        c = self.config
+        batch, max_asks, cap = c.get("ask_batch", 50), c.get("ask_max", 3), c.get("ask_cap", 200)
+        pool = region.pool or region.facts
+        asks, calls = [], 0
+        while True:
+            call, memory = answer(self.llm, self.store, region, question.query + "\n\n" + ASK_RULE, self.sub_dataset,
+                                  c["answer_max_tokens"])
+            calls += 1
+            if not wants_more(call.text) or len(asks) >= max_asks or len(region.facts) >= cap:
+                break
+            more = [f for f in pool[len(region.facts):len(region.facts) + batch] if f not in region.facts]
+            more = more[:max(cap - len(region.facts), 0)]
+            if not more:  # the batch adds nothing new: the pool is used up
+                break
+            asks.append(len(more))
+            region.facts = region.facts + more
+            if region.sources:
+                region.sources = region.sources + ["ask"] * len(more)
+        return call, memory, {"asks": len(asks), "added": asks, "calls": calls, "still_asking": wants_more(call.text)}
+
+
+ASK_RULE = ("If the memories above do not contain a fact you need to answer, reply with exactly NEED MORE MEMORIES and "
+            "nothing else. If no memory could hold the answer, say that the memory does not hold it.")
+
+
+def wants_more(text: str) -> bool:
+    """The model asked for more memories (G40): the reply is the ask phrase, alone or with only punctuation around it."""
+    lines = [re.sub(r"[^a-z ]", "", l.lower()).strip() for l in (text or "").splitlines()]
+    lines = [l for l in lines if l]
+    return bool(lines) and lines[-1] == "need more memories"  # alone, or as the last line after the model's reasoning
 
 
 SGARAgent = GraftAgent  # old name, kept for older scripts

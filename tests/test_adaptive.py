@@ -1,0 +1,77 @@
+"""Adaptive retrieval (G39 drop cutoff, G40 ask for more; docs/design/graft_adaptive_retrieval_design.md). Offline."""
+from types import SimpleNamespace as NS
+
+from baselines.claude_gateway.embeddings import load_embedder
+from my_method.agent import ASK_RULE, GraftAgent, wants_more
+from my_method.gnn.features import TextEmbedder, feature_dim
+from my_method.gnn.train import make_model
+from my_method.graph_store import GraphStore, Provenance
+from my_method.retrieval import Region, RetrievalConfig, Retriever, drop_cut
+
+
+def test_drop_cut_is_the_largest_ratio_drop_within_bounds():
+    s = [10, 9, 8, 1, 0.9, 0.8, 0.7, 0.6]
+    assert drop_cut(s, 2, 6) == 3                       # 8 -> 1 is the largest drop
+    assert drop_cut(list(reversed(s)), 2, 6) == 3       # order of the input does not matter
+    assert drop_cut(s, 4, 6) == 5                       # the cut may not come before lo: largest drop after it, 0.9 -> 0.8
+    assert drop_cut([5, 4, 3, 0, 0], 2, 5) == 3         # unreached facts (score 0): an infinite drop
+    assert drop_cut([5, 4], 3, 10) == 2                 # fewer facts than lo: all of them
+    assert drop_cut([1.0] * 30, 10, 20) == 10           # flat scores: no drop, the first candidate cut
+    assert drop_cut([0, 0, 0, 0], 2, 4) == 2            # nothing scored: the minimum
+
+
+def _store():
+    store = GraphStore()
+    store.add_fact("Pee Wee King", "country of citizenship", "France", Provenance(0, store.take_arrival(), 1, "1. a"))
+    store.add_fact("France", "official language", "Hebrew", Provenance(1, store.take_arrival(), 2, "2. b"))
+    for i in range(40):
+        store.add_fact(f"Person {i}", "country of citizenship", "France", Provenance(2, store.take_arrival(), 10 + i, f"x {i}"))
+    return store
+
+
+def test_drop_cutoff_keeps_g35_order_and_only_changes_the_count():
+    store = _store()
+    texts = TextEmbedder(load_embedder("hash:16"))
+    model = make_model(feature_dim(16), 8).eval()
+    q = "What language does Pee Wee King's country speak?"
+    base = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=30, max_facts=30, max_tokens=40000), texts, model)
+    full = base.retrieve(q)
+    ad = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=30, max_facts=30, max_tokens=40000,
+                                          adaptive="drop", min_facts=3, drop_max=20), texts, model).retrieve(q)
+    assert ad.pool == full.facts                         # same ranking as the fixed-count retriever
+    assert 3 <= ad.shown <= 20 and ad.facts == ad.pool[:ad.shown]
+    assert set(ad.fact_scores) >= set(ad.facts)
+    fb = Retriever(store, RetrievalConfig(mode="ppr_goat_ppr", max_nodes=30, max_facts=30, max_tokens=40000,
+                                          adaptive="drop", min_facts=3, drop_max=20), texts, model).retrieve("zzz qqq")
+    assert fb.fallback and fb.facts == fb.pool[:fb.shown] and all(f in fb.fact_scores for f in fb.facts)
+
+
+def test_wants_more_only_on_the_ask_phrase():
+    assert wants_more("NEED MORE MEMORIES") and wants_more("Step 1: ...\nNEED MORE MEMORIES.")
+    assert not wants_more("Answer: Hebrew") and not wants_more("") and not wants_more("I need more memories to be sure, but Hebrew")
+    assert "NEED MORE MEMORIES" in ASK_RULE
+
+
+def test_ask_loop_adds_batches_within_the_limits(monkeypatch):
+    import my_method.agent as ag
+    replies = iter(["NEED MORE MEMORIES", "NEED MORE MEMORIES", "Answer: Hebrew"])
+    shown = []
+
+    def fake_answer(llm, store, region, query, sub, mt):
+        shown.append(len(region.facts))
+        assert ASK_RULE in query
+        return NS(text=next(replies), stop_reason="end_turn"), "memory"
+    monkeypatch.setattr(ag, "answer", fake_answer)
+    agent = GraftAgent.__new__(GraftAgent)
+    agent.config = {"ask_more": True, "ask_batch": 50, "ask_max": 3, "ask_cap": 200, "answer_max_tokens": 1024}
+    agent.store, agent.llm, agent.sub_dataset = None, None, "x"
+    pool = [f"f:{i}" for i in range(180)]
+    region = Region(pool[:20], pool=pool, shown=20)
+    call, _, log = agent._answer_asking(region, NS(query="q"))
+    assert shown == [20, 70, 120] and call.text == "Answer: Hebrew" and log["asks"] == 2 and log["calls"] == 3
+    # the cap and the pool end stop the asking
+    replies = iter(["NEED MORE MEMORIES"] * 10)
+    shown.clear()
+    region = Region(pool[:150], pool=pool, shown=150)
+    call, _, log = agent._answer_asking(region, NS(query="q"))
+    assert shown == [150, 180] and log["asks"] == 1 and log["still_asking"]  # pool used up after one batch of 30
