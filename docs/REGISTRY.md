@@ -70,6 +70,7 @@ History: draft 1 numbered Embedding RAG (bge-small) as a candidate; it is a base
 | G43 | the better of G41/G42 with the user node (first-person questions link "user") | (new, 2026-11-22) | LongMemEval dev | designed | as G41 |
 | G44 | G43 with a chat guide instead of the T-REx guide | (new, 2026-11-22) | LongMemEval dev | designed | dataset to be chosen by the user |
 | G45 | G43 without any guide (mode C alone) | (new, 2026-11-22) | LongMemEval dev | designed | the no-guide control for G43/G44 |
+| G46 | the better of G41/G42 with bitemporal facts: said time (session date or serial) for supersede, event time (resolved from the text) for temporal questions | (new, 2026-11-22) | LongMemEval temporal dev | designed | design: [graft_bitemporal_design.md](design/graft_bitemporal_design.md); built after writer v2's results |
 Not a candidate: the **Haiku check** (`exp_real_replay38`, `exp_real_canary_replay38`) re-answers G08's saved
 2026-11-13 facts with no retrieval; it checks Haiku, not a method. It keeps its name and has a setup (S101).
 
@@ -253,4 +254,4 @@ setup column.
 - Setup IDs are one sequence across both repos (GRAFT S01-S101, Flotilla S102 onward); free-check setups have IDs too.
 - Qwen setups that never finished (S50, S52, S54: Qwen on the full T-REx candidates, jobs cancelled before an answer)
   keep their IDs.
-- Next free IDs: G46, S159 (S shared with Flotilla; S147-S158 are Flotilla router setups). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
+- Next free IDs: G47, S159 (S shared with Flotilla; S147-S158 are Flotilla router setups). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
