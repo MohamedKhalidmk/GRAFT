@@ -16,6 +16,8 @@ paths under `github.com/MohamedKhalidmk/GRAFT` (branch `graft-linking-hybrid`; i
 PR #6). The run logs are Flotilla's [docs/run_log.md](https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/run_log.md) (decisions and API spend, from 2026-11-19)
 and GRAFT's [docs/experiments.md](../docs/experiments.md) (the 2026-11-13 real runs).
 
+**IDs (2026-11-21).** Every candidate has a frozen ID: GRAFT G01-G38, Flotilla F01-F28; every result points to a setup (S01-S146) that adds the answering model, cap, benchmark and scoring. Registries: [GRAFT](https://github.com/MohamedKhalidmk/GRAFT/blob/graft-linking-hybrid/docs/REGISTRY.md), [Flotilla](https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/REGISTRY.md). Old names below are kept as they were used at the time; the main ones: mode A = G04, B = G07, C = G08, D = G09; the guide = G35; bridge = G36; background = G37; guide + working memory (arm E) = G38; working memory C/C- = G31/G32 (v1) and G33/G34 (v2); question layer = G30; RoG = G25; full T-REx = G27-G29. Flotilla: plain Qwen (bare) = F01; Qwen alone = route Deep+Tools = F06; gpt-oss = F07; Command A+ = F08; routes Fast F15, Tools F16, Deep F17, Vote F18, Vote+Tools F19, Memory F20-F23; router A F12, router B F13, router B lite F14.
+
 Contents
 
 1. Timeline at a glance
