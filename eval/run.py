@@ -175,27 +175,31 @@ def _me() -> dict:
     return {"job": os.environ.get("SLURM_JOB_ID"), "host": socket.gethostname(), "pid": os.getpid()}
 
 
-def _owner_alive(run_dir: Path) -> bool:
-    """Is the process that owns this run folder still running? Folders from before owner files count as free."""
+def _own_folder(run_dir: Path) -> bool:
+    """May this process resume this unfinished run folder? Only if this same Slurm job made it (a requeued job keeps
+    its job id). A folder left by any other job, dead or alive, or by a process outside Slurm, is never reused: a rerun
+    gets a new folder named after its own job, so a folder's name always says which job wrote it (2026-11-21: Nibi
+    28263641 resumed the folders of the failed 28252727 and wrote its results under the old job's name)."""
+    job = os.environ.get("SLURM_JOB_ID")
     f = run_dir / "owner.json"
-    if not f.exists():
+    if not job or not f.exists():
         return False
-    o = json.loads(f.read_text())
-    if o.get("job"):
-        if o["job"] == os.environ.get("SLURM_JOB_ID"):
-            return False  # this job's own earlier attempt
-        try:
-            r = subprocess.run(["squeue", "-h", "-j", str(o["job"]), "-o", "%T"], capture_output=True, text=True, timeout=30)
-            return r.returncode == 0 and r.stdout.strip() in ("RUNNING", "PENDING", "CONFIGURING", "COMPLETING")
-        except (OSError, subprocess.TimeoutExpired):
-            return True  # cannot tell: leave it alone
-    if o.get("host") == socket.gethostname():
-        try:
-            os.kill(int(o["pid"]), 0)
-            return int(o["pid"]) != os.getpid()
-        except (OSError, ValueError):
-            return False
-    return True
+    try:
+        return str(json.loads(f.read_text()).get("job")) == job
+    except (ValueError, AttributeError):
+        return False
+
+
+def run_folder(runs_dir: Path, cfg: dict) -> tuple[Path, bool]:
+    """The run folder for this config: this job's own unfinished folder of the same config if there is one (resumed,
+    keeping its finished repeats), else a new folder <run_name>_<timestamp>_<j<job id>|p<pid>>. Returns (folder, resumed)."""
+    unfinished = [d for d in sorted(runs_dir.glob(f"{cfg['run_name']}_2*")) if not (d / "summary.json").exists()
+                  and (d / "config.yaml").exists() and yaml.safe_load((d / "config.yaml").read_text()) == cfg
+                  and _own_folder(d)]
+    if unfinished:
+        return unfinished[-1], True
+    tag = f"j{os.environ['SLURM_JOB_ID']}" if os.environ.get("SLURM_JOB_ID") else f"p{os.getpid()}"
+    return runs_dir / f"{cfg['run_name']}_{time.strftime('%Y%m%d-%H%M%S')}_{tag}", False
 
 
 def _claim(run_dir: Path) -> None:
@@ -206,17 +210,11 @@ def run(config_path: str) -> Path:
     cfg = load_config(config_path)
     spec = METHODS[cfg["method"]]
     runs_dir = Path(os.environ.get("RESULTS_DIR", REPO / "results")) / "runs"
-    # resume: the newest unfinished run of this config (no summary.json, same config) is continued, keeping its
-    # finished repeats; otherwise a new run folder
-    # A run folder is owned by one process (owner.json: Slurm job id or host + pid). Two jobs of one config started in
-    # the same second used to share a folder and break each other (twins on one cluster, the Haiku check in two batches):
-    # new folders now carry the job id, and an unfinished folder is resumed only when its owner is gone.
-    unfinished = [d for d in sorted(runs_dir.glob(f"{cfg['run_name']}_2*")) if not (d / "summary.json").exists()
-                  and (d / "config.yaml").exists() and yaml.safe_load((d / "config.yaml").read_text()) == cfg
-                  and not _owner_alive(d)]
-    tag = f"j{os.environ['SLURM_JOB_ID']}" if os.environ.get("SLURM_JOB_ID") else f"p{os.getpid()}"
-    out = unfinished[-1] if unfinished else runs_dir / f"{cfg['run_name']}_{time.strftime('%Y%m%d-%H%M%S')}_{tag}"
-    out.mkdir(parents=True, exist_ok=bool(unfinished))
+    # A run folder is owned by one job (owner.json: Slurm job id, host, pid). Two jobs of one config started in the same
+    # second used to share a folder (twins, the Haiku check in two batches), and a rerun used to resume a dead job's
+    # folder: new folders carry the job id, and only this same job's unfinished folder is resumed (run_folder).
+    out, resumed = run_folder(runs_dir, cfg)
+    out.mkdir(parents=True, exist_ok=resumed)
     _claim(out)
     (out / "config.yaml").write_text(yaml.safe_dump(cfg, sort_keys=False))
     repeats = []
