@@ -264,4 +264,4 @@ setup column.
 - Qwen setups that never finished (S50, S52, S54: Qwen on the full T-REx candidates, jobs cancelled before an answer)
   keep their IDs.
 - Long-history study (design 2026-11-22, [graft_long_history_design.md](../design/graft_long_history_design.md)): no new candidate; G35, the writer-v2 winner and Flotilla's F15 get setups at run time. Flotilla's F35 (reasoning-graph route) uses GRAFT's work layer on an empty graph.
-- Next free IDs: G49, S168 (S shared with Flotilla; S147-S162 are Flotilla setups, S163-S167 the LongMemEval retrieval comparison). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
+- Next free IDs: G49, S169 (S shared with Flotilla; S147-S162 and S168 are Flotilla setups, S163-S167 the LongMemEval retrieval comparison). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
