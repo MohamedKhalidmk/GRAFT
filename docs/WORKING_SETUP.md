@@ -88,7 +88,8 @@ It is not a git checkout, and `git archive` leaves out the two submodules (`base
 - **Twins.** Submit each pass as a CPU and a GPU job (and on Nibi when useful). The first to start wins; cancel the
   others at once. Helpers (in the session scratchpad, rewrite if gone): `twin_pair.sh JOB_A JOB_B` on Fir,
   `twin_xc.sh FIR_JOB NIBI_JOB` across clusters. Run folders carry the job id and an owner file, so two twins of one
-  config never share a folder (`eval/run.py`).
+  config never share a folder, and only the same Slurm job (a requeue) resumes an unfinished folder: a rerun always
+  gets a new folder named after its own job (`eval/run.py`, 2026-11-21).
 - **Time limits** = measured runtime +50%. Use a pilot to measure before submitting long runs.
 - **Watchers.** Wait for jobs with a background shell loop that polls `squeue` and prints results when the jobs leave
   the queue; never poll with foreground sleeps.
@@ -130,6 +131,8 @@ It is not a git checkout, and `git archive` leaves out the two submodules (`base
   costly. Don't drop a model without logging why.
 - Writing style for docs: plain reflective sentences, commas, no em dashes.
 - Every always-wrong question gets one label: verifier bug, grader bug, wrong gold, or model wrong.
+- Metrics match the comparison (user, 2026-11-21): substring match for MemoryAgentBench and for choosing between GRAFT
+  variants; a strict metric only where the benchmark or paper we compare against is strict.
 
 ## 7. Flotilla's protocol (summary)
 
@@ -151,8 +154,8 @@ Frozen decision rules:
 Version history: v1 frozen 2026-11-19; v2 verifier retry; v3 leakage template rule; v4 router A implementation; v5 the
 Command A+ rule; v6 Command A+ native tools; v7 tool-loop budget note; v8 Command A+ from local FP8; v9 Phi dropped for
 gpt-oss-20b (plus addenda on native tools); v10 (2026-11-20) gpt-oss dropped, Qwen3.8-27B W4A16 alone. Later changes
-are test 04 decisions logged in the run log (route set, labels, routers). Note: PROTOCOL.md's status line still says
-"FROZEN as protocol-v8"; the changelog is current to v10.
+are test 04 decisions logged in the run log (route set, labels, routers). PROTOCOL.md's status line names protocol-v10
+(fixed 2026-11-21), and the v10 addendum (2026-11-21) makes Claude Haiku 5.5 the LongMemEval judge.
 
 How a change is made: only before the result it affects exists; a new version number, a dated changelog entry in
 PROTOCOL.md saying what changed, why and who decided, a git tag `protocol-vN`, and a run-log entry. Results already
