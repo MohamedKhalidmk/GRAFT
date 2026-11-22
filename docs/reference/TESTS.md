@@ -1,6 +1,6 @@
 # Tests (GRAFT)
 
-60 tests in 19 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
+66 tests in 20 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
 
 ## [tests/test_adaptive.py](../../tests/test_adaptive.py)
 
@@ -118,6 +118,17 @@ Both Mem0 variants run end to end on the fake gateway (no API calls).
 | Test | What it checks | Guards against |
 |---|---|---|
 | `test_mem0_fake_run` | Checks that each Mem0 variant runs end to end on the fake gateway, stores memories, and records ADD events, plus UPDATE events for the bundled one. | Mem0 silently storing nothing, or the bundled version's update path never running, while still answering questions. |
+
+## [tests/test_passages.py](../../tests/test_passages.py)
+
+| Test | What it checks | Guards against |
+|---|---|---|
+| `test_passages_are_turns_with_session_and_date_and_long_turns_split` | Checks that each turn becomes a passage carrying its chunk, session and date, and that a turn longer than the passage size is cut at sentence ends under the limit. | whole sessions shown as one passage, or passages without the date that time tracking needs. |
+| `test_facts_link_to_their_passage_exactly_approximately_or_not_at_all` | Checks that a fact whose source sentence is in a passage of its chunk links exactly, a reworded one links to the best-overlapping passage of its chunk (approximate), and one whose chunk does not exist links to none. | facts pointing at passages of another session, or a silently missing link counted as found. |
+| `test_guided_arm_follows_the_fact_ranking_marks_outdated_and_keeps_the_budget` | Checks that the guided arm takes passages in the order of the ranked facts without duplicates, stays within the token budget, marks the passage of a superseded fact outdated, and lists the facts behind the shown passages. | passages that ignore the guide's ranking, an outdated Lyon passage shown as current, or a budget overrun. |
+| `test_hipporag_arm_ranks_passages_by_ppr_from_question_seeds` | Checks that the HippoRAG 2-style arm (no guide) reaches the passage of the question's best-matching fact through PageRank, keeps the budget, and carries the outdated mark from the graph. | a passage arm that ignores the graph, or one that differs from the guided arm in anything but the ranking. |
+| `test_bm25_arm_and_equal_budgets` | Checks that the BM25 arm puts the lexically matching passage first with no graph marks, and that all three arms stay within one shared passage budget. | an arm compared on a larger budget than the others. |
+| `test_passage_retrieval_entry_point_for_the_bridge` | Checks the bridge's entry point: each arm returns a rendered block, its passages with dates and tokens, the total within the budget, and the fact-to-passage link counts; an unknown arm is an error. | the Memory route receiving a block from a different arm than its preset names, or no link statistics to report. |
 
 ## [tests/test_plan_relation_check.py](../../tests/test_plan_relation_check.py)
 
