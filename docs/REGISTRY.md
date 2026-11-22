@@ -233,7 +233,7 @@ A run is one run folder (`<run name>_<timestamp>[_j<job>]`). Its setup is the ro
 name; `experiments/test-NN-*/runs/run-NN/` records which runs each test used. After approval each test's table gains a
 setup column.
 
-## 5. Pre-fix runs to mark invalid (after approval, under each test's Revisions)
+## 5. Pre-fix runs marked invalid (under each test's Revisions, 2026-11-21)
 
 | Runs | Setup | Bug (fixed, no config switch) | Why invalid |
 |---|---|---|---|
