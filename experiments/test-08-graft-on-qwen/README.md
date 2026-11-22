@@ -2,7 +2,7 @@
 
 | Test | Date | Status | Current run |
 |---|---|---|---|
-| 08 | 2026-11-21 | run-01 done, run-02 (arm E) running | [run-01](runs/run-01) |
+| 08 | 2026-11-21 | run-01 and run-02 done | [run-01](runs/run-01), [run-02](runs/run-02) |
 
 ## Candidates and setups
 
@@ -76,3 +76,7 @@ dropped (test 06); run-02 tests the guide plus working memory (arm E) on Qwen ag
   resumed the dead job's empty folders. The folders keep their names (old runs are never edited); `eval/run.py` now
   resumes only the same Slurm job's folder, so a rerun always gets a new folder named after its own job (tested in
   `tests/test_run_owner.py`).
+
+## Run-02 (2026-11-22): all arms at 1,024-token answers
+
+See [runs/run-02/table.md](runs/run-02/table.md): mode C 44.0, the guide 48.3, working memory 34.0 (graph) and 32.7 (prompt), the guide with working memory 46.7 at 2.3x the calls. The guide stays the default; G38 stays parked.
