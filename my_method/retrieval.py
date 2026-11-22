@@ -1,3 +1,4 @@
+# Sources: hipporag, networkx (docs/reference/REFERENCES.md)
 """GRAFT read phase: find the region of the memory graph that answers a question.
 
 1. Link the question to graph entities (exact name match on normalised words; longest names win).

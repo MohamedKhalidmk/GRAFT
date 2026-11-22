@@ -1,3 +1,4 @@
+# Sources: goat, subgraphrag, pyg (docs/reference/REFERENCES.md)
 """Train GRAFT's node-scoring GNN (GOAt's GCN_NC: 3 GCN layers + 2 linear, 2 classes).
 
     python -m my_method.gnn.train --source synthetic --out results/checkpoints/gnn_synth \

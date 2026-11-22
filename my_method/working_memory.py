@@ -1,3 +1,4 @@
+# Sources: memoryagentbench (docs/reference/REFERENCES.md)
 """GRAFT working memory: answer in steps and keep the work in the graph (design: docs/design/graft_working_memory_design.md).
 
 Per question:

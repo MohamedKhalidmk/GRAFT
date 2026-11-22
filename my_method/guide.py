@@ -1,3 +1,4 @@
+# Sources: t-rex, bge-small (docs/reference/REFERENCES.md)
 """T-REx as a structure guide (test 06 arm B; design docs/design/graft_trex_structure_guide_design.md).
 
 The guide file (scripts/trex_guide.py) holds only relation labels, coarse entity types, type signatures, relation chain

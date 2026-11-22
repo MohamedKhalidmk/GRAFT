@@ -1,3 +1,4 @@
+# Sources: knowl, total-agent-memory, memoryagentbench (docs/reference/REFERENCES.md)
 """Drive the benchmark's own `methods/*.py` handlers without its heavy agent.py.
 
 The Knowl and total-agent-memory handlers (`initialize_*_agent`, `handle_*_agent`) take the

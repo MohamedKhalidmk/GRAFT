@@ -1,3 +1,4 @@
+# Sources: memoryagentbench (docs/reference/REFERENCES.md)
 """GRAFT answer phase: serialize the retrieved region and ask Claude the benchmark's question.
 
 The prompt layout is the benchmark's RAG layout (as BM25 gets it): retrieved memories, then the

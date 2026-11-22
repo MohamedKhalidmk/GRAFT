@@ -1,3 +1,4 @@
+# Sources: anthropic-sdk, claude-haiku (docs/reference/REFERENCES.md)
 """The Claude gateway: one local HTTP server every method talks to.
 
 Endpoints

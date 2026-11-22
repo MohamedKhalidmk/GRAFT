@@ -1,3 +1,4 @@
+# Sources: t-rex, bge-small (docs/reference/REFERENCES.md)
 """Test 06 step 0: extract T-REx as a structure guide (no LLM, CPU job). Only properties, types and counts are kept,
 never a (subject, object) pair, so nothing here can reach the answering model as a fact.
 

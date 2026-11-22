@@ -1,3 +1,4 @@
+# Sources: nltk-stopwords (docs/reference/REFERENCES.md)
 """The GRAFT memory graph: Entity and Fact nodes, subject_of / object_of / SUPERSEDES edges.
 
 Stored as a NetworkX MultiDiGraph and saved as node-link JSON, so it is easy to inspect.

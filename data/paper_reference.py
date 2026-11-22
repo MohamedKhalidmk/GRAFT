@@ -1,3 +1,4 @@
+# Sources: memoryagentbench (docs/reference/REFERENCES.md)
 """Extract Table 3 of the MemoryAgentBench paper (arXiv 2507.05257v4) into results/paper_table3.csv.
 
 The paper's numbers are parsed from arXiv's HTML rendering of the paper, so none is typed by hand.

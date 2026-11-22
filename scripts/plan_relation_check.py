@@ -1,3 +1,4 @@
+# Sources: longmemeval, t-rex (docs/reference/REFERENCES.md)
 """LongMemEval misses where the gold fact is in the graph: do the question's planned relations match the relation the
 writer stored? (user, 2026-11-22). Read-only; run where the graphs are, with GRAFT's env.
 

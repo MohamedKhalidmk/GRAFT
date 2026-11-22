@@ -1,3 +1,4 @@
+# Sources: eig-search (docs/reference/REFERENCES.md)
 """EiG-Search attribution: the batched version matches EiG-Search's own per-edge loop (main.py, NC branch)."""
 import torch
 

@@ -1,3 +1,4 @@
+# Sources: memoryagentbench (docs/reference/REFERENCES.md)
 """Long-context baseline: Claude reads the whole memorized history with every question.
 
 Follows the benchmark's agent.py `_handle_long_context_agent` / `_query_long_context_agent`:

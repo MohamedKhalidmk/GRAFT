@@ -1,3 +1,4 @@
+# Sources: flotilla (docs/reference/REFERENCES.md)
 """Copied from Flotilla (keep both the same). The session documents (docs/session/) must match scripts/SHA256SUMS, which scripts/sync_session_docs.py
 (Flotilla) writes in both repos when it copies Flotilla's source to GRAFT. A copy edited without a sync fails here."""
 import hashlib

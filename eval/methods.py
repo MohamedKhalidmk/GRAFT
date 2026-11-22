@@ -1,3 +1,4 @@
+# Sources: memoryagentbench (docs/reference/REFERENCES.md)
 """Every method the bench can run, with its environment, prompt family and default settings.
 
 `agent_name` is passed to the benchmark's template lookup and decides which query prompt the

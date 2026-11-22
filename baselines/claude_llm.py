@@ -1,3 +1,4 @@
+# Sources: anthropic-sdk, claude-haiku, memoryagentbench (docs/reference/REFERENCES.md)
 """Claude client for our own methods (long context, BM25, GRAFT). Calls go through the gateway,
 which forwards them to the Anthropic API (or the fake backend) and logs tokens and cost.
 

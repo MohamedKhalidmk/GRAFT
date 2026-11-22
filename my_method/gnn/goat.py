@@ -1,3 +1,4 @@
+# Sources: goat, gcn (docs/reference/REFERENCES.md)
 """Import Prof. Lu's GOAt (ICLR 2024) node-classification code from the pinned submodule.
 
 my_method/gnn/GOAt is https://github.com/sluxsr/GOAt at commit 1ef20f0, unmodified. We use its

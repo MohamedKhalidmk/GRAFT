@@ -1,3 +1,4 @@
+# Sources: dialogue-nli, flotilla (docs/reference/REFERENCES.md)
 """Chat guide, step 1 (G44, docs/design/graft_longmemeval_plan_design.md): Dialogue NLI's labelled triples as a
 facts file for scripts/trex_guide.py --triples. No LLM, CPU.
 

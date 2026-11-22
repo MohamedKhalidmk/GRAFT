@@ -1,6 +1,6 @@
 # Tests (GRAFT)
 
-58 tests in 18 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
+60 tests in 19 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
 
 ## [tests/test_adaptive.py](../../tests/test_adaptive.py)
 
@@ -136,6 +136,13 @@ eval.queue runs several configs in one job; a failed run must fail the job (Nibi
 |---|---|---|
 | `test_queue_runs_every_config_and_fails_if_one_failed` | Checks that the queue still runs the configs after a failed one, then exits with an error naming the failed run. | a Slurm job reported COMPLETED although one of its runs died, so a missing repeat goes unnoticed. |
 | `test_qwen_job_scripts_use_a_port_of_their_own` | Checks that the Fir and Nibi Qwen job scripts serve vLLM on a free port chosen per job, never a fixed one. | two jobs on one node sharing a server, so a run dies when the other job ends and shuts it down. |
+
+## [tests/test_references.py](../../tests/test_references.py)
+
+| Test | What it checks | Guards against |
+|---|---|---|
+| `test_every_named_source_is_in_references` | Checks that every key in a file's Sources line (GRAFT's code, scripts, baselines, tests) is listed in docs/reference/REFERENCES.md. | a file crediting a source that the references page does not cite, link or licence. |
+| `test_reference_entries_point_at_real_files` | Checks that every repository path named in REFERENCES.md exists, and that the main borrowed-code files carry a Sources line. | a references page that credits files which were renamed or deleted. |
 
 ## [tests/test_run_owner.py](../../tests/test_run_owner.py)
 

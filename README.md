@@ -4,7 +4,7 @@
 
 <h1 align="center">GRAFT</h1>
 
-<p align="center"><b><a href="https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/reference/PROTOCOL.md">Protocol</a> · <a href="docs/reference/REGISTRY.md">Registry</a> · <a href="https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/reference/run_log.md">Run log</a> · <a href="docs/reference/TESTS.md">Tests</a></b></p>
+<p align="center"><b><a href="https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/reference/PROTOCOL.md">Protocol</a> · <a href="docs/reference/REGISTRY.md">Registry</a> · <a href="https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/reference/run_log.md">Run log</a> · <a href="docs/reference/TESTS.md">Tests</a> · <a href="docs/reference/REFERENCES.md">References</a></b></p>
 
 <p align="center"><b>Revision-aware graph memory for LLM agents.</b><br>
 New knowledge is grafted onto a graph that remembers where every fact came from and which version is newest.</p>

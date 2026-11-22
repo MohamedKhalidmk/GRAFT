@@ -1,3 +1,4 @@
+# Sources: original, mquake, longmemeval (docs/reference/REFERENCES.md)
 """GRAFT write phase: read a chunk, extract facts, decide ADD / MERGE / SUPERSEDE / IGNORE for each.
 
 Two writers share one decision-applying step:
