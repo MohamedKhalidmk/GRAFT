@@ -71,6 +71,8 @@ History: draft 1 numbered Embedding RAG (bge-small) as a candidate; it is a base
 | G44 | G43 with a chat guide instead of the T-REx guide | (new, 2026-11-22) | LongMemEval dev | designed | Dialogue NLI (user, 2026-11-22); leakage check and guide build done (Flotilla run log 2026-11-22) |
 | G45 | G43 without any guide (mode C alone) | (new, 2026-11-22) | LongMemEval dev | designed | the no-guide control for G43/G44 |
 | G46 | the better of G41/G42 with bitemporal facts: said time (session date or serial) for supersede, event time (resolved from the text) for temporal questions | (new, 2026-11-22) | LongMemEval temporal dev | designed | design: [graft_bitemporal_design.md](../design/graft_bitemporal_design.md); built after writer v2's results |
+| G47 | G35 with 100 facts shown instead of 50 (fixed count, G35's ranking) | (new, 2026-11-22) | LongMemEval dev retrieval comparison | designed | named by the user's retrieval comparison on the writer-v2 graphs |
+| G48 | G35 with 200 facts shown (fixed count, G35's ranking) | (new, 2026-11-22) | LongMemEval dev retrieval comparison | designed | as G47 |
 Not a candidate: the **Haiku check** (`exp_real_replay38`, `exp_real_canary_replay38`) re-answers G08's saved
 2026-11-13 facts with no retrieval; it checks Haiku, not a method. It keeps its name and has a setup (S101).
 
@@ -119,6 +121,8 @@ graphs and bge-small embeddings. Read order: A = `gnn_goat`, B = `goat_ppr`, C =
 | G36 | C | GOAt | 400 | 400-node | 50 | T-REx full | Haiku (top 10) | walk only, weight 0.2 | - | exact | - | - | - |
 | G37 | C | GOAt | 400 | 400-node | 50 | T-REx full | Haiku (top 10) | walk only, weight 0.2, + 5 labelled background facts | - | exact | - | - | - |
 | G38 | C | GOAt | 400 | 400-node | 50 | empty | - | - | T-REx guide: linking + planning | exact | - | - | graph, v2 |
+| G47 | C | GOAt | 400 | 400-node | 100 | empty | - | - | T-REx guide (248 properties): linking + planning | exact | - | - | - |
+| G48 | C | GOAt | 400 | 400-node | 200 | empty | - | - | T-REx guide (248 properties): linking + planning | exact | - | - | - |
 
 Outside baseline, same table: Embedding RAG (bge-small) = embedding search over GRAFT's facts, 50 facts, no graph walk
 (`exp_embed_fake_mh_262k`, free check only).
@@ -234,6 +238,11 @@ since GRAFT runs there inside a Flotilla route.
 | S99 | Total Agent Memory | scripted (fake) | 16 | MAB FC 262k sh+mh | `dryrun_total_agent_memory_262k` |
 | S100 | Total Agent Memory | scripted (fake) | 16 | MAB FC 6k sh+mh, first 3 q | `total_agent_memory_fake_6k` |
 | S101 | Haiku check (replay) | Haiku 5.5 | 256 | MAB FC 262k mh | `exp_real_canary_replay38`, `exp_real_replay38` |
+| S163 | G41 (G35's rule, 50 facts) | Qwen3.8-27B W4A16 via Flotilla's Memory route (base route Fast) | 32,768 | LongMemEval dev (76), graphs from G41's fixed writer (`lme/devv2/cache_g41_fix`), Haiku 5.5 judge | `lme/devv2/ret/f50/r0..2` (Flotilla `configs/systems/lme_retrieval/f50.json`) |
+| S164 | G47 (100 facts) | Qwen3.8-27B W4A16 via Flotilla's Memory route (base route Fast) | 32,768 | LongMemEval dev (76), graphs from G41's fixed writer (`lme/devv2/cache_g41_fix`), Haiku 5.5 judge | `lme/devv2/ret/f100/r0..2` (Flotilla `configs/systems/lme_retrieval/f100.json`) |
+| S165 | G48 (200 facts) | Qwen3.8-27B W4A16 via Flotilla's Memory route (base route Fast) | 32,768 | LongMemEval dev (76), graphs from G41's fixed writer (`lme/devv2/cache_g41_fix`), Haiku 5.5 judge | `lme/devv2/ret/f200/r0..2` (Flotilla `configs/systems/lme_retrieval/f200.json`) |
+| S166 | G39 (drop cutoff, pool 200) | Qwen3.8-27B W4A16 via Flotilla's Memory route (base route Fast) | 32,768 | LongMemEval dev (76), graphs from G41's fixed writer (`lme/devv2/cache_g41_fix`), Haiku 5.5 judge | `lme/devv2/ret/g39/r0..2` (Flotilla `configs/systems/lme_retrieval/g39.json`) |
+| S167 | G40 (cutoff + up to 3 asks of 50, cap 200) | Qwen3.8-27B W4A16 via Flotilla's Memory route (base route Fast) | 32,768 | LongMemEval dev (76), graphs from G41's fixed writer (`lme/devv2/cache_g41_fix`), Haiku 5.5 judge | `lme/devv2/ret/g40/r0..2` (Flotilla `configs/systems/lme_retrieval/g40.json`) |
 
 ## 4. Runs
 
@@ -255,4 +264,4 @@ setup column.
 - Qwen setups that never finished (S50, S52, S54: Qwen on the full T-REx candidates, jobs cancelled before an answer)
   keep their IDs.
 - Long-history study (design 2026-11-22, [graft_long_history_design.md](../design/graft_long_history_design.md)): no new candidate; G35, the writer-v2 winner and Flotilla's F15 get setups at run time. Flotilla's F35 (reasoning-graph route) uses GRAFT's work layer on an empty graph.
-- Next free IDs: G47, S163 (S shared with Flotilla; S147-S162 are Flotilla setups). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
+- Next free IDs: G49, S168 (S shared with Flotilla; S147-S162 are Flotilla setups, S163-S167 the LongMemEval retrieval comparison). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
