@@ -1,9 +1,9 @@
-model,arm,what,repeats,accuracy_mean,accuracy_sd,per_repeat,gold_in_final_facts,cost_per_100_questions_usd
-Haiku,A,"empty start, mode C (test 05, rerun the same day)",3,34.7,1.5,36 / 33 / 35,50.3,0.027
-Haiku,B,T-REx as a structure guide (linking + planning),3,45.7,1.5,47 / 46 / 44,60.3,0.037
-Haiku,C,"T-REx as a bridge (walk only, weight 0.2)",3,17.3,1.2,18 / 16 / 18,32.0,0.022
-Haiku,D,C + 5 labelled background facts,3,17.7,1.5,19 / 16 / 18,33.0,0.029
-Haiku,A (run-02),"empty start, mode C, rerun the same day as B (run-02)",3,34.0,0.0,34 / 34 / 34,50.7,0.027
-Haiku,B (run-02),"the structure guide, rerun the same day as A (run-02)",3,46.0,3.0,46 / 43 / 49,60.0,0.036
-Haiku,E (run-03),"the guide + working memory in the graph (C v2), same day as B (run-03)",3,46.7,2.9,50 / 45 / 45,55.7,0.079
-Haiku,B (run-03),"the guide alone, rerun the same day as E (run-03)",3,46.7,1.5,48 / 47 / 45,60.7,0.036
+candidate,setup,model,arm,what,repeats,accuracy_mean,accuracy_sd,per_repeat,gold_in_final_facts,cost_per_100_questions_usd
+G08,S17,Haiku,A,"mode C, empty start (test 05 rerun, run-01)",3,34.7,1.5,36 / 33 / 35,50.3,0.027
+G35,S65,Haiku,B,the T-REx structure guide (run-01),3,45.7,1.5,47 / 46 / 44,60.3,0.037
+G36,S68,Haiku,C,"T-REx as a bridge, walk only (run-01)",3,17.3,1.2,18 / 16 / 18,32.0,0.022
+G37,S69,Haiku,D,bridge + 5 labelled background facts (run-01),3,17.7,1.5,19 / 16 / 18,33.0,0.029
+G08,S17,Haiku,A (run-02),"mode C, same day as G35 (run-02)",3,34.0,0.0,34 / 34 / 34,50.7,0.027
+G35,S65,Haiku,B (run-02),"the guide, same day as G08 (run-02)",3,46.0,3.0,46 / 43 / 49,60.0,0.036
+G38,S70,Haiku,E (run-03),"guide + working memory, same day as G35 (run-03)",3,46.7,2.9,50 / 45 / 45,55.7,0.079
+G35,S65,Haiku,B (run-03),"the guide alone, same day as G38 (run-03)",3,46.7,1.5,48 / 47 / 45,60.7,0.036

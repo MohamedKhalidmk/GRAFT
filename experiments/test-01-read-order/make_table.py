@@ -25,7 +25,7 @@ for run, limit, suffix in LIMITS:
                      "gold_in_final_facts": s["gold_in_final_facts"], "cut_off": "" if any(r["cut"] is None for r in reps) else sum(r["cut"] for r in reps),
                      "cost_per_100_questions_usd": s["cost_per_100_questions_usd"], "run": T.rel(R, HERE)})
         if limit in chart:
-            chart[limit].append(T.bar(f"{name} · {what}" if len(name) == 1 else name, [r["acc"] for r in reps], colour))
+            chart[limit].append(T.bar(T.tag(what, R) if len(name) == 1 else name, [r["acc"] for r in reps], colour))
 
 T.write_tables(HERE, rows)
 T.bar_chart(HERE / "figure.png", "Test 01 · Read order and starting graph",

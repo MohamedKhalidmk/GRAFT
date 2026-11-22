@@ -1,5 +1,7 @@
 # T-REx as a structure guide, not an answer source (design, for review)
 
+> IDs ([registry](../REGISTRY.md), 2026-11-21): arm A = G08, arm B (the guide) = G35, arm C (bridge) = G36, arm D (background) = G37, arm E (guide + working memory) = G38.
+
 Test 06 in GRAFT alone. No code yet.
 
 ## Why

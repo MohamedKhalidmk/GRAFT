@@ -4,6 +4,18 @@
 |---|---|---|---|
 | 04 | 2026-11-21 | done | [run-02](runs/run-02/run.json) |
 
+## Candidates and setups
+
+IDs from the [registry](../../docs/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+answer cap, benchmark and scoring; old run folders keep their names.
+
+| Candidate | Setup | Row in this test |
+|---|---|---|
+| G08 | S17 | Mode C, GOAt, empty-start graph (test 05 arm A) |
+| G27 | S48 | Mode C, EiG |
+| G28 | S51 | Mode C, GOAt (2 of 3 repeats: job time limit) |
+| G29 | S53 | Question layer + EiG |
+
 ## Question
 
 Does a large general base graph (all T-REx triples on its 45 most common Wikidata properties) under the documents help GRAFT answer?

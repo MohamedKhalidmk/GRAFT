@@ -4,6 +4,36 @@
 |---|---|---|---|
 | 02 | 2026-11-19/20 | done | [run-01](runs/run-01/run.json) |
 
+## Candidates and setups
+
+IDs from the [registry](../../docs/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+answer cap, benchmark and scoring; old run folders keep their names.
+
+| Candidate | Setup | Row in this test |
+|---|---|---|
+| G04 | S09 | Mode A with GOAt, 2026-11-13 (test 01) |
+| G08 | S17 | Mode C with GOAt, 2026-11-13 (test 01) |
+| G10 | S24 | Mode A, EiG instead of GOAt |
+| G10 | S25 | Mode A, EiG |
+| G11 | S26 | Mode C, EiG (free-check baseline) |
+| G12 | S27 | 50/50 hybrid with embedding search, EiG |
+| G12 | S28 | 50/50 hybrid, EiG |
+| G13 | S29 | 50/50 hybrid with embedding search, GOAt |
+| G13 | S30 | 50/50 hybrid, GOAt |
+| G14 | S31 | 50/50 hybrid, 800-node subgraph |
+| G15 | S32 | 50/50 hybrid, 1,600-node subgraph |
+| G16 | S33 | Top-10 hybrid, EiG |
+| G16 | S34 | Top-10 hybrid, EiG |
+| G17 | S35 | Top-5 hybrid, EiG |
+| G18 | S36 | Embedding entity linking (k=5), EiG |
+| G19 | S37 | Embedding entity linking (k=5), GOAt |
+| G20 | S38 | Linking + hybrid, EiG |
+| G21 | S39 | Linking + hybrid, GOAt |
+| G22 | S40 | Bigger subgraphs, 1,600-node GNN |
+| G23 | S41 | Question graph (Haiku parses the question), EiG |
+| G23 | S42 | Question graph, EiG |
+| Embedding RAG (bge-small) | S78 | Embedding search only (no graph) |
+
 ## Question
 
 Does anything added to mode C bring more gold facts to the model and more right answers?

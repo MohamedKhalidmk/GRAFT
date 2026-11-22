@@ -4,6 +4,17 @@
 |---|---|---|---|
 | 03 | 2026-11-20 | done | [run-01](runs/run-01/run.json) |
 
+## Candidates and setups
+
+IDs from the [registry](../../docs/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+answer cap, benchmark and scoring; old run folders keep their names.
+
+| Candidate | Setup | Row in this test |
+|---|---|---|
+| G08 | S17 | Mode C, empty-start graph (test 01, 2026-11-13) |
+| G25 | S44 | Mode C (EiG) + RoG base, Haiku linking |
+| G25 | S45 | Same graph, fake answerer |
+
 ## Question
 
 Does a base knowledge graph under the documents (GRAFT layer 1) help, starting with a 20,000-fact Freebase slice from RoG?

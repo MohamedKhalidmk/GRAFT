@@ -91,6 +91,7 @@ def rel(path, here):
 def write_tables(here, rows):
     """table.csv and table.md from a list of dicts (same keys)."""
     here = Path(here)
+    rows = [with_ids(r) for r in rows]
     keys = list(rows[0])
     with open(here / "table.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=keys)
@@ -198,3 +199,58 @@ def _draw(ax, rows, xmax, ticks, xlabel, one_run_note=True):
         ax.set_xlabel(xlabel, fontsize=9, color=INK3)
     for s in ax.spines.values():
         s.set_visible(False)
+
+
+# ------------------------------------------------------------------ registry (docs/REGISTRY.md)
+_REG = None
+
+
+def registry():
+    """run name -> (candidate, setup), from the setup table of docs/REGISTRY.md (the frozen IDs)."""
+    global _REG
+    if _REG is None:
+        import re
+        _REG = {}
+        for line in (ROOT / "docs" / "REGISTRY.md").read_text().splitlines():
+            m = re.match(r"\| (S\d+) \| ([^|]+?) \| .*\| ([^|]*`[^|]*) \|\s*$", line)
+            if m:
+                for name in re.findall(r"`([^`]+)`", m.group(3)):
+                    if name.endswith("r0..2"):
+                        for k in range(3):
+                            _REG[name[:-5] + f"r{k}"] = (m.group(2).strip(), m.group(1))
+                    else:
+                        _REG[name] = (m.group(2).strip(), m.group(1))
+    return _REG
+
+
+def ids(run_dir):
+    """(candidate, setup) of a run folder: its name minus the _<timestamp>[_j<job>] suffix, looked up in the registry."""
+    import re
+    name = re.sub(r"_2026\d{4}-\d{6}.*$", "", Path(str(run_dir)).name)
+    return registry().get(name, ("", ""))
+
+
+def with_ids(row):
+    """The row with candidate and setup columns first (from the first run folder named in it), if it has none."""
+    if "candidate" in row:
+        return row
+    import re
+    cand = setup = ""
+    for v in row.values():
+        for name in re.findall(r"(exp_[A-Za-z0-9_]+?_2026\d{4}-\d{6}[^;/ ]*)", str(v)):
+            cand, setup = ids(name)
+            if cand:
+                break
+        if cand:
+            break
+    return {"candidate": cand, "setup": setup, **row}
+
+
+def tag(label, run_dir):
+    """A figure label with the candidate ID in front, e.g. "G35 · the guide"."""
+    if isinstance(run_dir, (list, tuple)):
+        run_dir = run_dir[0] if run_dir else ""
+    import re
+    cand = ids(run_dir)[0]
+    ours = re.match(r"^[GF]\d+$", cand or "")
+    return f"{cand} · {label}" if ours and not str(label).startswith(cand) else label

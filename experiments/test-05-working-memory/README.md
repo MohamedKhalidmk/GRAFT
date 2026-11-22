@@ -4,6 +4,20 @@
 |---|---|---|---|
 | 05 | 2026-11-21 | done on Haiku (Qwen pending) | [run-02](runs/run-02/) |
 
+## Candidates and setups
+
+IDs from the [registry](../../docs/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+answer cap, benchmark and scoring; old run folders keep their names.
+
+| Candidate | Setup | Row in this test |
+|---|---|---|
+| G08 | S17 | mode C, one answer call |
+| G30 | S55 | question layer |
+| G31 | S56 | working memory in the graph |
+| G32 | S58 | same steps, prompt only |
+| G33 | S59 | C, step prompt with the newer-fact rule |
+| G34 | S62 | C-, same prompt |
+
 ## Question
 
 Does answering in steps, with the question, sub-steps, notes and partial results written into the graph and read back, beat one-shot GRAFT, and does writing to the graph matter or only answering in steps?

@@ -24,14 +24,14 @@ for run, name, what, base, pat, colour in ARMS:
         continue
     reps = T.score_runs([R])
     s = T.summarise(reps)
-    rows.append({"run": run, "pass": name, "what": what, "repeats": s["repeats"], "accuracy_mean": s["accuracy_mean"],
+    rows.append({"run": run, "valid": "invalid: pre-fix (PageRank stop rule, THE linking)" if run == "run-01" else "yes", "pass": name, "what": what, "repeats": s["repeats"], "accuracy_mean": s["accuracy_mean"],
                  "accuracy_sd": s["accuracy_sd"], "per_repeat": s["per_repeat"], "gold_in_final_facts": s["gold_in_final_facts"],
                  "cost_per_100_questions_usd": s["cost_per_100_questions_usd"], "folder": T.rel(R, HERE)})
     if run == "run-01":
         continue
     label = what if run == "reference" else f"T-REx base · {what}"
-    acc.append(T.bar(label, [r["acc"] for r in reps], colour))
-    gold.append(T.bar(label, [r["gold"] for r in reps], colour))
+    acc.append(T.bar(T.tag(label, R), [r["acc"] for r in reps], colour))
+    gold.append(T.bar(T.tag(label, R), [r["gold"] for r in reps], colour))
 
 T.write_tables(HERE, rows)
 T.bar_chart(HERE / "figure.png", "Test 04 · Base graph from full T-REx (Wikidata)",

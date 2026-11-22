@@ -59,7 +59,7 @@ for key, what, base, pat, colour in PAID:
                  "accuracy_mean": s["accuracy_mean"], "accuracy_sd": s["accuracy_sd"], "per_repeat": s["per_repeat"],
                  "gold_in_final_facts": s["gold_in_final_facts"], "cost_per_100_questions_usd": s["cost_per_100_questions_usd"],
                  "run": "; ".join(T.rel(r, HERE) for r in R)})
-    acc_bars.append(T.bar(what, [r["acc"] for r in reps], colour))
+    acc_bars.append(T.bar(T.tag(what, R), [r["acc"] for r in reps], colour))
 for key, what in FREE.items():
     R = complete(T.all_runs(RUNS, f"exp_{key}_2*"))
     if not R:
@@ -70,7 +70,7 @@ for key, what in FREE.items():
     rows.append({"kind": "free check", "variant": what, "repeats": len(reps), "accuracy_mean": "", "accuracy_sd": "",
                  "per_repeat": "", "gold_in_final_facts": round(sum(gold) / len(gold), 1), "cost_per_100_questions_usd": 0,
                  "run": "; ".join(T.rel(r, HERE) for r in R)})
-    gold_bars.append(T.bar(what, gold, T.NAVY if "baseline" in what else T.STONE))
+    gold_bars.append(T.bar(T.tag(what, R), gold, T.NAVY if "baseline" in what else T.STONE))
 
 T.write_tables(HERE, rows)
 T.bar_chart(HERE / "figure.png", "Test 02 · Retrieval variants on mode C",

@@ -2,7 +2,20 @@
 
 | Test | Date | Status | Current run |
 |---|---|---|---|
-| 06 | 2026-11-21 | done on Haiku (Qwen next) | [run-01](runs/run-01/) |
+| 06 | 2026-11-21 | done on Haiku; on Qwen in [test 08](../test-08-graft-on-qwen/README.md) | [run-03](runs/run-03/) |
+
+## Candidates and setups
+
+IDs from the [registry](../../docs/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+answer cap, benchmark and scoring; old run folders keep their names.
+
+| Candidate | Setup | Row in this test |
+|---|---|---|
+| G08 | S17 | mode C, empty start (test 05 rerun, run-01) |
+| G35 | S65 | the T-REx structure guide (run-01) |
+| G36 | S68 | T-REx as a bridge, walk only (run-01) |
+| G37 | S69 | bridge + 5 labelled background facts (run-01) |
+| G38 | S70 | guide + working memory, same day as G35 (run-03) |
 
 ## Question
 
@@ -74,19 +87,25 @@ it scored 35.
 | B · the guide alone | 46.7, 1.5 | 48 / 47 / 45 | 60.7 | $0.036 |
 | E · the guide + working memory (C v2) | 46.7, 2.9 | 50 / 45 / 45 | 55.7 | $0.079 |
 
-Working memory adds nothing on top of the guide: the same mean, a wider spread, about twice the cost. Gold in the final
+Working memory adds nothing on top of the guide on Haiku: the same mean, a wider spread, about twice the cost. Gold in the final
 facts falls (55.7 vs 60.7) because only the facts the steps cite reach the final call, as in test 05. Spend $0.373
 (E $0.237, B $0.109, Haiku check $0.027).
 
 ## Decision
 
 **B is kept: the T-REx structure guide becomes GRAFT's default on top of mode C** (11 points over A on Haiku). C and D
-are not adopted: T-REx as part of the graph hurts in any role tried (test 04 and here). Next: B on Qwen, the model the
-system ships with, and which of B's two parts carries the gain (linking only, planning only; about $0.10 each).
+are not adopted: T-REx as part of the graph hurts in any role tried (test 04 and here). **E is parked, not dropped**
+(user): it ties the guide on Haiku, and in test 05 steps written into the graph beat the same steps in the prompt by
+about 2.6 points in both rounds, so working memory stays a candidate. E runs next on Qwen against a guide rerun in the
+same job ([test 08](../test-08-graft-on-qwen/README.md) run-02); B on Qwen is test 08 run-01 (47.0 vs 39.3). Still
+open: which of B's two parts carries the gain (linking only, planning only; about $0.10 each).
 
 ## Revisions
 
-- 2026-11-21: run-03, arm E (guide + working memory) 46.7 vs the guide alone 46.7 the same day: not kept.
+- 2026-11-21: **run-01's two fixed Haiku checks are invalid** (setup S101): the checks at the start of the B and D batches started in the same second and wrote into one run folder. Fixed in eval/run.py (job ids in folder names). The paid arms are not affected.
+- 2026-11-21: arm E changed from "not kept" to parked, not dropped (user): a tie on Haiku, and graph-written steps beat
+  prompt-only by about 2.6 in both test 05 rounds. Arm E on Qwen is test 08 run-02.
+- 2026-11-21: run-03, arm E (guide + working memory) 46.7 vs the guide alone 46.7 the same day.
 - 2026-11-21: run-02, same-day A vs B confirmation (+12.0); the guide is GRAFT's default (user).
 - 2026-11-21: run-01 paid arms done; B kept, C and D not adopted.
 - 2026-11-21: design approved (user); arm D added (user); guide built from the raw T-REx parquet after the 45-property

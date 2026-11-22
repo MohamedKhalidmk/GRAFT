@@ -1,0 +1,13 @@
+test: test-08-graft-on-qwen
+runs_configs:
+  run-01:
+    - configs/runs/exp/qwen/a_modec_empty.yaml
+    - configs/runs/exp/qwen/b_guide_empty.yaml
+    - configs/runs/exp/qwen/c_wm_graph_v2_empty.yaml
+    - configs/runs/exp/qwen/cm_wm_prompt_v2_empty.yaml
+  run-02:
+    - configs/runs/exp/qwen/b_guide_sameday_empty.yaml
+    - configs/runs/exp/qwen/e_guide_wm_v2_empty.yaml
+job_scripts:
+  - scripts/nibi/run_qwen_graft.sbatch
+  - scripts/fir/run_qwen_graft.sbatch

@@ -236,7 +236,7 @@ only 0.4.
 
 **Decision.** Not kept on Haiku: about 1 point over A, inside the spread, at about three times the cost per question.
 Writing the steps into the graph beats keeping them in the prompt by 2.6 to 2.7 points in both rounds. That part is
-real, and it is why arm E (2.6.1) combines it with the guide.
+real, and it is why arm E (2.6.1) combines it with the guide. On Qwen the gap does not show (C v2 33.3, C- v2 33.0; [test 08](https://github.com/MohamedKhalidmk/GRAFT/blob/graft-linking-hybrid/experiments/test-08-graft-on-qwen/README.md)).
 
 ### 2.6 Test 06: T-REx as a structure guide, a bridge, or background (2026-11-21)
 
@@ -279,11 +279,25 @@ written); the bridge job ran out of memory at 64 GB. Both fixed, both at $0 (sec
 **Decision.** The guide is GRAFT's new default (user, 2026-11-21): +11 and +12 points, about seven times the repeat
 spread. T-REx as facts hurts in every role tried, even walk-only.
 
-#### 2.6.1 Arm E: guide plus working memory (running at the time of writing)
+#### 2.6.1 Arm E: guide plus working memory (parked, not dropped)
 
 The guide's planned chain is cited from the first working-memory step, then the steps run as C v2. Compared with a
-same-day rerun of the guide alone, 3 repeats each. Jobs: [run log](https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/run_log.md), 2026-11-21 entry "test 06 arm
-E". No result yet.
+same-day rerun of the guide alone, 3 repeats each (run-03, Fir 4874611 and 4874613): E [46.7](https://github.com/MohamedKhalidmk/GRAFT/blob/graft-linking-hybrid/experiments/test-06-trex-structure-guide/table.csv)
+(50/45/45) against the guide alone [46.7](https://github.com/MohamedKhalidmk/GRAFT/blob/graft-linking-hybrid/experiments/test-06-trex-structure-guide/table.csv) (48/47/45), at about twice the cost
+($0.079 vs $0.036 per 100 questions); gold in the final facts 55.7 vs 60.7.
+
+**Decision.** Parked, not dropped (user, 2026-11-21): a tie on Haiku, and in test 05 steps written into the graph beat
+the same steps in the prompt by about 2.6 points in both rounds, so working memory stays a candidate. Arm E on Qwen,
+against a guide rerun in the same job, is [test 08](https://github.com/MohamedKhalidmk/GRAFT/blob/graft-linking-hybrid/experiments/test-08-graft-on-qwen/README.md) run-02.
+
+#### 2.6.2 GRAFT on Qwen (test 08)
+
+The same arms with Qwen3.8-27B W4A16 answering (local vLLM on a 3g.40gb MIG slice, Nibi 28263641, free): mode C
+[39.3](https://github.com/MohamedKhalidmk/GRAFT/blob/graft-linking-hybrid/experiments/test-08-graft-on-qwen/table.csv), the guide [47.0](https://github.com/MohamedKhalidmk/GRAFT/blob/graft-linking-hybrid/experiments/test-08-graft-on-qwen/table.csv), C v2 33.3, C- v2 33.0.
+The guide carries over (+7.7). Qwen reasons in its answers, so 35% (mode C) and 26% (guide) of them reached the
+256-token cap: the one-call arms' absolute numbers are lower bounds, compared fairly within Qwen. The run folders are
+named after the failed job 28252727 because the rerun resumed its empty folders; `eval/run.py` now resumes only the
+same job's folder (section 7).
 
 ### 2.7 Test 07: Haiku drift and the fixed check (2026-11-21)
 
@@ -483,6 +497,9 @@ Decisions by the user are marked (user). Many were given by voice or in chat; th
 | 11-21 | Compare only within one day; fixed Haiku check in every paid batch; log request IDs (user) | identical inputs score lower now |
 | 11-21 | T-REx as a structure guide is GRAFT's default (user) | 45.7 and 46.0 vs 34.7 and 34.0 |
 | 11-21 | Delete charts.py, tables and figures come only from runs (user) | no hand-typed numbers |
+| 11-21 | Arm E (guide + working memory) parked, not dropped (user) | a tie with the guide on Haiku; graph-written steps beat prompt-only by about 2.6 twice |
+| 11-21 | The guide stays the default on Qwen | 47.0 vs 39.3 for mode C (test 08) |
+| 11-21 | A rerun never resumes another job's run folder | the Qwen rerun wrote into the failed job's folders |
 
 ### Flotilla
 
@@ -618,7 +635,8 @@ disk.
 | **git archive submodule miss** (GRAFT 11-21) | old-commit rerun failed at import | `git archive` leaves out submodules | link the unchanged submodules in |
 | **OOM** (GRAFT 11-21) | bridge job killed at 64 GB | the 1.58M-node graph plus weighted edges | 200 GB |
 | **tar "file changed"** (GRAFT 11-21) | guide job died before starting | other jobs' `.out` logs changed while the code was copied | skip `*.out`, accept tar's exit 1 |
-| Missing `openai` in GRAFT's venv (GRAFT 11-21, open) | Qwen GRAFT job on Nibi ended in 10 minutes, all four configs | the gateway's local vLLM backend imports `openai`, not in GRAFT's venv | add `openai` to the venv and repack (open) |
+| Missing `openai` in GRAFT's venv (GRAFT 11-21) | Qwen GRAFT job on Nibi ended in 10 minutes, all four configs | the gateway's local vLLM backend imports `openai`, not in GRAFT's venv | jobs install it from the Alliance wheelhouse when missing; worked on a compute node (Nibi 28263641). Repacking the venv with it is still open |
+| **Run folder reuse** (GRAFT 11-21) | the Qwen rerun's results sit in folders named after the failed job | an unfinished folder was resumed whenever its owner job was gone | resume only the same Slurm job's folder; tests |
 | Label prompt without a tool loop (Flotilla test 03 run-01) | 22 of 34 labels ended at a tool line | one call, no loop | label through the real loop |
 | Code fences (Flotilla labels) | gpt-oss code answers all failed | fenced code run as-is | strip fences before tests |
 | **A-D option bug** (Flotilla 11-20) | MMLU-Pro answers E-J rejected, retry forced to A-D (21 always-wrong) | verifier counted only A-D when no options list | count lettered options in the question; unit test |
@@ -649,8 +667,8 @@ All API spend is Anthropic (Haiku 5.5). Qwen runs are local and free. Cohere cal
 | 2026-11-21 | Working memory round 2 | $0.483 | run log |
 | 2026-11-21 | Test 06 B, C, D | $0.273 | run log |
 | 2026-11-21 | Same-day confirmation | $0.217 | run log |
-| 2026-11-21 | Test 06 arm E and guide rerun | about $0.40, running | run log |
-| | **Total recorded** | **$10.86** ($3.84 + $7.02), plus arm E | |
+| 2026-11-21 | Test 06 arm E and guide rerun, Haiku check | $0.373 | run log |
+| | **Total recorded** | **$11.23** ($3.84 + $7.39) | |
 
 GPU time: the strategy labels used about 25.2 GPU-hours for 1,450 questions on all six routes (90,804 GPU-seconds, the
 sum of the `gpu_seconds_job` figures in [summary.json](https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/experiments/test-04-strategy-router/runs/run-03/graded/summary.json)),
@@ -766,27 +784,23 @@ Supervised routers pick once. The RL router takes a step, sees the verifier's ve
 learning from the outcome with a cost penalty. It starts from the supervised router's estimates.
 
 **How do you grade free-text answers on LongMemEval?**
-With the benchmark's official judge prompts, using Qwen as judge, and a hand check of 50 verdicts before trusting labels.
+With the benchmark's official judge prompts, using Claude Haiku 5.5 as the judge, not Qwen: Qwen makes the answers that
+become the labels, so it must not grade its own work (protocol-v10 addendum). Every judge batch starts with the fixed
+Haiku check and logs request IDs, and 50 verdicts are checked by hand before the labels are trusted.
 
 ---
 
 ## 12. What is open, and the exact next steps
 
-**Running now.**
+**Running now** (see HANDOFF.md for job ids).
 
-- GRAFT test 06 arm E (guide plus working memory) and a same-day guide rerun, Fir CPU jobs.
-- LongMemEval labelling (Flotilla test 04): pilots on shard 00 as Fir/Nibi twins; then all shards, GRAFT graph builds
-  with the guide on Qwen, the four Memory routes, judging, and the merged labels (`run-04-lme`).
-
-**Broken and to fix first.**
-
-- GRAFT on Qwen: the Nibi job ended in 10 minutes because GRAFT's venv lacks `openai`. Add it, repack `venv.tar` on
-  Fir and Nibi, and resubmit the Qwen job (mode C, guide, C v2, C- v2). The Memory routes' GRAFT bridge runs in the same
-  venv, so this must be fixed before LongMemEval's Memory routes run.
+- GRAFT test 08 run-02: arm E (guide plus working memory) on Qwen with a guide rerun in the same job.
+- LongMemEval labelling (Flotilla test 04): the six base routes and the GRAFT graph builds have run on all 20 shards;
+  next the four Memory routes, the Haiku judge, and the merged labels (`run-04-lme`).
 
 **Next steps, in order.**
 
-1. Fix the venv; rerun GRAFT on Qwen with the guide; compare with Haiku on the same setup.
+1. Done: the venv fix worked and GRAFT on Qwen is test 08 (the guide 47.0 vs mode C 39.3).
 2. Finish LongMemEval labels on all ten routes; hand-check 50 judge verdicts (stop if under 90% agreement).
 3. Train the four supervised routers once on all ten routes (`scripts/fir/submit_strategy_router.sh train`); pick the
    best on dev under the keep rule (vs Vote, 0.5-point margin).
@@ -795,7 +809,7 @@ With the benchmark's official judge prompts, using Qwen as judge, and a hand che
 5. Held-out once, then the 5% small test once.
 6. Final full benchmarks: the full system vs plain Qwen and the best single route, on the same questions; accuracy,
    tokens and time, against the published reference numbers.
-7. GRAFT: which part of the guide carries the gain (linking only vs planning only, about $0.10 each); the guide on Qwen;
+7. GRAFT: which part of the guide carries the gain (linking only vs planning only, about $0.10 each); arm E on Qwen;
    a new benchmark beyond FactConsolidation.
 8. Merge Flotilla's `restructure` branch into its `main` after review; merge GRAFT's research branch again when the next
    results are in.

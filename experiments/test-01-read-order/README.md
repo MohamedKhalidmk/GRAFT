@@ -4,6 +4,27 @@
 |---|---|---|---|
 | 01 | 2026-11-13 | done | [run-02](runs/run-02/run.json) |
 
+## Candidates and setups
+
+IDs from the [registry](../../docs/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+answer cap, benchmark and scoring; old run folders keep their names.
+
+| Candidate | Setup | Row in this test |
+|---|---|---|
+| G04 | S08 | A |
+| G04 | S09 | A |
+| G07 | S13 | B |
+| G07 | S14 | B |
+| G08 | S16 | C |
+| G08 | S17 | C |
+| G09 | S21 | D |
+| G09 | S22 | D |
+| BM25 | S73 | BM25 |
+| BM25 | S74 | BM25 |
+| HippoRAG 2 (bundled) | S79 | HippoRAG 2 |
+| HippoRAG 2 (bundled) | S80 | HippoRAG 2 |
+| HippoRAG 2 (bundled) | S81 | HippoRAG 2 |
+
 ## Question
 
 Which read order (A: PPR then GNN + GOAt; B: GNN + GOAt then PPR; C: PPR, GNN + GOAt, short PPR) and which starting graph (empty vs D, a synthetic starting graph) answer FactConsolidation multi-hop best?
