@@ -99,7 +99,7 @@ Every test has a README (Question · Setup · Result · Decision · Revisions), 
 | `configs/` | Run configs |
 | `experiments/` | Numbered tests, each with README, config, runs and table |
 | `docs/reference/` | REGISTRY (frozen candidate and setup IDs) and the 2026-11-13 run write-up; PROTOCOL and the run log are Flotilla's (linked at the top) |
-| `docs/session/` | Handoff, working setup, project history: a copy of Flotilla's, kept identical |
+| `docs/session/` | Handoff, status (Open experiments), working setup, project history: a copy of Flotilla's, kept identical |
 | `docs/design/` | Designs written before the code; `docs/design/theme/` holds the logo, diagram and chart sources |
 | `assets/` | README images (built from the sources in `docs/design/theme/`) |
 | `results/` | Raw runs, checkpoints, tables and figures |

@@ -4,7 +4,7 @@ For a new Claude session picking up this project. The same file is in both repos
 GRAFT `docs/session/WORKING_SETUP.md`). No secrets are in it: no keys, passwords or tokens. Written 2026-11-21.
 
 Companion documents: [PROJECT_HISTORY.md](PROJECT_HISTORY.md) (everything that happened and why),
-[HANDOFF.md](HANDOFF.md) (what is running right now and the next steps), and Flotilla's
+[HANDOFF.md](HANDOFF.md) (what is running right now and the next steps), [STATUS.md](STATUS.md) (the Open experiments table), and Flotilla's
 [PROTOCOL.md](https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/reference/PROTOCOL.md) (the frozen evaluation
 rules, summarised below).
 
@@ -120,7 +120,7 @@ It is not a git checkout, and `git archive` leaves out the two submodules (`base
 
 - Heavy work never on the user's Mac: graph builds, PageRank, embeddings, grading, PDF builds of big reports all run
   as cluster CPU jobs. The Mac is for editing code, small unit tests and git. If a cluster needs a login, ask.
-- Docs: `docs/reference/` (PROTOCOL, REGISTRY, run log), `docs/session/` (this file, HANDOFF, PROJECT_HISTORY), `docs/design/`.
+- Docs: `docs/reference/` (PROTOCOL, REGISTRY, run log), `docs/session/` (this file, HANDOFF, STATUS, PROJECT_HISTORY), `docs/design/`.
   The session files are edited only in Flotilla's `docs/session/`, then `python scripts/sync_session_docs.py` copies them to
   GRAFT and writes `scripts/SHA256SUMS`; `tests/test_session_docs.py` in each repo fails if a copy drifts. Markdown only:
   a PDF is built (WeasyPrint on Fir) only when the user asks for one.
@@ -131,6 +131,7 @@ It is not a git checkout, and `git archive` leaves out the two submodules (`base
 - Preview before merging: send a rendered preview and wait for the user's go before merging into `main`.
 - Log every decision with a one-line reason, and every dollar, in Flotilla `docs/reference/run_log.md`.
 - Report only finishes, failures and decisions; no progress chatter. Give a time range before each step.
+- Every report starts with "Status changes": each row of [STATUS.md](STATUS.md)'s Open experiments table that changed since the last report, old state to new state, with the reason, one line each (or "no changes"). Update the table with every report; never delete a row; never change a state without listing it. Dropping, parking or reverting anything needs the user's yes first and a run-log line with the reason (user, 2026-11-22).
 - Decide routine things and report after; ask only for scope, model, benchmark or rule changes, or anything risky or
   costly. Don't drop a model without logging why.
 - Writing style for docs: plain reflective sentences, commas, no em dashes.
@@ -167,7 +168,7 @@ scored are never re-scored under a new rule without saying so.
 
 ## 8. First 10 minutes in a new session
 
-1. Read [HANDOFF.md](HANDOFF.md) (running jobs, broken things, next steps), then this file, then skim
+1. Read [STATUS.md](STATUS.md) (open experiments) and [HANDOFF.md](HANDOFF.md) (running jobs, broken things, next steps), then this file, then skim
    PROJECT_HISTORY.md parts 1 and 11.
 2. `git pull` in /Users/mk/flotilla (`restructure`) and /Users/mk/SGAR (`graft-linking-hybrid`); check `git status` for
    other sessions' uncommitted files and don't commit them.

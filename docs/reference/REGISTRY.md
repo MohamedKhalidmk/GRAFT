@@ -68,7 +68,7 @@ History: draft 1 numbered Embedding RAG (bge-small) as a candidate; it is a base
 | G41 | G35 on graphs from writer v2 (chat prompt, reply log, salvage), thinking off | (new, 2026-11-22) | LongMemEval dev | running | design: [graft_longmemeval_plan_design.md](../design/graft_longmemeval_plan_design.md) |
 | G42 | G41 with Qwen thinking on in the build, writer cap 16,384 | (new, 2026-11-22) | LongMemEval dev | running | as G41 |
 | G43 | the better of G41/G42 with the user node (first-person questions link "user") | (new, 2026-11-22) | LongMemEval dev | designed | as G41 |
-| G44 | G43 with a chat guide instead of the T-REx guide | (new, 2026-11-22) | LongMemEval dev | designed | dataset to be chosen by the user |
+| G44 | G43 with a chat guide instead of the T-REx guide | (new, 2026-11-22) | LongMemEval dev | designed | Dialogue NLI (user, 2026-11-22); leakage check and guide build done (Flotilla run log 2026-11-22) |
 | G45 | G43 without any guide (mode C alone) | (new, 2026-11-22) | LongMemEval dev | designed | the no-guide control for G43/G44 |
 | G46 | the better of G41/G42 with bitemporal facts: said time (session date or serial) for supersede, event time (resolved from the text) for temporal questions | (new, 2026-11-22) | LongMemEval temporal dev | designed | design: [graft_bitemporal_design.md](../design/graft_bitemporal_design.md); built after writer v2's results |
 Not a candidate: the **Haiku check** (`exp_real_replay38`, `exp_real_canary_replay38`) re-answers G08's saved
