@@ -254,4 +254,4 @@ setup column.
 - Setup IDs are one sequence across both repos (GRAFT S01-S101, Flotilla S102 onward); free-check setups have IDs too.
 - Qwen setups that never finished (S50, S52, S54: Qwen on the full T-REx candidates, jobs cancelled before an answer)
   keep their IDs.
-- Next free IDs: G47, S159 (S shared with Flotilla; S147-S158 are Flotilla router setups). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
+- Next free IDs: G47, S163 (S shared with Flotilla; S147-S162 are Flotilla setups). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
