@@ -1,6 +1,6 @@
 # Tests (GRAFT)
 
-56 tests in 17 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
+58 tests in 18 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
 
 ## [tests/test_adaptive.py](../../tests/test_adaptive.py)
 
@@ -118,6 +118,15 @@ Both Mem0 variants run end to end on the fake gateway (no API calls).
 | Test | What it checks | Guards against |
 |---|---|---|
 | `test_mem0_fake_run` | Checks that each Mem0 variant runs end to end on the fake gateway, stores memories, and records ADD events, plus UPDATE events for the bundled one. | Mem0 silently storing nothing, or the bundled version's update path never running, while still answering questions. |
+
+## [tests/test_plan_relation_check.py](../../tests/test_plan_relation_check.py)
+
+scripts/plan_relation_check.py: classifying LongMemEval misses by planned against stored relations. Offline.
+
+| Test | What it checks | Guards against |
+|---|---|---|
+| `test_misses_are_classed_by_planned_against_stored_relation` | Checks that a miss is a relation-name mismatch only when no gold fact's mapped relation is one the plan wanted. | counting a miss as a naming problem when the names matched and the plan failed for another reason. |
+| `test_gold_found_in_facts_by_words` | Checks that the gold string is found in a fact's subject, relation, object or sentence, golds up to 40 characters. | a gold fact in the graph being missed because of case or punctuation, or long golds matched loosely. |
 
 ## [tests/test_queue.py](../../tests/test_queue.py)
 
