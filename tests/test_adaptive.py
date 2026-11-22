@@ -10,6 +10,8 @@ from my_method.retrieval import Region, RetrievalConfig, Retriever, drop_cut
 
 
 def test_drop_cut_is_the_largest_ratio_drop_within_bounds():
+    """Checks that drop_cut cuts at the largest score ratio drop between the lo and hi bounds, including zero-score, flat and short lists.
+    Guards against: the answering model being shown a long tail of weak facts, or too few facts, because the cut misses the clear score gap."""
     s = [10, 9, 8, 1, 0.9, 0.8, 0.7, 0.6]
     assert drop_cut(s, 2, 6) == 3                       # 8 -> 1 is the largest drop
     assert drop_cut(list(reversed(s)), 2, 6) == 3       # order of the input does not matter
@@ -30,6 +32,8 @@ def _store():
 
 
 def test_drop_cutoff_keeps_g35_order_and_only_changes_the_count():
+    """Checks that the adaptive drop cutoff keeps the fixed-count retriever's fact ranking and only changes how many facts are shown, also on the fallback.
+    Guards against: turning on the cutoff silently reordering the retrieved facts, so the comparison with the fixed-count run measures two changes at once."""
     store = _store()
     texts = TextEmbedder(load_embedder("hash:16"))
     model = make_model(feature_dim(16), 8).eval()
@@ -47,12 +51,16 @@ def test_drop_cutoff_keeps_g35_order_and_only_changes_the_count():
 
 
 def test_wants_more_only_on_the_ask_phrase():
+    """Checks that wants_more fires only when the reply ends with the exact NEED MORE MEMORIES phrase.
+    Guards against: a real answer that merely mentions needing more memories being thrown away and treated as a request for another batch."""
     assert wants_more("NEED MORE MEMORIES") and wants_more("Step 1: ...\nNEED MORE MEMORIES.")
     assert not wants_more("Answer: Hebrew") and not wants_more("") and not wants_more("I need more memories to be sure, but Hebrew")
     assert "NEED MORE MEMORIES" in ASK_RULE
 
 
 def test_ask_loop_adds_batches_within_the_limits(monkeypatch):
+    """Checks that each NEED MORE MEMORIES reply adds the next batch of pool facts, and that the ask limit and the end of the pool stop the loop.
+    Guards against: a model that keeps asking for more memories looping past the ask limit or past the end of the retrieved pool."""
     import my_method.agent as ag
     replies = iter(["NEED MORE MEMORIES", "NEED MORE MEMORIES", "Answer: Hebrew"])
     shown = []
@@ -78,6 +86,8 @@ def test_ask_loop_adds_batches_within_the_limits(monkeypatch):
 
 
 def test_user_node_links_first_person_questions():
+    """Checks that with user_node on, first-person questions (I, my, me) also link the writer's user entity, and other questions link as before.
+    Guards against: a chat question like 'What did I buy?' linking no entity, so the user's own facts are never reached."""
     store = GraphStore()
     store.add_fact("user", "bought", "a bike", Provenance(0, store.take_arrival(), None, "I bought a bike"))
     store.add_fact("Paris", "capital of", "France", Provenance(1, store.take_arrival(), None, "Paris is the capital"))

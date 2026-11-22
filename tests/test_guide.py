@@ -31,6 +31,8 @@ def add(s, h, r, o, serial):
 
 
 def test_link_pass(tmp_path):
+    """Checks that the guide's link pass adds a revision missed across relation spellings and merges same-entity names only when their types agree.
+    Guards against: an old citizenship shown as current because two spellings of one relation hid the revision, or a planet merged with a newspaper."""
     s = GraphStore()
     old = add(s, "Ann", "is a citizen of", "Peru", 5)
     new = add(s, "Ann", "citizenship", "Chile", 9)
@@ -45,6 +47,8 @@ def test_link_pass(tmp_path):
 
 
 def test_plan_direct_and_bridged(tmp_path):
+    """Checks that planning follows a chain of direct facts, and bridges a hop through the document relation when no fact has the planned one.
+    Guards against: a multi-hop question failing because the documents spell a relation differently from the planned T-REx relation."""
     s = GraphStore()
     f1 = add(s, "Ann", "is a citizen of", "Finland", 3)
     f2 = add(s, "Finland", "is located in the continent of", "Asia", 4)

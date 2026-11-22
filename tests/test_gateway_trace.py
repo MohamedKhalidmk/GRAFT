@@ -15,6 +15,8 @@ class Stub:
 
 
 def test_trace_fields(tmp_path):
+    """Checks that the gateway usage log records request and message IDs, a request hash that ignores dropped params, a reply hash, and the dropped params.
+    Guards against: a logged call that cannot be traced back to its API request, or the internal request ID leaking into the client's reply."""
     log = tmp_path / "usage.jsonl"
     body = {"model": "claude-haiku-5-5", "max_tokens": 256, "system": "s", "messages": [{"role": "user", "content": "q"}],
             "temperature": 0.5}

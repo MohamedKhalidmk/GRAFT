@@ -7,6 +7,8 @@ SESSION = Path(__file__).resolve().parent.parent / "docs" / "session"
 
 
 def test_session_docs_match_their_manifest():
+    """Checks that the docs/session files match scripts/SHA256SUMS, with no file missing, extra or changed.
+    Guards against: a session document edited in GRAFT alone drifting from Flotilla's copy."""
     sums = dict(reversed(l.split("  ", 1)) for l in (SESSION.parent.parent / "scripts" / "SHA256SUMS").read_text().splitlines() if l.strip())
     present = {p.name for p in SESSION.iterdir() if p.suffix == ".md"}
     assert present == set(sums), f"files and manifest differ: {sorted(present ^ set(sums))}"
@@ -20,8 +22,9 @@ COLUMNS = ["#", "Experiment", "IDs", "State", "Result (one line)", "Next step", 
 
 
 def test_status_open_experiments_table():
-    """STATUS.md's Open experiments table (user, 2026-11-22): fixed columns, the six states only, a date on every row,
-    and row numbers 1..n with no gap, so a deleted row shows up here (rows are never deleted, only their state changes)."""
+    """Checks that STATUS.md's Open experiments table has the fixed columns, only the six states, a date on every row, and rows numbered 1..n.
+    Guards against: an experiment row being deleted instead of having its state changed, so its record is lost.
+    Rule from the user, 2026-11-22: rows are never deleted, only their state changes, so a gap in the numbers shows a deleted row."""
     import re
     text = (SESSION / "STATUS.md").read_text()
     section = text.split("## Open experiments", 1)[1]

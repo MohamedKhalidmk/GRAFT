@@ -44,7 +44,7 @@ which cluster. After that the socket lasts 8 hours.
 | **Trillium** | free CPU runs only (whole 192-core nodes, account `def-sylu`) | **compute nodes have no internet**, so no paid (API) runs; home and /project are read-only on compute nodes; GPU jobs only from `trig-login01`, which has no socket here; `sbatch` needs `--export=ALL` to pass environment variables |
 
 Fir cannot ssh to Nibi or Trillium directly: copy between clusters by streaming through the Mac
-(`ssh fir 'tar cf - ...' | ssh nibi 'tar xf - -C ...'`), never storing large files on the Mac.
+(`ssh fir 'tar cf - ...' | ssh nibi 'tar xf - -C ...'`), never storing large files on the Mac. When copying from the Mac with tar, set `COPYFILE_DISABLE=1`: macOS tar otherwise adds `._*` files, which broke the session-docs test on Fir once (2026-11-22).
 
 ## 3. Where things live
 

@@ -8,6 +8,8 @@ REPO = Path(__file__).resolve().parent.parent
 
 
 def test_dnli_triples_keeps_clean_sentences_and_types(tmp_path):
+    """Checks that dnli_triples.py keeps only triples whose sentence passed the leakage check, maps 'i' to user and relations to labels, and adds type lines.
+    Guards against: triples from sentences that overlap a test set leaking into the chat guide, or the guide getting raw relation names it cannot match."""
     d = tmp_path / "dnli"
     (d / "dialogue_nli").mkdir(parents=True)
     (d / "dialogue_nli_extra").mkdir()

@@ -14,6 +14,8 @@ from eval.run import run
 
 @pytest.mark.parametrize("method", ["hipporag_bundled", "hipporag_upstream"])
 def test_fake_run_answers_every_question(method: str) -> None:
+    """Checks that each HippoRAG-v2 variant runs end to end in fake mode, answers every question, and makes one NER and one triple call per chunk.
+    Guards against: a broken HippoRAG install or adapter leaving questions unanswered or building an empty graph, found only on a paid run."""
     if not METHODS[method].python.exists():
         pytest.skip(f"environment for {method} is not installed")
     out = run(str(REPO / "configs" / "runs" / f"{method}_fake_6k.yaml"))

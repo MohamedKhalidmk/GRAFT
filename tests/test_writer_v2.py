@@ -12,6 +12,8 @@ REPO = Path(__file__).resolve().parent.parent
 
 
 def test_salvage_keeps_complete_facts_before_the_cut():
+    """Checks that salvage_facts recovers every complete fact before the cut in a truncated reply, and returns None when there is none.
+    Guards against: a writer reply cut off at the token cap losing every fact it already listed."""
     cut = '{"facts": [{"subject": "user", "relation": "owns", "object": "3 cucumber plants", "serial": null, ' \
           '"span": "I have 3 plants"}, {"subject": "user", "relation": "bought", "object": "a b'
     assert salvage_facts(cut) == {"facts": [{"subject": "user", "relation": "owns", "object": "3 cucumber plants",
@@ -35,6 +37,8 @@ def _writer(llm, tmp_path, prompt="default"):
 
 
 def test_reply_log_retry_and_salvage(tmp_path):
+    """Checks that the writer retries an unparseable reply, salvages a cut-off one on the first try, and logs every attempt with its outcome.
+    Guards against: failed or truncated writer replies vanishing without a trace in the reply log or the writer stats."""
     good = '{"facts": [{"subject": "user", "relation": "owns", "object": "Luna", "serial": null, "span": "my cat Luna"}]}'
     cut = '{"facts": [{"subject": "user", "relation": "visited", "object": "Science Museum", "serial": null, "span": "x"}, {"subj'
     w = _writer(FakeLLM([("oops, not json", "end_turn"), (good, "end_turn"), (cut, "max_tokens"), ("still bad", "end_turn")]), tmp_path)
@@ -49,6 +53,8 @@ def test_reply_log_retry_and_salvage(tmp_path):
 
 
 def test_chat_prompt_only_when_asked(tmp_path):
+    """Checks that the chat writer rules go into the system prompt, before the JSON instruction, only for the chat_v2 prompt.
+    Guards against: the chat rules leaking into the default writer prompt and changing results on the other benchmarks."""
     reply = ('{"facts": []}', "end_turn")
     plain, chat = FakeLLM([reply]), FakeLLM([reply])
     _writer(plain, tmp_path, "default").extract("t")
@@ -59,6 +65,8 @@ def test_chat_prompt_only_when_asked(tmp_path):
 
 
 def test_gateway_thinking_switch(monkeypatch):
+    """Checks that the local OpenAI backend sends enable_thinking false by default and true only when thinking is switched on.
+    Guards against: Qwen thinking by default as the writer and spending its token cap on reasoning instead of facts."""
     import sys
     sent = []
 

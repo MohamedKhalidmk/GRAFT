@@ -50,6 +50,8 @@ def run(mode):
 
 
 def test_graph_mode_chains_steps_and_links_work_layer():
+    """Checks that graph-mode working memory fills each step's placeholder from the previous result, links a work layer, and removes it afterwards.
+    Guards against: the second step asking about ?A instead of Bob, or work-layer nodes left behind in the shared graph."""
     text, meta, llm = run("graph")
     rec = meta["working_memory"]
     assert [s["result"] for s in rec["steps"]] == ["Bob", "Paris"]
@@ -62,6 +64,8 @@ def test_graph_mode_chains_steps_and_links_work_layer():
 
 
 def test_prompt_only_writes_nothing():
+    """Checks that prompt_only working memory still chains the steps but adds no work nodes or edges to the graph.
+    Guards against: the prompt-only arm writing work nodes into the graph, so it no longer differs from graph mode."""
     _, meta, _ = run("prompt_only")
     rec = meta["working_memory"]
     assert rec["work_nodes"] == [] and rec["work_edges"] == []
@@ -69,7 +73,8 @@ def test_prompt_only_writes_nothing():
 
 
 def test_guide_plan_is_cited_from_the_start():
-    """guide + working memory (test 06): the guide's planned chain reaches every step and the final answer."""
+    """Checks that with the guide and working memory together (test 06), the guide's planned facts reach every step prompt and the final facts.
+    Guards against: the guide's planned chain being dropped when working memory runs, so the steps and the final answer never see it."""
     g = graph()
     r = Retriever(g, RetrievalConfig(mode="ppr", max_facts=10), TextEmbedder(HashEmbedder(64)))
     carl = [f for f in g.facts() if g.fact(f)["subject"] == "Carl"][0]  # a fact no step would cite

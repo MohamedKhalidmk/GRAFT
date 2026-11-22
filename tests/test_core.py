@@ -20,6 +20,8 @@ REPO = Path(__file__).resolve().parent.parent
 
 
 def test_translate_drops_sampling_and_maps_tools():
+    """Checks that OpenAI-format requests become Anthropic requests with sampling dropped, thinking off and tool calls mapped, and that tool replies map back.
+    Guards against: baselines that send OpenAI tool calls getting broken requests, or settings like temperature slipping through to the model."""
     body = {"model": "gpt-4o-mini", "temperature": 0.7, "seed": 1, "max_tokens": 50,
             "messages": [{"role": "system", "content": "sys"}, {"role": "user", "content": "hi"},
                          {"role": "assistant", "content": None, "tool_calls": [
@@ -40,17 +42,23 @@ def test_translate_drops_sampling_and_maps_tools():
 
 
 def test_cost_uses_long_prompt_rate_above_100k():
+    """Checks that token_cost charges the long-prompt rate above 100K prompt tokens and the short rate below it.
+    Guards against: long-context runs being reported at the cheaper short-prompt price."""
     assert token_cost("claude-haiku-5-5", 1_000_000, 0) == pytest.approx(0.50)  # >100K prompt: long card
     assert token_cost("claude-haiku-5-5", 50_000, 0) == pytest.approx(0.005)
 
 
 def test_scoring_is_the_benchmarks_substring_match():
+    """Checks that scoring uses the benchmark's normalized substring match and that answer_in_text finds a gold answer in retrieved text.
+    Guards against: a correct answer with different case or trailing punctuation being scored wrong, making results incomparable with the benchmark."""
     assert score("Pesäpallo.", ["pesäpallo"])["substring_exact_match"] == 1.0
     assert score("ice hockey", ["pesäpallo"])["substring_exact_match"] == 0.0
     assert answer_in_text(["Rodez"], "450. Olga of Kiev died in the city of Rodez.")
 
 
 def test_graph_store_supersede_chain_and_roundtrip(tmp_path):
+    """Checks that a chain of SUPERSEDES edges resolves to the newest fact and survives saving and loading the graph.
+    Guards against: a reloaded graph losing its revision links, so an older fact is shown to the answering model as current."""
     store = GraphStore()
     ids = [store.add_fact("X", "capital", obj, Provenance(0, store.take_arrival(), i, f"s{i}"))
            for i, obj in enumerate(["A", "B", "C"])]
@@ -63,6 +71,8 @@ def test_graph_store_supersede_chain_and_roundtrip(tmp_path):
 
 
 def test_rule_writer_supersedes_newer_fact_and_keeps_old():
+    """Checks that the rule writer marks a later fact with the same subject and relation as superseding the earlier one, keeping both, and splits numbered facts.
+    Guards against: a revised fact sitting next to its old version with no SUPERSEDES edge, so retrieval can return the outdated value."""
     store, writer = GraphStore(), RuleWriter(revisions=True)
     writer.write_chunk(0, "Here is a list of facts:\n1. The capital of Papal States is Rome. "
                           "2. The capital of Papal States is Watertown.", store)
@@ -72,7 +82,8 @@ def test_rule_writer_supersedes_newer_fact_and_keeps_old():
 
 
 def test_features_have_one_edge_per_node_pair():
-    """GOAt indexes edges by (a, b), so parallel edges crash it (subject == object facts make them)."""
+    """Checks that the GNN features hold one edge per node pair, even for a fact whose subject and object are the same entity.
+    Guards against: GOAt crashing on parallel edges, since it indexes edges by (a, b) and subject == object facts create them."""
     from baselines.claude_gateway.embeddings import load_embedder
     from my_method.gnn.features import TextEmbedder, build_features
     store = GraphStore()
@@ -83,7 +94,8 @@ def test_features_have_one_edge_per_node_pair():
 
 
 def test_subgraph_selection_reaches_past_a_hub():
-    """Nearest-first selection fills up on a hub's neighbours; PPR must still reach the chain's end."""
+    """Checks that subgraph selection still reaches the end of a chain when a hub entity on the way has hundreds of neighbours.
+    Guards against: nearest-first selection filling the node budget with the hub's neighbours, so PPR never reaches the answer node."""
     from my_method.gnn.features import select_subgraph
     store = GraphStore()
 
@@ -98,6 +110,8 @@ def test_subgraph_selection_reaches_past_a_hub():
 
 
 def test_sh_and_mh_share_one_context():
+    """Checks that the single-hop and multi-hop splits are built over one shared context and that the questions carry no gold answers.
+    Guards against: a method seeing gold answers in its questions, or building a separate memory per split."""
     task, golds = build_task("6k", ["sh", "mh"], 512, "Simple_rag_bm25", 2)
     assert [g.split for g in golds] == ["sh", "sh", "mh", "mh"] and len(task.chunks) == 12
     assert all("answers" not in q.__dict__ for q in task.questions)  # gold answers never reach a method
@@ -106,6 +120,8 @@ def test_sh_and_mh_share_one_context():
 @pytest.mark.parametrize("config", ["bm25_fake_6k", "long_context_fake_6k", "long_context_128k_fake_6k",
                                     "graft_ppr_fake_6k", "graft_goat_fake_6k"])
 def test_fake_run_end_to_end(config, tmp_path, monkeypatch):
+    """Checks that each listed config runs end to end in fake LLM mode, answers every question, and logs a question index on every query call.
+    Guards against: a pipeline break that leaves questions unanswered or query usage untraceable being found only on a paid cluster run."""
     if "goat" in config and not (REPO / "results/checkpoints/gnn_default/model.pt").exists():
         pytest.skip("no GNN checkpoint at results/checkpoints/gnn_default")
     monkeypatch.setenv("RESULTS_DIR", str(tmp_path))
@@ -118,6 +134,8 @@ def test_fake_run_end_to_end(config, tmp_path, monkeypatch):
 
 
 def test_synthetic_training_data_has_no_benchmark_entities():
+    """Checks that no entity name from the synthetic GNN training worlds appears in the benchmark context.
+    Guards against: the GNN being trained on benchmark entities, which would leak test content into its training."""
     from my_method.gnn.data_synthetic import synthetic_examples
     task, _ = build_task("6k", ["sh"], 512, "Simple_rag_bm25", None)
     world = synthetic_examples(seed=random.randint(0, 999), n_worlds=1, questions_per_world=5)[0]
@@ -127,12 +145,16 @@ def test_synthetic_training_data_has_no_benchmark_entities():
 
 
 def test_registry_configs_are_valid():
+    """Checks that every run config under configs/runs names a method registered in eval.methods.
+    Guards against: a run config with a misspelled or removed method failing only after it is submitted to the cluster."""
     from eval.methods import METHODS
     for path in (REPO / "configs" / "runs").glob("*.yaml"):
         assert yaml.safe_load(path.read_text())["method"] in METHODS, path
 
 
 def test_nearest_nodes_is_breadth_first_and_capped():
+    """Checks that nearest_nodes starts at the seed, takes its one-hop facts first, and stops at the node cap.
+    Guards against: the GNN subgraph growing past its node budget or skipping the seed entity's own facts."""
     from my_method.gnn.features import nearest_nodes
     store = GraphStore()
     for i in range(30):
@@ -144,7 +166,8 @@ def test_nearest_nodes_is_breadth_first_and_capped():
 
 @pytest.mark.parametrize("mode,region", [("goat_ppr", "nearest"), ("goat_ppr", "full"), ("ppr_goat_ppr", "nearest")])
 def test_experiment_b_and_c_modes_return_newest_facts(mode, region):
-    """B and C run end to end with an untrained GCN, and the latest-version rule still applies."""
+    """Checks that the B and C retrieval modes run end to end with an untrained GCN and return only the newest version of a revised fact.
+    Guards against: the GNN modes returning a superseded fact, so an older fact is shown to the answering model as current."""
     from baselines.claude_gateway.embeddings import load_embedder
     from my_method.gnn.features import TextEmbedder, feature_dim
     from my_method.gnn.train import make_model
@@ -166,7 +189,8 @@ def test_experiment_b_and_c_modes_return_newest_facts(mode, region):
 
 
 def test_extend_mode_starts_from_synthetic_graph_and_prompts_its_pattern():
-    """Experiment D: the writer starts from the synthetic graph and the prompt lists its relations."""
+    """Checks that in extend mode (experiment D) the writer starts from the synthetic graph and its prompt lists that graph's relations.
+    Guards against: the extend arm silently running as the plain writer, or the extend instruction leaking into the default prompt."""
     from my_method.gnn.data_synthetic import synthetic_start_graph
     from my_method.schema import Schema
     from my_method.writer import EXTRACT_FIXED, LLMWriter, graph_pattern
@@ -186,6 +210,8 @@ def test_extend_mode_starts_from_synthetic_graph_and_prompts_its_pattern():
 
 
 def test_shared_graph_is_built_once_then_loaded(tmp_path):
+    """Checks that the first agent builds and saves the shared graph and a second agent loads it instead of writing its own chunks.
+    Guards against: every repeat rebuilding the shared graph, paying for extraction again and possibly getting a different graph."""
     from baselines.common.protocol import Task
     from my_method.agent import GraftAgent
     cfg = {"model": "claude-haiku-5-5", "writer": "rule", "revisions": True, "embedding_model": "hash:16",
@@ -209,8 +235,9 @@ def _small_store():
 
 @pytest.mark.parametrize("explainer", ["goat", "eig"])
 def test_embedding_linking_and_hybrid_on_mode_c(explainer):
-    """link_embed_k keeps the exact matches first and adds k more entities; hybrid interleaves the mode's ranking
-    with embedding search, without duplicates, and still returns only newest facts within the budget."""
+    """Checks that link_embed_k keeps exact entity matches first and adds k more, and that hybrid interleaves graph and embedding facts without duplicates.
+    Guards against: embedding links pushing out the exact match, or hybrid merging returning duplicate facts or more facts than the budget.
+    Hybrid takes one fact from each ranking in turn and still returns only newest facts within the budget."""
     from baselines.claude_gateway.embeddings import load_embedder
     from my_method.gnn.features import TextEmbedder, feature_dim
     from my_method.gnn.train import make_model
@@ -235,6 +262,8 @@ def test_embedding_linking_and_hybrid_on_mode_c(explainer):
 
 
 def test_hybrid_labels_sources_and_embed_mode_needs_no_gnn():
+    """Checks that hybrid retrieval labels each fact with its source, embed mode runs without a GNN, and attribution classifies answers by source.
+    Guards against: the attribution table crediting the graph or the embedding search for answers it did not find."""
     from baselines.claude_gateway.embeddings import load_embedder
     from eval.attribution import classify
     from my_method.gnn.features import TextEmbedder, feature_dim
@@ -256,6 +285,8 @@ def test_hybrid_labels_sources_and_embed_mode_needs_no_gnn():
 
 
 def test_hybrid_k_keeps_graph_head_and_adds_k_new_embedding_facts():
+    """Checks that hybrid_k keeps the graph's top facts and fills the last k slots with new embedding facts, skipping ones already in the head.
+    Guards against: embedding facts displacing the graph's best facts, or a duplicate embedding fact wasting one of the k slots."""
     from baselines.claude_gateway.embeddings import load_embedder
     from my_method.gnn.features import TextEmbedder, feature_dim
     from my_method.gnn.train import make_model
@@ -273,8 +304,9 @@ def test_hybrid_k_keeps_graph_head_and_adds_k_new_embedding_facts():
 
 
 def test_question_graph_is_attached_used_and_removed():
-    """query_graph: parsed edges become temporary nodes linked through matched entities; they seed PPR and enter the
-    GNN subgraph, never appear among retrieved facts, and leave the graph unchanged afterwards."""
+    """Checks that query_graph attaches parsed question edges as temporary nodes linked through matched entities, and removes them after retrieval.
+    Guards against: temporary question nodes staying in the shared graph, or being returned to the answering model as retrieved facts.
+    The question nodes seed PPR and enter the GNN subgraph."""
     from baselines.claude_gateway.embeddings import load_embedder
     from my_method.gnn.features import TextEmbedder, feature_dim
     from my_method.gnn.train import make_model
@@ -298,7 +330,8 @@ def test_question_graph_is_attached_used_and_removed():
 
 
 def test_question_graph_needs_no_embedding_after_prepare():
-    """Workers are forked and cannot embed: after prepare_queries, retrieval must only read cached vectors."""
+    """Checks that after prepare_queries, question-graph retrieval reads only cached vectors and never calls the embedder.
+    Guards against: forked retrieval workers, which cannot embed, failing mid-run on a question-graph name that was not embedded up front."""
     from baselines.claude_gateway.embeddings import load_embedder
     from my_method.gnn.features import TextEmbedder, feature_dim
     from my_method.gnn.train import make_model
@@ -324,6 +357,8 @@ def test_question_graph_needs_no_embedding_after_prepare():
 
 
 def test_entity_linker_maps_names_to_base_entities_and_logs():
+    """Checks that the entity linker maps a new name to the base entity the LLM picks, caches it, asks only about unseen names, and logs every decision.
+    Guards against: 'USA' and 'United States of America' becoming separate entities, or the linker paying to ask about the same name twice."""
     from baselines.claude_gateway.embeddings import load_embedder
     from my_method.gnn.features import TextEmbedder
     from my_method.writer import EntityLinker, NewFact, WriterStats
@@ -359,6 +394,8 @@ def test_entity_linker_maps_names_to_base_entities_and_logs():
 
 
 def test_question_layer_uses_llm_links_not_the_embedding_threshold():
+    """Checks that with LLM query linking, question names link only where the LLM picked an entity, with no embedding-threshold fallback.
+    Guards against: a name the LLM judged new being linked anyway to a lookalike entity by embedding similarity."""
     from baselines.claude_gateway.embeddings import load_embedder
     from my_method.gnn.features import TextEmbedder, feature_dim
     from my_method.gnn.train import make_model
@@ -380,7 +417,8 @@ def test_question_layer_uses_llm_links_not_the_embedding_threshold():
 
 
 def test_build_resumes_from_checkpoint_after_a_cut_off(tmp_path):
-    """A build cut off mid-way resumes from the last checkpoint: earlier chunks are not written again."""
+    """Checks that a build cut off mid-way resumes from the last checkpoint without rewriting earlier chunks, and deletes the checkpoint once saved.
+    Guards against: a job that hits its time limit paying to rewrite every chunk, or a stale checkpoint being picked up by a later build."""
     from baselines.common.protocol import Task
     from my_method.agent import GraftAgent
     cfg = {"model": "claude-haiku-5-5", "writer": "rule", "revisions": True, "embedding_model": "hash:16",

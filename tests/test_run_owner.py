@@ -20,6 +20,8 @@ def _unfinished(runs, name, job):
 
 
 def test_own_folder(tmp_path, monkeypatch):
+    """Checks that a run folder counts as this job's own only when its owner file names the current Slurm job.
+    Guards against: a rerun resuming another job's folder, dead or alive, or a run outside Slurm resuming anything."""
     d = tmp_path / "exp_x_20261121-000000_j1"
     d.mkdir()
     monkeypatch.setenv("SLURM_JOB_ID", "200")
@@ -35,6 +37,8 @@ def test_own_folder(tmp_path, monkeypatch):
 
 
 def test_rerun_gets_a_new_folder(tmp_path, monkeypatch):
+    """Checks that a new Slurm job gets a new run folder even when a failed job left an unfinished folder of the same config.
+    Guards against: a rerun writing its results into a dead job's run folder."""
     runs = tmp_path / "runs"
     dead = _unfinished(runs, "exp_x_20261121-081013_j28252727", "28252727")  # a failed job, long gone
     monkeypatch.setenv("SLURM_JOB_ID", "28263641")
@@ -43,6 +47,8 @@ def test_rerun_gets_a_new_folder(tmp_path, monkeypatch):
 
 
 def test_requeue_resumes_its_own_folder(tmp_path, monkeypatch):
+    """Checks that a requeued job resumes its own unfinished folder, and starts a new one once that folder is finished.
+    Guards against: a requeued job redoing its finished repeats, or a later attempt writing into an already finished folder."""
     runs = tmp_path / "runs"
     _unfinished(runs, "exp_x_20261121-081013_j28252727", "28252727")
     mine = _unfinished(runs, "exp_x_20261121-090000_j28263641", "28263641")
