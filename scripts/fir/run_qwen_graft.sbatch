@@ -14,22 +14,25 @@ set -euo pipefail
 FLO=$HOME/projects/def-sylu/khaledmk/flotilla
 MODEL=$HOME/scratch/flotilla/quant/qwen3.8-27b-w4a16
 C=${SLURM_TMPDIR:-$HOME/scratch/flotilla/cache}
+# A free port of this job's own: jobs on GPU slices share a node, and with one fixed port for every job a run talked to
+# a neighbour's server and died when that job ended (G35 and G40 repeats on Nibi, 2026-11-22).
+PORT=${VLLM_PORT:-$(python3 -c "import socket; s = socket.socket(); s.bind(('127.0.0.1', 0)); print(s.getsockname()[1])")}
 (
   source "$FLO/scripts/trillium/modules.sh"
   export HF_HUB_OFFLINE=1 VLLM_CACHE_ROOT="$C/vllm" TRITON_CACHE_DIR="$C/triton" TORCHINDUCTOR_CACHE_DIR="$C/inductor" \
          XDG_CACHE_HOME="$C" HUMMING_CACHE_DIR="$C/humming" HUMMING_TMP_DIR="$C/humming-tmp" FLASHINFER_WORKSPACE_BASE="$C"
-  exec "$FLO/envs/flotilla/bin/vllm" serve "$MODEL" --served-model-name qwen --port 8000 --seed ${VLLM_SEED:-20261119} \
+  exec "$FLO/envs/flotilla/bin/vllm" serve "$MODEL" --served-model-name qwen --port $PORT --seed ${VLLM_SEED:-20261119} \
        --max-model-len 65536 --gpu-memory-utilization 0.85 --max-num-seqs 64 --reasoning-parser qwen3
 ) > "vllm-$SLURM_JOB_ID.log" 2>&1 &
 VLLM=$!
 trap 'kill $VLLM 2>/dev/null || true' EXIT
 for i in $(seq 1 120); do
-  curl -sf http://127.0.0.1:8000/health >/dev/null && break
+  curl -sf http://127.0.0.1:$PORT/health >/dev/null && break
   kill -0 $VLLM 2>/dev/null || { echo "vLLM exited; see vllm-$SLURM_JOB_ID.log"; exit 2; }
   sleep 30
 done
-curl -sf http://127.0.0.1:8000/health >/dev/null || { echo "vLLM not healthy after 60 min"; exit 2; }
-echo "[qwen] vLLM healthy $(date +%H:%M)"
+curl -sf http://127.0.0.1:$PORT/health >/dev/null || { echo "vLLM not healthy after 60 min"; exit 2; }
+echo "[qwen] vLLM healthy $(date +%H:%M) on port $PORT"
 source "$SLURM_SUBMIT_DIR/scripts/fir/common.sh"
-export HF_HUB_OFFLINE=1 GRAFT_OPENAI_BASE_URL=http://127.0.0.1:8000/v1
+export HF_HUB_OFFLINE=1 GRAFT_OPENAI_BASE_URL=http://127.0.0.1:$PORT/v1
 .venv/bin/python -m eval.queue --name "slurm_${SLURM_JOB_ID}" "$@"

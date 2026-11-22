@@ -1,6 +1,6 @@
 # Tests (GRAFT)
 
-54 tests in 16 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
+56 tests in 17 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
 
 ## [tests/test_adaptive.py](../../tests/test_adaptive.py)
 
@@ -118,6 +118,15 @@ Both Mem0 variants run end to end on the fake gateway (no API calls).
 | Test | What it checks | Guards against |
 |---|---|---|
 | `test_mem0_fake_run` | Checks that each Mem0 variant runs end to end on the fake gateway, stores memories, and records ADD events, plus UPDATE events for the bundled one. | Mem0 silently storing nothing, or the bundled version's update path never running, while still answering questions. |
+
+## [tests/test_queue.py](../../tests/test_queue.py)
+
+eval.queue runs several configs in one job; a failed run must fail the job (Nibi, 2026-11-22).
+
+| Test | What it checks | Guards against |
+|---|---|---|
+| `test_queue_runs_every_config_and_fails_if_one_failed` | Checks that the queue still runs the configs after a failed one, then exits with an error naming the failed run. | a Slurm job reported COMPLETED although one of its runs died, so a missing repeat goes unnoticed. |
+| `test_qwen_job_scripts_use_a_port_of_their_own` | Checks that the Fir and Nibi Qwen job scripts serve vLLM on a free port chosen per job, never a fixed one. | two jobs on one node sharing a server, so a run dies when the other job ends and shuts it down. |
 
 ## [tests/test_run_owner.py](../../tests/test_run_owner.py)
 
