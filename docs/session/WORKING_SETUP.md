@@ -122,7 +122,8 @@ It is not a git checkout, and `git archive` leaves out the two submodules (`base
   as cluster CPU jobs. The Mac is for editing code, small unit tests and git. If a cluster needs a login, ask.
 - Docs: `docs/reference/` (PROTOCOL, REGISTRY, run log), `docs/session/` (this file, HANDOFF, PROJECT_HISTORY), `docs/design/`.
   The session files are edited only in Flotilla's `docs/session/`, then `python scripts/sync_session_docs.py` copies them to
-  GRAFT and writes `SHA256SUMS`; `tests/test_session_docs.py` in each repo fails if a copy drifts.
+  GRAFT and writes `scripts/SHA256SUMS`; `tests/test_session_docs.py` in each repo fails if a copy drifts. Markdown only:
+  a PDF is built (WeasyPrint on Fir) only when the user asks for one.
 - Commits are authored by the user only: **no Co-Authored-By or any Claude attribution line**, in commits or PRs.
   Don't rewrite history.
 - Numbered tests: `experiments/test-NN-name/` with README (Question, Setup, Result, Decision, Revisions), config,

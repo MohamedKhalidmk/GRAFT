@@ -61,8 +61,8 @@ f. PROTOCOL.md's status line now names protocol-v10 (fixed 2026-11-21).
 
 | Document | Flotilla (`restructure`) | GRAFT (`graft-linking-hybrid`) |
 |---|---|---|
-| Working setup (clusters, jobs, keys, rules, first 10 minutes) | `docs/session/WORKING_SETUP.md` / `.pdf` | `docs/session/WORKING_SETUP.md` / `.pdf` |
-| Project history (every test, decision, bug, spend, lessons) | `docs/session/PROJECT_HISTORY.md` / `.pdf` | `docs/session/PROJECT_HISTORY.md` / `.pdf` |
+| Working setup (clusters, jobs, keys, rules, first 10 minutes) | `docs/session/WORKING_SETUP.md` | `docs/session/WORKING_SETUP.md` |
+| Project history (every test, decision, bug, spend, lessons) | `docs/session/PROJECT_HISTORY.md` | `docs/session/PROJECT_HISTORY.md` |
 | Protocol (frozen evaluation rules) | `docs/reference/PROTOCOL.md` | link: github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/reference/PROTOCOL.md |
 | Run log (every decision and dollar) | `docs/reference/run_log.md` | |
 | Experiments | `experiments/INDEX.md` | `experiments/INDEX.md` |
