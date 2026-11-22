@@ -371,7 +371,7 @@ The router pool is 4,856 public training questions (math, science multiple choic
 leakage-checked against every test set: 96 dropped, 4,760 kept
 ([report](https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/reports/leakage/router_pool.json)). The strict 13-gram check had first flagged 648, almost all shared
 template wording; protocol-v3 made the template rule explicit. Router A (vLLM Semantic Router's decision model plus a
-fixed table) scored 0.744 routing accuracy on 500 clean pool items ([report](https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/reports/router_a_pool500.json)).
+fixed table) scored 0.744 routing accuracy on 500 clean pool items ([report](https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/experiments/legacy/router_a_pool500.json)).
 
 ### 3.3 Test 02: model small test (2026-11-20)
 
