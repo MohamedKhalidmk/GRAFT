@@ -50,14 +50,18 @@ def main() -> None:
     ap.add_argument("--trex-dir", default=None, help="or the raw T-REx parquet files, with --labels")
     ap.add_argument("--labels", default=None, help="JSON {property id: English label}: every property to keep")
     ap.add_argument("--aliases", default=None, help="JSON {label: [Wikidata aliases]}: also matched when mapping labels")
-    ap.add_argument("--docs", required=True)
-    ap.add_argument("--parses", required=True)
+    ap.add_argument("--triples", default=None, help="or a JSONL of [subject, relation, object] (chat guide: scripts/dnli_triples.py)")
+    ap.add_argument("--docs", default=None, help="a document graph whose relation labels get mapped (optional)")
+    ap.add_argument("--parses", default=None, help="question parses whose labels get mapped (optional)")
     ap.add_argument("--out", required=True)
     ap.add_argument("--embedding_model", default="BAAI/bge-small-en-v1.5")
     ap.add_argument("--cover_min", type=float, default=0.8)
     a = ap.parse_args()
     t0 = time.time()
-    facts = load_parquet(a.trex_dir, json.loads(Path(a.labels).read_text())) if a.trex_dir else load_facts(a.base)
+    if a.triples:
+        facts = [tuple(json.loads(l)) for l in open(a.triples)]
+    else:
+        facts = load_parquet(a.trex_dir, json.loads(Path(a.labels).read_text())) if a.trex_dir else load_facts(a.base)
     print(f"{len(facts):,} base facts in {time.time() - t0:.0f} s", flush=True)
     rel_count = Counter(r for _, r, _ in facts)
 
@@ -150,11 +154,11 @@ def main() -> None:
         return {lab: {"relation": names[int(i)][1], "via": names[int(i)][0], "cosine": round(float(sims[k, i]), 3)}
                 for k, (lab, i) in enumerate(zip(labels, sims.argmax(1)))}
 
-    doc_facts = load_facts(a.docs)
+    doc_facts = load_facts(a.docs) if a.docs else []
     doc_labels = Counter(r for _, r, _ in doc_facts)
     doc_map = nearest(sorted(doc_labels))
     q_labels = Counter()
-    for line in open(a.parses):
+    for line in (open(a.parses) if a.parses else []):
         qg = json.loads(line).get("query_graph") or {}
         for _, r, _ in qg.get("edges", []):
             q_labels[r.strip().lower()] += 1
