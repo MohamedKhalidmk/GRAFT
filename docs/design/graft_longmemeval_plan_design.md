@@ -1,7 +1,7 @@
 # GRAFT on LongMemEval: the plan after the diagnosis (design, 2026-11-22)
 
 > Decisions by the user, 2026-11-22. Baseline: **G35** (mode C + T-REx guide, 50 facts). Every change is a new
-> candidate with a fresh ID in the [registry](../REGISTRY.md). Companion designs:
+> candidate with a fresh ID in the [registry](../reference/REGISTRY.md). Companion designs:
 > [adaptive retrieval](graft_adaptive_retrieval_design.md) (G39, G40), [writer fix](graft_writer_fix_design.md).
 
 ## What the diagnosis found (LongMemEval dev, 76 items; Flotilla run log 2026-11-22)

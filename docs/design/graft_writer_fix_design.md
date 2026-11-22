@@ -1,7 +1,7 @@
 # Writer fix for LongMemEval builds (design, 2026-11-22)
 
 > Diagnosis behind it: Flotilla run log 2026-11-22, "Memory-route diagnosis" (LongMemEval dev items). Candidates
-> ([registry](../REGISTRY.md)): G35 is the method; what changes here is how its graph is written.
+> ([registry](../reference/REGISTRY.md)): G35 is the method; what changes here is how its graph is written.
 
 ## What the diagnosis found
 

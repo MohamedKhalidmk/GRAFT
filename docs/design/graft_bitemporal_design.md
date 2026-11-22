@@ -1,6 +1,6 @@
 # Time in the graph: bitemporal facts (design, 2026-11-22)
 
-> Idea from the user, 2026-11-22. New candidate **G46** in the [registry](../REGISTRY.md). Built only after writer v2's
+> Idea from the user, 2026-11-22. New candidate **G46** in the [registry](../reference/REGISTRY.md). Built only after writer v2's
 > dev results (G41/G42, [plan](graft_longmemeval_plan_design.md)), on the better writer arm.
 
 ## Question

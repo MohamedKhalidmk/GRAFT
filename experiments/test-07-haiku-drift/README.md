@@ -2,11 +2,11 @@
 
 | Test | Date | Status | Current run |
 |---|---|---|---|
-| 07 | 2026-11-21 | done; the check runs in every paid Haiku batch | [run-01](runs/run-01/) |
+| 07 | 2026-11-21 | done; the check runs in every paid Haiku batch | [run-01](runs/run-01) |
 
 ## Candidates and setups
 
-IDs from the [registry](../../docs/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+IDs from the [registry](../../docs/reference/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
 answer cap, benchmark and scoring; old run folders keep their names.
 
 | Candidate | Setup | Row in this test |

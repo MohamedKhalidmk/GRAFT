@@ -6,7 +6,7 @@
 
 ## Candidates and setups
 
-IDs from the [registry](../../docs/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+IDs from the [registry](../../docs/reference/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
 answer cap, benchmark and scoring; old run folders keep their names.
 
 | Candidate | Setup | Row in this test |
@@ -55,7 +55,7 @@ Same graph and questions as test 01, mode C as baseline (38%). Free checks first
 
 ## Decision
 
-Mode C with GOAt stays; none of the variants is kept. Source: Flotilla docs/run_log.md (2026-11-19/20 entries).
+Mode C with GOAt stays; none of the variants is kept. Source: Flotilla docs/reference/run_log.md (2026-11-19/20 entries).
 
 ## Revisions
 

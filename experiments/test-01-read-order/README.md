@@ -6,7 +6,7 @@
 
 ## Candidates and setups
 
-IDs from the [registry](../../docs/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+IDs from the [registry](../../docs/reference/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
 answer cap, benchmark and scoring; old run folders keep their names.
 
 | Candidate | Setup | Row in this test |
@@ -44,7 +44,7 @@ Claude Haiku 5.5 writes the graph once from the 537 FC chunks (empty start; D ex
 | BM25 | 1 | 4 | 32 |
 | HippoRAG 2 | 0 | 15 | |
 
-With room to answer, A, B, C and D do not differ; the 16-token gaps came from cut-off answers. Retrieval is the limit: the gold fact reaches the model in 51 of 100 questions. Full write-up: [docs/experiments.md](../../docs/experiments.md).
+With room to answer, A, B, C and D do not differ; the 16-token gaps came from cut-off answers. Retrieval is the limit: the gold fact reaches the model in 51 of 100 questions. Full write-up: [docs/reference/experiments.md](../../docs/reference/experiments.md).
 
 ## Decision
 

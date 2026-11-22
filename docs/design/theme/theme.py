@@ -201,17 +201,17 @@ def _draw(ax, rows, xmax, ticks, xlabel, one_run_note=True):
         s.set_visible(False)
 
 
-# ------------------------------------------------------------------ registry (docs/REGISTRY.md)
+# ------------------------------------------------------------------ registry (docs/reference/REGISTRY.md)
 _REG = None
 
 
 def registry():
-    """run name -> (candidate, setup), from the setup table of docs/REGISTRY.md (the frozen IDs)."""
+    """run name -> (candidate, setup), from the setup table of docs/reference/REGISTRY.md (the frozen IDs)."""
     global _REG
     if _REG is None:
         import re
         _REG = {}
-        for line in (ROOT / "docs" / "REGISTRY.md").read_text().splitlines():
+        for line in (ROOT / "docs" / "reference" / "REGISTRY.md").read_text().splitlines():
             m = re.match(r"\| (S\d+) \| ([^|]+?) \| .*\| ([^|]*`[^|]*) \|\s*$", line)
             if m:
                 for name in re.findall(r"`([^`]+)`", m.group(3)):

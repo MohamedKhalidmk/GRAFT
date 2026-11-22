@@ -2,11 +2,11 @@
 
 | Test | Date | Status | Current run |
 |---|---|---|---|
-| 05 | 2026-11-21 | done on Haiku (Qwen pending) | [run-02](runs/run-02/) |
+| 05 | 2026-11-21 | done on Haiku (Qwen pending) | [run-02](runs/run-02) |
 
 ## Candidates and setups
 
-IDs from the [registry](../../docs/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+IDs from the [registry](../../docs/reference/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
 answer cap, benchmark and scoring; old run folders keep their names.
 
 | Candidate | Setup | Row in this test |

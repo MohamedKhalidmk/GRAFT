@@ -1,8 +1,8 @@
 # GRAFT experiments
 
-Each test has a README (Question, Setup, Result, Decision, Revisions), `config.yaml` naming the run configs, `runs/run-NN/` with the small per-run files, and `table.csv`, `table.md` and `figure.png` built by its `make_table.py` from those runs. Designs live in [docs/design/](../docs/design/). Old runs are never edited: a fix or rerun is a new run-NN and a Revisions line.
+Each test has a README (Question, Setup, Result, Decision, Revisions), `config.yaml` naming the run configs, `runs/run-NN/` with the small per-run files, and `table.csv`, `table.md` and `figure.png` built by its `make_table.py` from those runs. Designs live in [docs/design/](../docs/design). Old runs are never edited: a fix or rerun is a new run-NN and a Revisions line.
 
-Candidate IDs (G01...) and setups (S01...) are in the [registry](../docs/REGISTRY.md).
+Candidate IDs (G01...) and setups (S01...) are in the [registry](../docs/reference/REGISTRY.md).
 
 | Test | Question | Status | Current run | Decision |
 |---|---|---|---|---|
@@ -26,4 +26,4 @@ Candidate IDs (G01...) and setups (S01...) are in the [registry](../docs/REGISTR
 - [Fixed Haiku check, history](test-07-haiku-drift/haiku_canary.md) (the same 100 prompts in every paid Haiku batch)
 - [Why arm A scored 34.7 when mode C scored 38](test-07-haiku-drift/baseline_check.md) (test 07): nothing on our side changed; identical inputs score about 34 today on Haiku
 - [T-REx cleaning: everything dropped](test-04-base-graph-trex-full/runs/run-02/cleaning/dropped_items.md) (test 04 run-02, also .pdf)
-- [Read order, starting graph and baselines, full write-up](../docs/experiments.md) (test 01)
+- [Read order, starting graph and baselines, full write-up](../docs/reference/experiments.md) (test 01)

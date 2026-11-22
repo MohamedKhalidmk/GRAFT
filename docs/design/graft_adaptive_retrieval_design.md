@@ -1,6 +1,6 @@
 # Adaptive retrieval: how many facts to show (design, 2026-11-22)
 
-> IDs ([registry](../REGISTRY.md)): baseline **G35** (the T-REx guide on mode C, fixed 50 facts). New candidates
+> IDs ([registry](../reference/REGISTRY.md)): baseline **G35** (the T-REx guide on mode C, fixed 50 facts). New candidates
 > **G39** (drop cutoff) and **G40** (drop cutoff, then Qwen asks for more). Idea and keep rule from the user, 2026-11-22.
 
 ## Question
