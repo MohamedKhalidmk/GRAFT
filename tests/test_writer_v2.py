@@ -6,7 +6,7 @@ from types import SimpleNamespace as NS
 
 from my_method.graph_store import GraphStore
 from my_method.schema import Schema
-from my_method.writer import CHAT_RULES, LLMWriter, salvage_facts
+from my_method.writer import CHAT_RULES, LLMWriter, parse_facts, salvage_facts
 
 REPO = Path(__file__).resolve().parent.parent
 
@@ -84,3 +84,19 @@ def test_gateway_thinking_switch(monkeypatch):
     OpenAIBackend("http://x", "qwen").create(params)
     OpenAIBackend("http://x", "qwen", thinking=True).create(params)
     assert [s["extra_body"]["chat_template_kwargs"]["enable_thinking"] for s in sent] == [False, True]
+
+
+def test_bare_list_of_facts_is_read(tmp_path):
+    """Checks that an extraction reply given as a bare JSON list of facts, whole or cut off, is read as the facts list.
+    Guards against: a session's facts thrown away because Qwen answered [...] instead of {"facts": [...]}."""
+    fact = {"subject": "user", "relation": "place of residence", "object": "Canada", "serial": None, "span": "I live in Canada now."}
+    two = json.dumps([fact, {**fact, "relation": "preferred currency", "object": "Canadian dollars"}], indent=2)
+    assert parse_facts(two)["facts"][1]["object"] == "Canadian dollars"
+    assert parse_facts("```json\n" + json.dumps([fact]) + "\n```") == {"facts": [fact]}   # one fact, fenced
+    assert parse_facts(json.dumps({"facts": [fact]})) == {"facts": [fact]}                 # the asked shape still works
+    assert salvage_facts(two[:two.rfind("Canadian")]) == {"facts": [fact]}                 # a cut-off bare list
+    w = _writer(FakeLLM([(two, "end_turn")]), tmp_path, prompt="chat_v2")
+    w._chunk = 0
+    assert [f.object for f in w.extract("I live in Canada now, prices in Canadian dollars please.")] == ["Canada", "Canadian dollars"]
+    log = [json.loads(l) for l in open(tmp_path / "replies.jsonl")]
+    assert [r["result"] for r in log] == ["parsed"]

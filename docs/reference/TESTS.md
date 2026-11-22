@@ -1,6 +1,6 @@
 # Tests (GRAFT)
 
-53 tests in 16 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
+54 tests in 16 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
 
 ## [tests/test_adaptive.py](../../tests/test_adaptive.py)
 
@@ -166,6 +166,7 @@ Writer v2 (G41/G42, docs/design/graft_longmemeval_plan_design.md): reply log, sa
 | `test_reply_log_retry_and_salvage` | Checks that the writer retries an unparseable reply, salvages a cut-off one on the first try, and logs every attempt with its outcome. | failed or truncated writer replies vanishing without a trace in the reply log or the writer stats. |
 | `test_chat_prompt_only_when_asked` | Checks that the chat writer rules go into the system prompt, before the JSON instruction, only for the chat_v2 prompt. | the chat rules leaking into the default writer prompt and changing results on the other benchmarks. |
 | `test_gateway_thinking_switch` | Checks that the local OpenAI backend sends enable_thinking false by default and true only when thinking is switched on. | Qwen thinking by default as the writer and spending its token cap on reasoning instead of facts. |
+| `test_bare_list_of_facts_is_read` | Checks that an extraction reply given as a bare JSON list of facts, whole or cut off, is read as the facts list. | a session's facts thrown away because Qwen answered [...] instead of {"facts": [...]}. |
 
 ## Gaps
 

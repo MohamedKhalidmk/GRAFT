@@ -234,13 +234,20 @@ SUPERSEDE_LINE = ("- SUPERSEDE: the fact is a newer version of a stored fact wit
                   "and marked outdated.\n")
 
 
+def _list_first(text: str) -> bool:
+    """True if the reply's JSON starts with a list: a bare list of facts, [{...}, ...], instead of {"facts": [...]}."""
+    i, j = text.find("["), text.find("{")
+    return i >= 0 and (j < 0 or i < j)
+
+
 def salvage_facts(text: str) -> dict | None:
     """From an extraction reply cut off at the token cap (or otherwise broken), every complete fact object of its
-    "facts" list: {"facts": [...]} with those, or None if there is none."""
-    i = (text or "").find('"facts"')
-    if i < 0:
+    "facts" list, or of a bare list of facts: {"facts": [...]} with those, or None if there is none."""
+    text = text or ""
+    i = text.find('"facts"')
+    if i < 0 and not _list_first(text):
         return None
-    dec, facts, pos = json.JSONDecoder(), [], text.find("[", i) + 1
+    dec, facts, pos = json.JSONDecoder(), [], text.find("[", max(i, 0)) + 1
     if pos <= 0:
         return None
     while True:
@@ -255,6 +262,20 @@ def salvage_facts(text: str) -> dict | None:
             facts.append(obj)
         pos = end
     return {"facts": facts} if facts else None
+
+
+def parse_facts(text: str) -> dict:
+    """An extraction reply: {"facts": [...]} as asked, or a bare list of facts [{...}, ...] (Qwen sometimes answers
+    that way; 209 of G41's first 212 failed extractions did), returned as {"facts": [...]}. Raises like parse_json."""
+    if _list_first(text):
+        start, end = text.find("["), text.rfind("]")
+        if end < start:
+            raise ValueError("unclosed JSON list in reply")
+        items = json.loads(text[start:end + 1])
+        if not isinstance(items, list):
+            raise ValueError("no JSON list in reply")
+        return {"facts": [f for f in items if isinstance(f, dict)]}
+    return parse_json(text)
 
 
 def parse_json(text: str) -> dict:
@@ -392,7 +413,7 @@ class LLMWriter:
             call = self.llm.complete(system, user, self.max_tokens)
             text, stop = call.text, getattr(call, "stop_reason", None)
             try:
-                out, how = parse_json(text), "parsed"
+                out, how = (parse_facts(text) if kind == "extract" else parse_json(text)), "parsed"
             except (ValueError, json.JSONDecodeError):
                 out = salvage_facts(text) if kind == "extract" else None
                 how = "salvaged" if out else "failed"
