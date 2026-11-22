@@ -66,7 +66,7 @@ History: draft 1 numbered Embedding RAG (bge-small) as a candidate; it is a base
 | G39 | G35 with a drop cutoff: G35's ranking, first k facts, k at the largest score drop (10-100, pool 200) | (new, 2026-11-22) | 09 | running | design: [graft_adaptive_retrieval_design.md](../design/graft_adaptive_retrieval_design.md) |
 | G40 | G39, then Qwen may ask for 50 more facts (at most 3 asks, cap 200, stop when nothing new) | (new, 2026-11-22) | 09 | running | as G39 |
 | G41 | G35 on graphs from writer v2 (chat prompt, reply log, salvage), thinking off | (new, 2026-11-22) | LongMemEval dev | running | design: [graft_longmemeval_plan_design.md](../design/graft_longmemeval_plan_design.md) |
-| G42 | G41 with Qwen thinking on in the build, writer cap 16,384 | (new, 2026-11-22) | LongMemEval dev | running | as G41 |
+| G42 | G41 with Qwen thinking on in the build, writer cap 16,384 | (new, 2026-11-22) | LongMemEval dev | dropped | dropped by the user 2026-11-22: 336 of 358 extraction calls stopped at the 16,384-token cap with an empty reply (the thinking used the budget); jobs Fir 5133097-5133100 cancelled after 1 h 49 min, no graph finished. G43 and G46 build on G41 |
 | G43 | the better of G41/G42 with the user node (first-person questions link "user") | (new, 2026-11-22) | LongMemEval dev | designed | as G41 |
 | G44 | G43 with a chat guide instead of the T-REx guide | (new, 2026-11-22) | LongMemEval dev | designed | Dialogue NLI (user, 2026-11-22); leakage check and guide build done (Flotilla run log 2026-11-22) |
 | G45 | G43 without any guide (mode C alone) | (new, 2026-11-22) | LongMemEval dev | designed | the no-guide control for G43/G44 |
