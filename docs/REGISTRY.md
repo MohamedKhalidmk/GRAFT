@@ -63,6 +63,13 @@ History: draft 1 numbered Embedding RAG (bge-small) as a candidate; it is a base
 | G37 | G36 + 5 labelled background facts | test 06 **arm D**, "background", `exp_real_tg_d_background` | 06 | scored | 17.7; not adopted |
 | G38 | G35 + working memory in the graph (v2), the guide's chain cited from the first step | test 06 **arm E**, "guide + working memory", `exp_real_tg_e_guide_wm_v2`, `exp_qwen_empty_e_guide_wm_v2`, `exp_qwen1024_e_guide_wm_v2_r0..2` | 06, 08 | scored | Haiku 46.7, level with the guide at 2x cost: **parked, not dropped** (user); Qwen at 1,024 running |
 
+| G39 | G35 with a drop cutoff: G35's ranking, first k facts, k at the largest score drop (10-100, pool 200) | (new, 2026-11-22) | 09 | running | design: [graft_adaptive_retrieval_design.md](design/graft_adaptive_retrieval_design.md) |
+| G40 | G39, then Qwen may ask for 50 more facts (at most 3 asks, cap 200, stop when nothing new) | (new, 2026-11-22) | 09 | running | as G39 |
+| G41 | G35 on graphs from writer v2 (chat prompt, reply log, salvage), thinking off | (new, 2026-11-22) | LongMemEval dev | running | design: [graft_longmemeval_plan_design.md](design/graft_longmemeval_plan_design.md) |
+| G42 | G41 with Qwen thinking on in the build, writer cap 16,384 | (new, 2026-11-22) | LongMemEval dev | running | as G41 |
+| G43 | the better of G41/G42 with the user node (first-person questions link "user") | (new, 2026-11-22) | LongMemEval dev | designed | as G41 |
+| G44 | G43 with a chat guide instead of the T-REx guide | (new, 2026-11-22) | LongMemEval dev | designed | dataset to be chosen by the user |
+| G45 | G43 without any guide (mode C alone) | (new, 2026-11-22) | LongMemEval dev | designed | the no-guide control for G43/G44 |
 Not a candidate: the **Haiku check** (`exp_real_replay38`, `exp_real_canary_replay38`) re-answers G08's saved
 2026-11-13 facts with no retrieval; it checks Haiku, not a method. It keeps its name and has a setup (S101).
 
@@ -246,4 +253,4 @@ setup column.
 - Setup IDs are one sequence across both repos (GRAFT S01-S101, Flotilla S102 onward); free-check setups have IDs too.
 - Qwen setups that never finished (S50, S52, S54: Qwen on the full T-REx candidates, jobs cancelled before an answer)
   keep their IDs.
-- Next free IDs: G39, S147 (shared with Flotilla).
+- Next free IDs: G46, S147 (shared with Flotilla). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
