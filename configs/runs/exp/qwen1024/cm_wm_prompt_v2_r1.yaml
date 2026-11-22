@@ -1,0 +1,23 @@
+# FREE (Qwen, test 08 run-02, user 2026-11-21): cm_wm_prompt_v2 at a 1,024-token answer cap, repeat 1 as its own job
+# (vLLM seed 20261119+1, VLLM_SEED). Same graph, prompts and settings as configs/runs/exp/qwen/cm_wm_prompt_v2_empty.yaml otherwise:
+# at 256 tokens 26-35% of Qwen's one-call answers were cut before a final answer.
+run_name: exp_qwen1024_cm_wm_prompt_v2_r1
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  max_facts: 50
+  retrieval_workers: 8
+  working_memory: prompt_only
+  wm_step_prompt: v2
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+data:
+  length: 262k
+  splits:
+  - mh
+llm:
+  model: qwen
+  mode: local
+  answer_max_tokens: 1024
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1

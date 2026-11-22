@@ -18,7 +18,7 @@ C=${SLURM_TMPDIR:-$HOME/scratch/flotilla/cache}
   source "$FLO/scripts/trillium/modules.sh"
   export HF_HUB_OFFLINE=1 VLLM_CACHE_ROOT="$C/vllm" TRITON_CACHE_DIR="$C/triton" TORCHINDUCTOR_CACHE_DIR="$C/inductor" \
          XDG_CACHE_HOME="$C" HUMMING_CACHE_DIR="$C/humming" HUMMING_TMP_DIR="$C/humming-tmp" FLASHINFER_WORKSPACE_BASE="$C"
-  exec "$FLO/envs/flotilla/bin/vllm" serve "$MODEL" --served-model-name qwen --port 8000 --seed 20261119 \
+  exec "$FLO/envs/flotilla/bin/vllm" serve "$MODEL" --served-model-name qwen --port 8000 --seed ${VLLM_SEED:-20261119} \
        --max-model-len 65536 --gpu-memory-utilization 0.85 --max-num-seqs 64 --reasoning-parser qwen3
 ) > "vllm-$SLURM_JOB_ID.log" 2>&1 &
 VLLM=$!
