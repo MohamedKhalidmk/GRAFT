@@ -5,8 +5,11 @@ losing accuracy against G35's fixed 50 facts? Design and keep rule: [graft_adapt
 
 Keep rule (user, 2026-11-22, before any result): keep a candidate if it beats G35 by more than the repeat spread, or
 matches it (within the spread) with clearly fewer facts; "clearly fewer" = at least 30% fewer facts shown per question
-(proposed in the design, still to be confirmed by the user).
+(proposed in the design; not confirmed by the user, 2026-11-22).
 
 Setup: FactConsolidation multi-hop 262k, 100 questions, Haiku-built graph (2026-11-13; 1 parse failure, not affected by
 the bare-list writer bug); answers by Qwen3.8-27B W4A16 on a 3g.40gb H100 slice (Nibi), 1,024-token cap, one repeat per
 job, all on 2026-11-22. Results: [runs/run-01](runs/run-01/).
+
+Decision (user, 2026-11-22): G39 and G40 stay undecided; G39 lost by 1 in every same-day pair with lower gold in the
+facts shown (56% against 59%). Both go into the LongMemEval retrieval comparison after the G41 rebuild.

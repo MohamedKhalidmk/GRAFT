@@ -11,6 +11,6 @@ Excluded: G35 r2 28366769 and G40 r2 28413036 (killed by the port-8000 clash, no
 each, model start included. G35 r0 and r1 predate the facts_shown field; G35 always shows 50. "Calls" = one question
 parse for the guide plan plus one answer (all parses booked on question 0), plus G40's asks.
 
-Keep rule: G39 is 1.0 below G35, equal to the repeat range (within the spread at its edge), with 34% fewer facts:
-kept if the 30% threshold is confirmed. G40 is within the spread (-0.7) but shows 36% more facts and makes 40% more
-calls: it does not beat G35 and is not cheaper, so the rule does not keep it (dropping needs the user's yes).
+Decision (user, 2026-11-22): the 30% bar is not confirmed. G39 lost by 1 in every same-day pair and has lower gold
+in the facts shown (56% against 59%); G40 neither beats G35 nor is cheaper. Both stay undecided and go into the LongMemEval
+retrieval comparison after the G41 rebuild (fixed 50, 100, 200, G39, G40; Flotilla STATUS row 24).
