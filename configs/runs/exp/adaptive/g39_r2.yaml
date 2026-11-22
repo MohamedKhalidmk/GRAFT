@@ -1,0 +1,27 @@
+# FREE (GRAFT test 09 run-01): Qwen at 1,024 tokens, repeat 2 as its own job (seed 20261119+2); same day as G35 (qwen1024 b_guide_r2).
+# G39: drop cutoff, 10-100 of a 200-fact pool, G35's order.
+run_name: exp_qwen1024_g39_r2
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  max_facts: 200
+  trex_guide: results/checkpoints/trex_guide.json
+  guide_linking: true
+  guide_planning: true
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+  max_tokens: 40000
+  adaptive: drop
+  min_facts: 10
+  drop_max: 100
+data:
+  length: 262k
+  splits:
+  - mh
+llm:
+  model: qwen
+  mode: local
+  answer_max_tokens: 1024
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1
