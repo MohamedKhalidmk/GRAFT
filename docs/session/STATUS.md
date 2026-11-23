@@ -5,20 +5,23 @@ Same file in both repos (Flotilla's copy is the source; `scripts/sync_session_do
 ## RL router start
 
 Rule (user, 2026-11-23): every report updates the estimates below from the queues, and says plainly when RL (row 12)
-is the next thing to run. Estimates are earliest finishes, from the queue state at the time shown and last night's
-waits; a step's estimate moves when a step above it moves. Checked 2026-11-23 05:19 (Mountain).
+is the next thing to run. Estimates are earliest finishes, from the queue state at the time shown; a step's estimate
+moves when a step above it moves. Checked 2026-11-23 06:00 (Mountain). Target (user, 2026-11-23): everything by
+24 Nov. Fixed limit: Nibi is down for maintenance from 24 Nov 07:50 to 25 Nov 16:00 (reservation NibiMaintenance).
 
-RL is not next yet: 6 steps remain, the first still waiting for a GPU (Nibi, ahead of test 10).
+RL is not next yet: 6 steps remain. Speed-ups in place (2026-11-23): the G41 rebuild split into 76 one-history jobs
+with a 3 h limit (the old 5 h limit kept them out of the main GPU partition), each with a twin on the other cluster;
+toy gate and F36 replay moved from whole H100s to 3g.40gb slices (twins where the data exists).
 
 | Step | Rows | State | Waiting on | Estimated finish |
 |---|---|---|---|---|
-| 1. G41 rebuild of the 76 dev histories | 1, 40 | running (queued) | G41 first (you, 2026-11-23): the 16 Nibi slice jobs only, Fir copies cancelled (Fir rank about 842 of 1,116 pending H100 jobs, fair share 0.17; ReqNodeNotAvail is Slurm naming a drained node, no reservation or constraint); test 10 held until all 16 start | none of the 16 Nibi jobs had started after 4 h (rank about 3,364 of 9,691 pending on Nibi); if they start by about 02:50 on 24 Nov they can finish before the Nibi maintenance (24 Nov 07:50), otherwise after it: 2026-11-24 or later |
-| 2. Writer v2 decision | 1, 2, 23 | queued | step 1, then Memory accuracy on the new graphs (Qwen, Haiku judge with your key), the supersede toy rerun, then your yes | 2026-11-24 to 25 |
-| 3. F36 replay and the F37-F40 pilots | 28, 32 | queued | F36: Fir 5208816 (Fir only), then the Haiku judge with your key. F37-F40: toy gate (Fir 5226371 / Nibi 28477059), then the 193-question pilot, then the Haiku judge | 2026-11-24 to 25; F36 has no estimate while Fir does not start jobs |
-| 4. LongMemEval retrieval comparison | 24, 25, 36 | queued | step 1; 5 variants x 3 repeats, then the Haiku judge with your key | 2026-11-25 |
-| 5. Full relabel | 2, 37 | queued | steps 2 to 4 and your yes; rebuild all 500 histories with the chosen writer (about 7 times step 1), rerun the Memory routes and any kept F36-F40 routes, judge (Haiku majority of 3, Sonnet tiebreak, overrides last); judge cost asked before it runs | 2026-11-27 to 28 |
-| 6. Supervised router retrain (F30, F31 on the new labels) | 2, 16 | queued | step 5 | about a day after step 5: 2026-11-28 to 29 |
-| RL (live, from the chosen router) | 12 | queued | steps 1 to 6 | starts after step 6: 2026-11-29 at the earliest |
+| 1. G41 rebuild of the 76 dev histories | 1, 40 | running (queued) | 76 one-history jobs, Nibi 28666435 on and Fir twins (one_g41/*_ids.txt), first copy to start wins | 2026-11-23 afternoon if slices free up; any history not started by about 04:50 on 24 Nov waits for Fir |
+| 2. Writer v2 decision | 1, 2, 23 | queued | step 1, then Memory accuracy (Qwen, Haiku judge with your key), the supersede toy rerun, then your yes | 2026-11-23 evening at the earliest |
+| 3. F36 replay and the F37-F40 pilots | 28, 32 | queued | F36: Fir slice 5412184, then the judge. F37-F40: toy gate slices (Fir 5412183 / Nibi 28666540), then the 193-question pilot, then the judge | 2026-11-24 |
+| 4. LongMemEval retrieval comparison | 24, 25, 36 | queued | step 1 graphs on Fir; 5 variants x 3 repeats, then the judge | 2026-11-24 |
+| 5. Full relabel | 2, 37 | queued | steps 2 to 4 and your yes; the other 424 histories rebuilt with the chosen writer, Memory routes rerun, judged (cost asked first). Pre-building the 424 now on Fir slices at low priority needs your yes | 2026-11-25 to 26 if pre-built now; 2026-11-27 to 28 otherwise |
+| 6. Supervised router retrain (F30, F31) | 2, 16 | queued | step 5 | half a day after step 5 |
+| RL (live, from the chosen router) | 12 | queued | steps 1 to 6 | 2026-11-26 at the earliest with the pre-build; 24 Nov only if RL starts on the current labels and routers (your call) |
 
 ## Open experiments
 
