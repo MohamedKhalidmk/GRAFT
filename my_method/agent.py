@@ -470,6 +470,12 @@ class GraftAgent:
                         added.append(p)
             asks.append({"open": [f"P{n} {sc}" for n, sc in wanted], "passages_added": len(added),
                          "tokens_added": sum(p.tokens() for p in added)})
+            if not added:  # the ask opened nothing new (already shown, or an unknown passage): answer now
+                memory = block()
+                chat = format_chat(message=memory + "\n" + question.query, system_message=system)
+                call = self.llm.complete(chat[0]["content"], chat[1]["content"], self.config["answer_max_tokens"])
+                calls += 1
+                break
         final = PassageResult(shown, {**res.outdated_notes, **_outdated_notes(self.store, idx.links[0], shown[len(res.passages):])},
                               res.summary, res.link)
         return call, memory, final, {"asks": len(asks), "calls": calls, "log": asks,

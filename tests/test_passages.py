@@ -220,3 +220,28 @@ def test_reading_arm_opens_text_counts_tokens_and_stops_after_three_asks(tmp_pat
     assert len(seen[1]) > len(seen[0]) and r["log"][0]["passages_added"] > 0
     assert r["tokens_added"] == sum(a["tokens_added"] for a in r["log"]) and all(a["tokens_added"] <= 3 * 40 for a in r["log"])
     assert meta["retrieved_text"] in seen[3] and meta["tokens_shown"] >= meta["passage_tokens"]
+
+
+def test_reading_stops_when_an_ask_opens_nothing_new(tmp_path):
+    """Checks that when an OPEN request adds no new passage (the toy check on real Qwen asked for P1 AROUND three times in a row), the loop stops asking and the next call gets the plain question.
+    Guards against: G53 spending its asks and Qwen calls on requests for text Qwen already has."""
+    from types import SimpleNamespace as NS
+    from baselines.common.protocol import Task
+    from my_method.agent import GraftAgent
+    chunks = ["1. Anna Berg is a citizen of Norway. 2. Norway has the capital Oslo. 3. Bo Lund plays chess.",
+              "4. Anna Berg is a citizen of Chile. 5. Chile has the capital Santiago."]
+    gw = type("G", (), {"anthropic_base_url": "http://unused"})()
+    task = Task(sub_datasets=["factconsolidation_mh_6k"], chunk_size=512, chunks=chunks, questions=[])
+    cfg = {"model": "claude-haiku-5-5", "writer": "rule", "revisions": True, "embedding_model": "hash:16",
+           "work_dir": str(tmp_path / "w"), "retrieval": "ppr", "max_facts": 5, "max_tokens": 5120,
+           "include_outdated": False, "goat_targets": 3, "goat_topk": 12, "answer_max_tokens": 64,
+           "passages": {"arm": "guided", "budget_tokens": 4096, "reading": True, "max_asks": 3}}
+    agent = GraftAgent(cfg, gw, task)
+    agent.memorize(chunks)
+    replies = iter(["OPEN P1 AROUND", "Answer: Santiago"])
+    seen = []
+    agent.llm = NS(complete=lambda system, user, mt: (seen.append(user), NS(text=next(replies), stop_reason="end_turn"))[1])
+    text, meta = agent.answer(NS(q_index=0, query="What is the capital of the country Anna Berg is a citizen of?"))
+    r = meta["reading"]
+    assert text == "Answer: Santiago" and r["calls"] == 2 and r["asks"] == 1 and r["log"][0]["passages_added"] == 0
+    assert "OPEN P<number>" in seen[0] and "OPEN P<number>" not in seen[1]

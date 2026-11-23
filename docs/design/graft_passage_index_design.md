@@ -61,7 +61,8 @@ something is missing, Qwen may reply with only `OPEN P<n> AROUND` (the passages 
 chunk or session) or `OPEN P<n> SESSION` (the rest of that chunk or session, in order), at most 3 lines per reply.
 Each line adds at most 1,024 tokens, never repeats a shown passage, and the added passages are numbered on after the
 shown ones (so they can be opened in turn) and carry outdated marks like the rest. At most 3 asks; after the third,
-or after a reply that is not a request, the plain question is answered. A reply is a request only when its last
+after a reply that is not a request, or after an ask that opens nothing new (added after the toy check, where Qwen
+repeated the same request), the plain question is answered. A reply is a request only when its last
 non-empty line is an OPEN line. Every added token is counted: the log keeps each ask's lines, passages and tokens, and
 the tokens shown are those of the context on the final call. Tests with scripted replies; a toy check on real Qwen
 (first 10 FactConsolidation questions) before any run.
