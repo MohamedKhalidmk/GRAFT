@@ -119,3 +119,47 @@ def test_passage_retrieval_entry_point_for_the_bridge():
         assert out["passage_links"]["exact"] >= 2 and out["passages_total"] > 3
     with pytest.raises(ValueError):
         passage_retrieval(st, CHUNKS, [], set(), "q", {"arm": "dense"})
+
+
+def test_passage_index_matches_the_per_question_functions():
+    """Checks that the cached PassageIndex (built once per history) chooses the same passages as the per-question functions for all three arms.
+    Guards against: the FactConsolidation runs (one index, 100 questions) showing different passages than the tested functions would."""
+    from my_method.passages import PassageIndex
+    st, F = toy_store()
+    ps = split_passages(CHUNKS)
+    cfg = PassageConfig(budget_tokens=80)
+    idx = PassageIndex(st, CHUNKS, cfg, embed=fake_embed)
+    pids = lambda r: [p.pid for p in r.passages]
+    assert pids(idx.guided([F["tor"], F["lyon"]], set())) == pids(guided_passages(st, ps, [F["tor"], F["lyon"]], set(), cfg))
+    q = "Where did the user move to?"
+    assert pids(idx.hipporag(q)) == pids(hipporag_passages(st, ps, q, fake_embed, cfg))
+    assert pids(idx.bm25(q)) == pids(bm25_passages(st, ps, q, cfg))
+
+
+def test_agent_answers_from_passages_on_factconsolidation_chunks(tmp_path):
+    """Checks GRAFT's agent with a passages config on FactConsolidation-style chunks (numbered fact lines): each arm puts its passage block (not fact lines) in the benchmark prompt within the budget, the guided arm uses the guided region and the HippoRAG and BM25 arms never run GRAFT's retrieval, and the log carries passages shown, tokens and link counts.
+    Guards against: a passage arm that silently answers from G35's fact lines, a baseline that secretly uses the guide, or a run with nothing to report."""
+    from types import SimpleNamespace as NS
+    from baselines.common.protocol import Task
+    from my_method.agent import GraftAgent
+    chunks = ["1. Anna Berg is a citizen of Norway.\n2. Norway has the capital Oslo.",
+              "3. Anna Berg is a citizen of Chile.\n4. Chile has the capital Santiago.\n5. Bo Lund plays chess."]
+    gw = type("G", (), {"anthropic_base_url": "http://unused"})()
+    task = Task(sub_datasets=["factconsolidation_mh_6k"], chunk_size=512, chunks=chunks, questions=[])
+    for arm in ("guided", "hipporag", "bm25"):
+        cfg = {"model": "claude-haiku-5-5", "writer": "rule", "revisions": True, "embedding_model": "hash:16",
+               "work_dir": str(tmp_path / arm), "retrieval": "ppr", "max_facts": 5, "max_tokens": 5120,
+               "include_outdated": False, "goat_targets": 3, "goat_topk": 12, "answer_max_tokens": 64,
+               "passages": {"arm": arm, "budget_tokens": 30, "header": "PASSAGES (source text, most relevant first):"}}
+        agent = GraftAgent(cfg, gw, task)
+        agent.memorize(chunks)
+        prompts = []
+        agent.llm = NS(complete=lambda system, user, mt: (prompts.append(user), NS(text="Answer: Santiago", stop_reason="end_turn"))[1])
+        if arm != "guided":
+            agent._region = lambda q: (_ for _ in ()).throw(AssertionError("baseline ran GRAFT retrieval"))
+        text, meta = agent.answer(NS(q_index=0, query="What is the capital of the country Anna Berg is a citizen of?"))
+        assert text == "Answer: Santiago" and meta["passage_arm"] == arm
+        assert prompts[0].startswith("PASSAGES (source text") and "Memory 1:" not in prompts[0]
+        assert meta["retrieved_text"] in prompts[0] and 0 < meta["passages_shown"] and meta["passage_tokens"] <= 30
+        assert sum(meta["passage_links"].values()) == agent.store.stats()["facts"]
+        assert ("facts_ranked" in meta) == (arm == "guided")

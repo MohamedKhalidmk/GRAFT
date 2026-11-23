@@ -148,6 +148,7 @@ class GraftAgent:
             linker.cache, linker.log = meta["link_cache"], meta["link_log"]
 
     def memorize(self, chunks: list[str]) -> dict:
+        self._chunks = list(chunks)  # the passage arms (G49-G51) read the history's own text
         shared = self.config.get("shared_graph")  # one built graph reused by several read variants
         shared = REPO / shared if shared else None
         if shared and Path(shared).exists():
@@ -367,16 +368,9 @@ class GraftAgent:
                 self._working_memory_all()
             text, meta = self.wm[question.q_index]
             return text, {k: v for k, v in meta.items() if k != "working_memory"}
-        workers = self.config.get("retrieval_workers", 1)
-        if workers > 1 and not self.regions:
-            self._retrieve_all(workers)
-        if not self.regions and (self.retriever.cfg.query_graph or self.retriever.cfg.guide_planning):
-            self._prepare_query_graphs([question_text(question.query)])
-        region = self.regions.get(question.q_index)
-        if region is None:
-            region = self.retriever.retrieve(question_text(question.query))
-            self._seen_regions = getattr(self, "_seen_regions", []) + [region]
-            self._check_regions(self._seen_regions, final=False)
+        if self.config.get("passages"):  # G49-G51 (GRAFT test 10): source passages instead of fact lines
+            return self._answer_passages(question)
+        region = self._region(question)
         if self.config.get("ask_more"):  # G40: Qwen may ask for the next batch of the pool
             call, memory, asks = self._answer_asking(region, question)
         else:
@@ -391,6 +385,52 @@ class GraftAgent:
                            "fact_sources": region.sources, "query_graph": region.query_graph,
                            "plan": getattr(region, "plan", None)}
 
+
+    def _region(self, question: Question) -> Region:
+        """The guided retrieval's region for one question (all questions at once with retrieval_workers > 1)."""
+        workers = self.config.get("retrieval_workers", 1)
+        if workers > 1 and not self.regions:
+            self._retrieve_all(workers)
+        if not self.regions and (self.retriever.cfg.query_graph or self.retriever.cfg.guide_planning):
+            self._prepare_query_graphs([question_text(question.query)])
+        region = self.regions.get(question.q_index)
+        if region is None:
+            region = self.retriever.retrieve(question_text(question.query))
+            self._seen_regions = getattr(self, "_seen_regions", []) + [region]
+            self._check_regions(self._seen_regions, final=False)
+        return region
+
+    def _answer_passages(self, question: Question) -> tuple[str, dict]:
+        """GRAFT test 10 (docs/design/graft_passage_index_design.md): the history's own passages, chosen by the guided
+        ranking (guided, G49), HippoRAG 2-style PPR without the guide (hipporag, G50) or BM25 (bm25, G51), all cut to
+        one token budget, in the benchmark's RAG prompt in place of the fact lines."""
+        from my_method.passages import PassageConfig, PassageIndex
+        settings = self.config["passages"]
+        if getattr(self, "_pindex", None) is None:
+            import numpy as np
+            cfg = PassageConfig(**{k: v for k, v in settings.items() if k in PassageConfig.__dataclass_fields__})
+
+            def embed(texts):
+                v = np.asarray(self.retriever.texts.embed_texts(texts), dtype=float)
+                return v / np.maximum(np.linalg.norm(v, axis=1, keepdims=True), 1e-12)
+            self._pindex = PassageIndex(self.store, self._chunks, cfg, embed=embed)
+            print(f"[graft] passage index ({cfg.arm}): {len(self._pindex.passages)} passages, fact links "
+                  f"{self._pindex.link_counts()}", flush=True)
+        idx = self._pindex
+        region = self._region(question) if idx.cfg.arm == "guided" else None
+        memory, res = idx.retrieve(question_text(question.query), list(region.facts) if region else None,
+                                   set(region.outdated) if region else None)
+        chat = format_chat(message=memory + "\n" + question.query,
+                           system_message=get_template(self.sub_dataset, "system", AGENT_NAME))
+        call = self.llm.complete(chat[0]["content"], chat[1]["content"], self.config["answer_max_tokens"])
+        meta = {"stop_reason": call.stop_reason, "retrieved_text": memory, "passage_arm": idx.cfg.arm,
+                "passages_shown": len(res.passages), "passage_tokens": res.tokens(),
+                "passage_outdated": len(res.outdated_notes), "passage_summary": len(res.summary),
+                "passage_links": idx.link_counts() if question.q_index == 0 else None}
+        if region is not None:
+            meta.update({"facts_ranked": len(region.facts), "plan": getattr(region, "plan", None),
+                         "linked_entities": region.linked_entities, "fallback": region.fallback})
+        return call.text, meta
 
     def _answer_asking(self, region: Region, question: Question):
         """G40 (docs/design/graft_adaptive_retrieval_design.md): show the drop-cutoff facts; on NEED MORE MEMORIES add

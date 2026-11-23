@@ -40,6 +40,7 @@ class PassageConfig:
     hippo_top_facts: int = 5       # hipporag: the question's best-matching facts seed their entities
     hippo_passage_weight: float = 0.05   # hipporag: weight of dense passage similarity in the seeds
     damping: float = 0.5           # hipporag: PageRank damping (HippoRAG 2)
+    header: str = "PASSAGES (from your earlier chat sessions with this user, most relevant first):"
 
 
 @dataclass
@@ -153,9 +154,9 @@ def _fill(order: list[str], by_id: dict[str, Passage], budget: int) -> list[Pass
 
 
 def guided_passages(store, passages: list[Passage], ranked_facts: list[str], outdated: set[str],
-                    cfg: PassageConfig) -> PassageResult:
+                    cfg: PassageConfig, links=None) -> PassageResult:
     """G49: the guided ranking's facts bring their passages in order; outdated facts mark their passage."""
-    where, how = link_facts(store, passages)
+    where, how = links or link_facts(store, passages)
     by_id = {p.pid: p for p in passages}
     chosen = _fill([where[f] for f in ranked_facts if f in where], by_id, cfg.budget_tokens)
     shown = {p.pid for p in chosen}
@@ -228,9 +229,9 @@ def bm25_passages(store, passages: list[Passage], question: str, cfg: PassageCon
     return PassageResult(chosen, {}, [], {})
 
 
-def render(store, res: PassageResult) -> str:
+def render(store, res: PassageResult, header: str = PassageConfig.header) -> str:
     """The memory block Qwen reads: dated passages (with outdated notes), then the guided arm's fact summary."""
-    lines = ["PASSAGES (from your earlier chat sessions with this user, most relevant first):"]
+    lines = [header]
     for i, p in enumerate(res.passages, 1):
         note = ""
         if p.pid in res.outdated_notes:
@@ -268,8 +269,101 @@ def passage_retrieval(store, chunks: list[str], ranked_facts: list[str], outdate
     links = {}
     for how in (res.link or link_facts(store, ps)[1]).values():
         links[how] = links.get(how, 0) + 1
-    return {"passage_block": render(store, res), "passage_arm": cfg.arm, "passage_budget": cfg.budget_tokens,
+    return {"passage_block": render(store, res, cfg.header), "passage_arm": cfg.arm, "passage_budget": cfg.budget_tokens,
             "passages": [{"pid": p.pid, "session": p.session, "date": p.date, "tokens": p.tokens(),
                           "outdated": p.pid in res.outdated_notes} for p in res.passages],
             "passage_tokens": res.tokens(), "passage_summary": res.summary, "passage_links": links,
             "passages_total": len(ps)}
+
+
+class PassageIndex:
+    """One history's passages, fact links, HippoRAG graph, passage embeddings and BM25 index, built once and reused by
+    every question (FactConsolidation runs: one history of ~17k passages and 100 questions). Same results as the
+    per-question functions above; tests check that."""
+
+    def __init__(self, store, chunks: list[str], cfg: PassageConfig, embed=None):
+        self.store, self.cfg, self.embed = store, cfg, embed
+        self.passages = split_passages(chunks, cfg.passage_tokens)
+        self.by_id = {p.pid: p for p in self.passages}
+        self.links = link_facts(store, self.passages)
+        self._graph = self._pvec = self._fvec = self._bm = None
+
+    def link_counts(self) -> dict[str, int]:
+        out: dict[str, int] = {}
+        for how in self.links[1].values():
+            out[how] = out.get(how, 0) + 1
+        return out
+
+    def guided(self, ranked_facts: list[str], outdated: set[str]) -> PassageResult:
+        return guided_passages(self.store, self.passages, ranked_facts, outdated, self.cfg, self.links)
+
+    def _build_graph(self):
+        where = self.links[0]
+        g = nx.Graph()
+        for f in self.store.facts():
+            d = self.store.fact(f)
+            s, o = f"e:{d['subject'].lower()}", f"e:{d['object'].lower()}"
+            g.add_edge(s, o, weight=g.get_edge_data(s, o, {}).get("weight", 0) + 1.0)
+            if f in where:
+                for e in (s, o):
+                    g.add_edge(where[f], e, weight=1.0)
+        for p in self.passages:
+            g.add_node(p.pid)
+        self._graph = g
+        self._facts = [f for f in self.store.facts() if not self.store.is_superseded(f)]
+        ftexts = [" ".join((self.store.fact(f)["subject"], self.store.fact(f)["relation"], self.store.fact(f)["object"]))
+                  for f in self._facts]
+        self._fvec = np.asarray(self.embed(ftexts)) if ftexts else np.zeros((0, 1))
+        self._pvec = np.asarray(self.embed([p.text for p in self.passages])) if self.passages else np.zeros((0, 1))
+
+    def hipporag(self, question: str) -> PassageResult:
+        if self.embed is None:
+            raise ValueError("the hipporag passage arm needs an embedder")
+        if self._graph is None:
+            self._build_graph()
+        cfg, store, g = self.cfg, self.store, self._graph
+        q = np.asarray(self.embed([question]))[0]
+        seeds: dict[str, float] = {}
+        if self._facts:
+            sims = self._fvec @ q
+            for i in np.argsort(-sims)[:cfg.hippo_top_facts]:
+                d = store.fact(self._facts[i])
+                for e in (f"e:{d['subject'].lower()}", f"e:{d['object'].lower()}"):
+                    seeds[e] = seeds.get(e, 0.0) + max(float(sims[i]), 0.0)
+        if self.passages:
+            psims = self._pvec @ q
+            top = max(float(psims.max()), 1e-9)
+            for p, s in zip(self.passages, psims):
+                if s > 0:
+                    seeds[p.pid] = seeds.get(p.pid, 0.0) + cfg.hippo_passage_weight * float(s) / top
+        seeds = {k: v for k, v in seeds.items() if k in g and v > 0}
+        if not seeds:
+            return PassageResult([], {}, [], self.links[1])
+        pr = nx.pagerank(g, alpha=cfg.damping, personalization=seeds, weight="weight")
+        order = sorted((p.pid for p in self.passages), key=lambda pid: -pr.get(pid, 0.0))
+        chosen = _fill(order, self.by_id, cfg.budget_tokens)
+        return PassageResult(chosen, _outdated_notes(store, self.links[0], chosen), [], self.links[1])
+
+    def bm25(self, question: str) -> PassageResult:
+        from rank_bm25 import BM25Okapi
+        if not self.passages:
+            return PassageResult([], {}, [], {})
+        tok = lambda t: [w.lower() for w in WORD.findall(t)]
+        if self._bm is None:
+            self._bm = BM25Okapi([tok(p.text) for p in self.passages])
+        scores = self._bm.get_scores(tok(question))
+        order = [self.passages[i].pid for i in np.argsort(-scores) if scores[i] > 0]
+        return PassageResult(_fill(order, self.by_id, self.cfg.budget_tokens), {}, [], {})
+
+    def retrieve(self, question: str, ranked_facts: list[str] | None = None, outdated: set[str] | None = None):
+        """The configured arm for one question: (rendered block, PassageResult)."""
+        arm = self.cfg.arm
+        if arm == "guided":
+            res = self.guided(ranked_facts or [], outdated or set())
+        elif arm == "hipporag":
+            res = self.hipporag(question)
+        elif arm == "bm25":
+            res = self.bm25(question)
+        else:
+            raise ValueError(f"unknown passage arm {arm!r}")
+        return render(self.store, res, self.cfg.header), res
