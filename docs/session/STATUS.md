@@ -2,6 +2,24 @@
 
 Same file in both repos (Flotilla's copy is the source; `scripts/sync_session_docs.py` copies it to GRAFT).
 
+## RL router start
+
+Rule (user, 2026-11-23): every report updates the estimates below from the queues, and says plainly when RL (row 12)
+is the next thing to run. Estimates are earliest finishes, from the queue state at the time shown and last night's
+waits; a step's estimate moves when a step above it moves. Checked 2026-11-23 01:06 (Mountain).
+
+RL is not next yet: 6 steps remain, the first still waiting for a GPU.
+
+| Step | Rows | State | Waiting on | Estimated finish |
+|---|---|---|---|---|
+| 1. G41 rebuild of the 76 dev histories | 1, 40 | running (queued) | 16 Nibi slice twins pending behind the 18 test 10 jobs; the 16 Fir copies wait for whole H100s with no start estimate | 2026-11-23 evening, if the twins start after test 10; Nibi maintenance from 24 Nov 07:50 pushes it past that day if they have not finished |
+| 2. Writer v2 decision | 1, 2, 23 | queued | step 1, then Memory accuracy on the new graphs (Qwen, Haiku judge with your key), the supersede toy rerun, then your yes | 2026-11-24 to 25 |
+| 3. F36 replay and the F37-F40 pilots | 28, 32 | queued | F36: Fir 5208816 (Fir only), then the Haiku judge with your key. F37-F40: toy gate (Fir 5226371 / Nibi 28477059), then the 193-question pilot, then the Haiku judge | 2026-11-24 to 25; F36 has no estimate while Fir does not start jobs |
+| 4. LongMemEval retrieval comparison | 24, 25, 36 | queued | step 1; 5 variants x 3 repeats, then the Haiku judge with your key | 2026-11-25 |
+| 5. Full relabel | 2, 37 | queued | steps 2 to 4 and your yes; rebuild all 500 histories with the chosen writer (about 7 times step 1), rerun the Memory routes and any kept F36-F40 routes, judge (Haiku majority of 3, Sonnet tiebreak, overrides last); judge cost asked before it runs | 2026-11-27 to 28 |
+| 6. Supervised router retrain (F30, F31 on the new labels) | 2, 16 | queued | step 5 | about a day after step 5: 2026-11-28 to 29 |
+| RL (live, from the chosen router) | 12 | queued | steps 1 to 6 | starts after step 6: 2026-11-29 at the earliest |
+
 ## Open experiments
 
 Rules (user, 2026-11-22): updated every time Claude reports. A row is never deleted: a finished or dropped item
@@ -54,3 +72,4 @@ log with its reason. States: queued, running, waiting on me, done, parked, dropp
 | 40 | G41 rebuild queue | G41 | running | option 2 (you, 2026-11-22): 16 Nibi 3g.40gb slice twins with a 5 h limit (28585914-28585931) next to the 16 Fir jobs; Nibi got the same code as Fir (15 files, incl. GRAFT writer.py), the gnn_default checkpoint and the same 16 shard files (md5 equal); a watcher cancels whichever copy of each shard starts second | copy the Nibi-built graphs back into cache_g41_fix on Fir, then row 1 | 2026-11-22 |
 | 41 | Guided graph + passage index (GRAFT) | G49-G51, S171-S178 | queued | design (GRAFT docs/design/graft_passage_index_design.md) and code: GRAFT my_method/passages.py (c885c2c, 6 tests on a toy history), Flotilla presets guide_passages / hippo_passages / bm25_passages and the bridge (1a1e116); fake end-to-end run on 7 toy histories passed for all presets (Fir 5233979), but GRAFT's fake writer extracts no facts from chat text, so the guided arm is checked by the unit tests, not end to end | real runs after the G41 rebuild; a toy check with the real Qwen writer if you want it before | 2026-11-22 |
 | 42 | GRAFT test 10: passage index on FactConsolidation (G49 against G35, the budget control G52, HippoRAG 2-style G50, BM25 G51, and G53 the index with reading), Qwen 4,096-token answer cap, Haiku graph, 3 repeats same day | G35, G49-G53; S179-S185 | running | built (cached index, agent path, 2 tests); smoke passed (Fir 5357744, fake answers): gold in context G35 53, G49 59, G50 47, G51 35 of 100; a passage here is a 256-token slice of a chunk (~15 unrelated numbered facts), so G49 shows ~4,100 tokens against G35 ~1,200 and a win may come from the budget; keep G49 only if it beats G35 by more than the repeat spread (you, before results). Added (you, 2026-11-22): G52 (G35 at 4,096 tokens) and G53 (reading, at most 3 asks; prompt passage_reading.v1, 3 fake tests). The 12 first jobs are held on Nibi so all six arms run the same day. G53 toy check on real Qwen passed (Fir 5364165: OPEN lines parse, loop stops, no empty answers); fixed: stop asking when an ask opens nothing new (Qwen repeated OPEN P1 AROUND). Changed (you, 2026-11-23): answer cap 4,096 for all six arms; run-01 at 1,024 superseded (15 jobs had finished, G53 cancelled at about 55 of 100), all 18 resubmitted together as run-02 | run-02: 18 Nibi jobs 28630848-28630865 released together; then make_table.py with answers at the cap per arm | 2026-11-23 |
+| 43 | RL router start: every step before live RL (row 12), with its state and estimated finish | F28; G41; F30, F31; F36-F40 | queued | 6 steps left; table "RL router start" above, estimates updated in every report; earliest RL start 2026-11-29 | G41 rebuild (step 1), on Nibi after test 10 | 2026-11-23 |
