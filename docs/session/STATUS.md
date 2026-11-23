@@ -6,7 +6,7 @@ Same file in both repos (Flotilla's copy is the source; `scripts/sync_session_do
 
 Rule (user, 2026-11-23): every report updates the estimates below from the queues, and says plainly when RL (row 12)
 is the next thing to run. Estimates are earliest finishes, from the queue state at the time shown; a step's estimate
-moves when a step above it moves. Checked 2026-11-23 06:00 (Mountain). Target (user, 2026-11-23): everything by
+moves when a step above it moves. Checked 2026-11-23 07:10 (Mountain). Target (user, 2026-11-23): everything by
 24 Nov. Fixed limit: Nibi is down for maintenance from 24 Nov 07:50 to 25 Nov 16:00 (reservation NibiMaintenance).
 
 RL is not next yet: 6 steps remain. Speed-ups in place (2026-11-23): the G41 rebuild split into 76 one-history jobs
@@ -15,9 +15,9 @@ toy gate and F36 replay moved from whole H100s to 3g.40gb slices (twins where th
 
 | Step | Rows | State | Waiting on | Estimated finish |
 |---|---|---|---|---|
-| 1. G41 rebuild of the 76 dev histories | 1, 40 | running (queued) | 76 one-history jobs with twins (Fir 5412538 on, Nibi 28666818 on; one_g41/{logi,l5.n}_ids.txt), first copy to start wins; 17 started on Fir within minutes | 2026-11-23 afternoon if slices free up; any history not started by about 04:50 on 24 Nov waits for Fir |
+| 1. G41 rebuild of the 76 dev histories | 1, 40 | running (queued) | 76 one-history jobs with twins (Fir 5427107 on, Nibi 28669780 on; one_g41/*_ids_all.txt), first copy to start wins. The 06:00 batch hung at vLLM start (shared compile caches; fixed in job.sbatch) and was cancelled | 2026-11-23 afternoon if slices free up; any history not started by about 04:50 on 24 Nov waits for Fir |
 | 2. Writer v2 decision | 1, 2, 23 | queued | step 1, then Memory accuracy (Qwen, Haiku judge with your key), the supersede toy rerun, then your yes | 2026-11-23 evening at the earliest |
-| 3. F36 replay and the F37-F40 pilots | 28, 32 | queued | F36: Fir slice 5412759, then the judge. F37-F40: toy gate slices (Fir 5412758 / Nibi 28666971), then the 193-question pilot, then the judge | 2026-11-24 |
+| 3. F36 replay and the F37-F40 pilots | 28, 32 | queued | F36: Fir slice 5412759, then the judge. F37-F40: toy gate PASSED (Nibi 28666971, 15 of 16 right, no parse failures or empty answers); pilot submitted, 8 routes x 2 parts as slice twins (Fir 5427439-56, Nibi 28669874-91), then the judge | 2026-11-23 night for the runs; judge needs your key |
 | 4. LongMemEval retrieval comparison | 24, 25, 36 | queued | step 1 graphs on Fir; 5 variants x 3 repeats, then the judge | 2026-11-24 |
 | 5. Full relabel | 2, 37 | queued | steps 2 to 4 and your yes; the other 424 histories rebuilt with the chosen writer, Memory routes rerun, judged (cost asked first). Pre-building the 424 now on Fir slices at low priority needs your yes | 2026-11-25 to 26 if pre-built now; 2026-11-27 to 28 otherwise |
 | 6. Supervised router retrain (F30, F31) | 2, 16 | queued | step 5 | half a day after step 5 |
