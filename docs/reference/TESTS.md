@@ -1,6 +1,6 @@
 # Tests (GRAFT)
 
-68 tests in 20 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
+71 tests in 20 files, in plain words. Generated from each test's docstring by `scripts/make_tests_doc.py`; to change a line, edit the docstring and rerun the script. `tests/test_tests_doc.py` fails if a test is missing here or a line is out of date. The Gaps section at the end is written by hand.
 
 ## [tests/test_adaptive.py](../../tests/test_adaptive.py)
 
@@ -131,6 +131,9 @@ Both Mem0 variants run end to end on the fake gateway (no API calls).
 | `test_passage_retrieval_entry_point_for_the_bridge` | Checks the bridge's entry point: each arm returns a rendered block, its passages with dates and tokens, the total within the budget, and the fact-to-passage link counts; an unknown arm is an error. | the Memory route receiving a block from a different arm than its preset names, or no link statistics to report. |
 | `test_passage_index_matches_the_per_question_functions` | Checks that the cached PassageIndex (built once per history) chooses the same passages as the per-question functions for all three arms. | the FactConsolidation runs (one index, 100 questions) showing different passages than the tested functions would. |
 | `test_agent_answers_from_passages_on_factconsolidation_chunks` | Checks GRAFT's agent with a passages config on FactConsolidation-style chunks (numbered fact lines): each arm puts its passage block (not fact lines) in the benchmark prompt within the budget, the guided arm uses the guided region and the HippoRAG and BM25 arms never run GRAFT's retrieval, and the log carries passages shown, tokens and link counts. | a passage arm that silently answers from G35's fact lines, a baseline that secretly uses the guide, or a run with nothing to report. |
+| `test_parse_open_takes_only_replies_that_end_in_open_lines` | Checks that an OPEN request is read only when the reply ends with OPEN lines (bold or backticks allowed, a copied explanation after the scope allowed), duplicates dropped, at most 3; an answer that merely mentions opening is not a request. | G53 treating a real answer as a request for more text, or missing a request Qwen formatted in markdown. |
+| `test_open_more_adds_neighbours_or_the_rest_of_the_chunk_within_its_cap` | Checks that AROUND adds the passages just before and after the named shown passage in its chunk, SESSION the rest of the chunk in order, already shown passages are skipped, the added text stays within open_tokens, and an unknown passage number adds nothing. | an OPEN request pulling text from another session, repeating what Qwen already has, or growing past its token cap. |
+| `test_reading_arm_opens_text_counts_tokens_and_stops_after_three_asks` | Checks GRAFT's G53 loop with scripted replies: each OPEN reply adds passages to what Qwen sees next and its tokens are logged, the reading rule is shown only while asks remain, after 3 asks the last call gets the plain question, and the final answer's context includes the opened text. | unbounded asking, asked text that never reaches Qwen, or opened tokens left out of the tokens shown. |
 
 ## [tests/test_plan_relation_check.py](../../tests/test_plan_relation_check.py)
 

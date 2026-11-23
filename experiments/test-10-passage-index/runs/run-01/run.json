@@ -1,5 +1,31 @@
-{"run": "run-01", "date": "2026-11-22", "status": "submitted",
- "jobs": {"G35": [28588394, 28588395, 28588397], "G49": [28588398, 28588399, 28588400], "G50": [28588401, 28588402, 28588403], "G51": [28588404, 28588405, 28588406]},
+{
+ "run": "run-01",
+ "date": "2026-11-22",
+ "status": "held on Nibi until G52 and G53 are ready (same day, user 2026-11-22)",
+ "jobs": {
+  "G35": [
+   28588394,
+   28588395,
+   28588397
+  ],
+  "G49": [
+   28588398,
+   28588399,
+   28588400
+  ],
+  "G50": [
+   28588401,
+   28588402,
+   28588403
+  ],
+  "G51": [
+   28588404,
+   28588405,
+   28588406
+  ]
+ },
  "where": "Nibi 3g.40gb slices, 1:30 limit, VLLM_SEED 20261119+k",
  "smoke": "Fir CPU 5357744 (fake answers, real retrieval: configs/runs/exp/passages/fake_*.yaml)",
- "results": "$HOME/scratch/sgar/results/runs/exp_passages_{g35,g49,g50,g51}_r*_2026112*_j* (Nibi)"}
+ "results": "$HOME/scratch/sgar/results/runs/exp_passages_{g35,g49,g50,g51}_r*_2026112*_j* (Nibi)",
+ "toy_check_G53": "Fir 5364164 (H100) / 5364165 (slice) / Nibi 28601752 (slice), first to start wins"
+}
