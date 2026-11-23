@@ -12,7 +12,7 @@ RL is not next yet: 6 steps remain, the first still waiting for a GPU.
 
 | Step | Rows | State | Waiting on | Estimated finish |
 |---|---|---|---|---|
-| 1. G41 rebuild of the 76 dev histories | 1, 40 | running (queued) | 16 Nibi slice twins pending behind the 18 test 10 jobs; the 16 Fir copies wait for whole H100s with no start estimate | 2026-11-23 evening, if the twins start after test 10; Nibi maintenance from 24 Nov 07:50 pushes it past that day if they have not finished |
+| 1. G41 rebuild of the 76 dev histories | 1, 40 | running (queued) | 16 Nibi slice twins pending; the 16 Fir copies are rank about 842 of 1,116 pending H100 jobs (fair share 0.17; ReqNodeNotAvail is Slurm naming a drained node, no reservation or constraint), options sent to you 2026-11-23 | 2026-11-23 evening, if the twins start after test 10; Nibi maintenance from 24 Nov 07:50 pushes it past that day if they have not finished |
 | 2. Writer v2 decision | 1, 2, 23 | queued | step 1, then Memory accuracy on the new graphs (Qwen, Haiku judge with your key), the supersede toy rerun, then your yes | 2026-11-24 to 25 |
 | 3. F36 replay and the F37-F40 pilots | 28, 32 | queued | F36: Fir 5208816 (Fir only), then the Haiku judge with your key. F37-F40: toy gate (Fir 5226371 / Nibi 28477059), then the 193-question pilot, then the Haiku judge | 2026-11-24 to 25; F36 has no estimate while Fir does not start jobs |
 | 4. LongMemEval retrieval comparison | 24, 25, 36 | queued | step 1; 5 variants x 3 repeats, then the Haiku judge with your key | 2026-11-25 |
