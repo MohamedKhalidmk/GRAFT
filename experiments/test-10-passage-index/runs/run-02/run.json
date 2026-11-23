@@ -1,0 +1,41 @@
+{
+ "run": "run-02",
+ "date": "2026-11-23",
+ "status": "queued on Nibi, all 18 jobs released together",
+ "change": "answer cap 4,096 tokens for every arm (was 1,024 in run-01), so G53's longer reasoning is not cut; run names exp_passages4k_*",
+ "jobs": {
+  "G35": [
+   28630848,
+   28630849,
+   28630850
+  ],
+  "G49": [
+   28630851,
+   28630852,
+   28630853
+  ],
+  "G50": [
+   28630854,
+   28630855,
+   28630856
+  ],
+  "G51": [
+   28630857,
+   28630858,
+   28630859
+  ],
+  "G52": [
+   28630860,
+   28630861,
+   28630862
+  ],
+  "G53": [
+   28630863,
+   28630864,
+   28630865
+  ]
+ },
+ "where": "Nibi 3g.40gb slices, VLLM_SEED 20261119+k, limit 2:30 (G53 3:00); no pilot at 4,096, set from run-01 times (19-34 min) with room for longer answers",
+ "results": "$HOME/scratch/sgar/results/runs/exp_passages4k_*_r*_2026112*_j* (Nibi)",
+ "report": "make_table.py, including answers that hit the 4,096 cap per arm"
+}

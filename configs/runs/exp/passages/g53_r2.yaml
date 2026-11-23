@@ -1,6 +1,6 @@
 # FREE (GRAFT test 10, user 2026-11-22): G53, the index with reading: G49's passages, and Qwen may open the text around a passage or the rest of its chunk (OPEN lines, prompt passage_reading.v1, at most 3 asks, 1,024 tokens per line, every added token counted).
-# 1,024-token answer cap, repeat 2 as its own job (vLLM seed 20261119+2, VLLM_SEED); all test 10 jobs the same day.
-run_name: exp_passages_g53_r2
+# 4,096-token answer cap (raised from 1,024 by the user 2026-11-23, run-02), repeat 2 as its own job (vLLM seed 20261119+2, VLLM_SEED); all test 10 jobs the same day.
+run_name: exp_passages4k_g53_r2
 method: graft
 method_config:
   retrieval: ppr_goat_ppr
@@ -28,6 +28,6 @@ data:
 llm:
   model: qwen
   mode: local
-  answer_max_tokens: 1024
+  answer_max_tokens: 4096
 embedding_model: BAAI/bge-small-en-v1.5
 repeats: 1

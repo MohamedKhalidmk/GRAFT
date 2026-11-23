@@ -12,7 +12,7 @@ spread.
 
 - **Data:** MemoryAgentBench FactConsolidation multi-hop 262k, 100 questions, the Haiku-built graph (2026-11-13,
   `real_mh_262k_empty_start.json`), as test 09.
-- **Answers:** Qwen3.8-27B W4A16 on a 3g.40gb H100 slice (Nibi), 1,024-token cap, 3 repeats, each its own job (vLLM seed
+- **Answers:** Qwen3.8-27B W4A16 on a 3g.40gb H100 slice (Nibi), 4,096-token answer cap (run-02; run-01 used 1,024 and was superseded), 3 repeats, each its own job (vLLM seed
   20261119+k), all 12 jobs submitted together the same day. Configs `configs/runs/exp/passages/{g35,g49,g50,g51}_r{0,1,2}.yaml`.
 - **Arms:**
 

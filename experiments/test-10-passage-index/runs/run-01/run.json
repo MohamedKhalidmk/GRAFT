@@ -1,7 +1,7 @@
 {
  "run": "run-01",
  "date": "2026-11-22",
- "status": "queued on Nibi, all six arms together (held jobs released 2026-11-22 after the G53 toy check)",
+ "status": "superseded by run-02 (user 2026-11-23: answer cap raised to 4,096 for all arms). G35, G49, G50, G51, G52 completed at the 1,024 cap; G53 cancelled at about 55 of 100 questions. Results kept on Nibi under exp_passages_*, not used.",
  "jobs": {
   "G35": [
    28588394,

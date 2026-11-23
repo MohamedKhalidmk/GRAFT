@@ -2,7 +2,7 @@
 
     python3 experiments/test-10-passage-index/make_table.py --runs-root $HOME/scratch/sgar/results/runs [--prefix exp_passages]
 
-Per arm and repeat (one run folder each, exp_passages_<arm>_r<k>_<time>_j<job>; the newest complete folder wins):
+Per arm and repeat (one run folder each, exp_passages4k_<arm>_r<k>_<time>_j<job>; the newest complete folder wins):
 right answers of 100 (substring exact match, MemoryAgentBench's metric as in tests 08 and 09), gold in the context
 Qwen read (answer_in_retrieved), tokens shown per question (the whole context block on the final call, 4 characters
 per token: fact lines or passages, plus G49's summary, the outdated notes and G53's opened text), Qwen calls per
@@ -47,7 +47,7 @@ def row(d: Path) -> dict:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs-root", required=True)
-    ap.add_argument("--prefix", default="exp_passages")
+    ap.add_argument("--prefix", default="exp_passages4k")
     ap.add_argument("--out", default=str(Path(__file__).parent))
     a = ap.parse_args()
     rows = []
@@ -59,7 +59,7 @@ def main() -> None:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader()
         w.writerows(rows)
-    lines = ["| Candidate | Arm | Right per repeat (of 100) | Mean | Spread | Gold in context | Tokens shown per question: mean (min-max) | Qwen calls per question | Asks per question | Opened tokens per question | Cut at 1,024 |",
+    lines = ["| Candidate | Arm | Right per repeat (of 100) | Mean | Spread | Gold in context | Tokens shown per question: mean (min-max) | Qwen calls per question | Asks per question | Opened tokens per question | Cut at the cap |",
              "|---|---|---|---|---|---|---|---|---|---|---|"]
     for arm, cid, setup, what in ARMS:
         rs = [r for r in rows if r["candidate"] == cid]

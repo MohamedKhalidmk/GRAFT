@@ -1,6 +1,6 @@
 # FREE (GRAFT test 10, user 2026-11-22): G51, BM25 over the same passages, cut at 4,096 tokens. FactConsolidation mh 262k, Haiku-built graph, Qwen at a
-# 1,024-token answer cap, repeat 0 as its own job (vLLM seed 20261119+0, VLLM_SEED); all test 10 jobs the same day.
-run_name: exp_passages_g51_r0
+# 4,096-token answer cap (raised from 1,024 by the user 2026-11-23, run-02), repeat 0 as its own job (vLLM seed 20261119+0, VLLM_SEED); all test 10 jobs the same day.
+run_name: exp_passages4k_g51_r0
 method: graft
 method_config:
   retrieval: ppr_goat_ppr
@@ -24,6 +24,6 @@ data:
 llm:
   model: qwen
   mode: local
-  answer_max_tokens: 1024
+  answer_max_tokens: 4096
 embedding_model: BAAI/bge-small-en-v1.5
 repeats: 1
