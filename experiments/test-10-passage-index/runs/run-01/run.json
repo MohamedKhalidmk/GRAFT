@@ -1,7 +1,7 @@
 {
  "run": "run-01",
  "date": "2026-11-22",
- "status": "held on Nibi until G52 and G53 are ready (same day, user 2026-11-22)",
+ "status": "queued on Nibi, all six arms together (held jobs released 2026-11-22 after the G53 toy check)",
  "jobs": {
   "G35": [
    28588394,
@@ -22,10 +22,20 @@
    28588404,
    28588405,
    28588406
+  ],
+  "G52": [
+   28605267,
+   28605269,
+   28605270
+  ],
+  "G53": [
+   28605271,
+   28605293,
+   28605327
   ]
  },
  "where": "Nibi 3g.40gb slices, 1:30 limit, VLLM_SEED 20261119+k",
  "smoke": "Fir CPU 5357744 (fake answers, real retrieval: configs/runs/exp/passages/fake_*.yaml)",
  "results": "$HOME/scratch/sgar/results/runs/exp_passages_{g35,g49,g50,g51}_r*_2026112*_j* (Nibi)",
- "toy_check_G53": "Fir 5364164 (H100) / 5364165 (slice) / Nibi 28601752 (slice), first to start wins"
+ "toy_check_G53": "Fir 5364165 (slice) ran; 5364164 and Nibi 28601752 cancelled; see toy_check_g53.md"
 }
