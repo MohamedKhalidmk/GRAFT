@@ -41,6 +41,7 @@ class PassageConfig:
     hippo_passage_weight: float = 0.05   # hipporag: weight of dense passage similarity in the seeds
     damping: float = 0.5           # hipporag: PageRank damping (HippoRAG 2)
     header: str = "PASSAGES (from your earlier chat sessions with this user, most relevant first):"
+    open_tokens: int = 1024        # reading (G53): the most text one OPEN line adds
 
 
 @dataclass
@@ -367,3 +368,35 @@ class PassageIndex:
         else:
             raise ValueError(f"unknown passage arm {arm!r}")
         return render(self.store, res, self.cfg.header), res
+
+
+OPEN_LINE = re.compile(r"^\s*OPEN\s+P(\d+)\s+(AROUND|SESSION)\b[^\n]*$", re.I)
+
+
+def parse_open(text: str, limit: int = 3) -> list[tuple[int, str]]:
+    """G53: the OPEN requests in a reply, as (passage number, AROUND | SESSION). A reply counts as a request only when
+    its last non-empty line is an OPEN line (a real answer that merely mentions opening is not); at most `limit`."""
+    lines = [l.strip().strip("*`-").strip() for l in (text or "").splitlines()]
+    lines = [l for l in lines if l]
+    if not lines or not OPEN_LINE.match(lines[-1]):
+        return []
+    out = []
+    for l in lines:
+        m = OPEN_LINE.match(l)
+        if m and (int(m.group(1)), m.group(2).upper()) not in out:
+            out.append((int(m.group(1)), m.group(2).upper()))
+    return out[:limit]
+
+
+def open_more(index: "PassageIndex", shown: list[Passage], number: int, scope: str) -> list[Passage]:
+    """G53: passages of the original text to add for one OPEN line. AROUND: the passages just before and after shown
+    passage P<number> in its chunk; SESSION: the rest of its chunk in order. Passages already shown are skipped, and
+    what is added stops at cfg.open_tokens. An unknown passage number adds nothing."""
+    if not 1 <= number <= len(shown):
+        return []
+    p = shown[number - 1]
+    seen = {q.pid for q in shown}
+    chunk = [q for q in index.passages if q.chunk_id == p.chunk_id]
+    k = next(i for i, q in enumerate(chunk) if q.pid == p.pid)
+    cands = [chunk[i] for i in (k - 1, k + 1) if 0 <= i < len(chunk)] if scope == "AROUND" else chunk
+    return _fill([q.pid for q in cands if q.pid not in seen], index.by_id, index.cfg.open_tokens)

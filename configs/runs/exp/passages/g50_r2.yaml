@@ -1,5 +1,5 @@
 # FREE (GRAFT test 10, user 2026-11-22): G50, HippoRAG 2-style passages on the same graph, no guide (PPR, damping 0.5), cut at 4,096 tokens. FactConsolidation mh 262k, Haiku-built graph, Qwen at a
-# 1,024-token answer cap, repeat 2 as its own job (vLLM seed 20261119+2, VLLM_SEED); all 12 jobs the same day.
+# 1,024-token answer cap, repeat 2 as its own job (vLLM seed 20261119+2, VLLM_SEED); all test 10 jobs the same day.
 run_name: exp_passages_g50_r2
 method: graft
 method_config:

@@ -18,6 +18,7 @@ Config keys (defaults in eval/methods.py, all switchable in the UI):
 """
 
 import json
+import math
 import re
 import multiprocessing
 from pathlib import Path
@@ -420,10 +421,15 @@ class GraftAgent:
         region = self._region(question) if idx.cfg.arm == "guided" else None
         memory, res = idx.retrieve(question_text(question.query), list(region.facts) if region else None,
                                    set(region.outdated) if region else None)
-        chat = format_chat(message=memory + "\n" + question.query,
-                           system_message=get_template(self.sub_dataset, "system", AGENT_NAME))
-        call = self.llm.complete(chat[0]["content"], chat[1]["content"], self.config["answer_max_tokens"])
+        reading = None
+        if settings.get("reading"):  # G53: Qwen may open more of the original text, at most max_asks times
+            call, memory, res, reading = self._read_more(idx, res, question, settings)
+        else:
+            chat = format_chat(message=memory + "\n" + question.query,
+                               system_message=get_template(self.sub_dataset, "system", AGENT_NAME))
+            call = self.llm.complete(chat[0]["content"], chat[1]["content"], self.config["answer_max_tokens"])
         meta = {"stop_reason": call.stop_reason, "retrieved_text": memory, "passage_arm": idx.cfg.arm,
+                "reading": reading, "tokens_shown": math.ceil(len(memory) / 4),
                 "passages_shown": len(res.passages), "passage_tokens": res.tokens(),
                 "passage_outdated": len(res.outdated_notes), "passage_summary": len(res.summary),
                 "passage_links": idx.link_counts() if question.q_index == 0 else None}
@@ -431,6 +437,44 @@ class GraftAgent:
             meta.update({"facts_ranked": len(region.facts), "plan": getattr(region, "plan", None),
                          "linked_entities": region.linked_entities, "fallback": region.fallback})
         return call.text, meta
+
+    def _read_more(self, idx, res, question: Question, settings: dict):
+        """G53 (prompt my_method/prompts/passage_reading.v1.md): show the passages with the reading rule; each reply made
+        only of OPEN lines adds the asked text as new passages (counted in tokens) and asks again; after max_asks asks,
+        or a reply that is not a request, the plain question is answered. Returns (call, memory, result, log)."""
+        from my_method.passages import PassageResult, _outdated_notes, open_more, parse_open, render
+        rule = READING_PROMPT.rsplit("-->", 1)[-1].strip()  # the text after the header comments
+        max_asks = settings.get("max_asks", 3)
+        shown, asks, calls = list(res.passages), [], 0
+        system = get_template(self.sub_dataset, "system", AGENT_NAME)
+
+        def block():
+            notes = {**res.outdated_notes, **_outdated_notes(self.store, idx.links[0], shown[len(res.passages):])}
+            return render(self.store, PassageResult(shown, notes, res.summary, res.link), idx.cfg.header)
+        while True:
+            memory = block()
+            asking = len(asks) < max_asks
+            query = question.query + ("\n\n" + rule.format(asks_left=max_asks - len(asks), open_tokens=idx.cfg.open_tokens)
+                                      if asking else "")
+            chat = format_chat(message=memory + "\n" + query, system_message=system)
+            call = self.llm.complete(chat[0]["content"], chat[1]["content"], self.config["answer_max_tokens"])
+            calls += 1
+            wanted = parse_open(call.text) if asking else []
+            if not wanted:
+                break
+            added = []
+            for number, scope in wanted:
+                for p in open_more(idx, shown, number, scope):
+                    if p.pid not in {q.pid for q in shown}:
+                        shown.append(p)
+                        added.append(p)
+            asks.append({"open": [f"P{n} {sc}" for n, sc in wanted], "passages_added": len(added),
+                         "tokens_added": sum(p.tokens() for p in added)})
+        final = PassageResult(shown, {**res.outdated_notes, **_outdated_notes(self.store, idx.links[0], shown[len(res.passages):])},
+                              res.summary, res.link)
+        return call, memory, final, {"asks": len(asks), "calls": calls, "log": asks,
+                                     "tokens_added": sum(a["tokens_added"] for a in asks),
+                                     "still_asking": bool(parse_open(call.text))}
 
     def _answer_asking(self, region: Region, question: Question):
         """G40 (docs/design/graft_adaptive_retrieval_design.md): show the drop-cutoff facts; on NEED MORE MEMORIES add
@@ -455,6 +499,8 @@ class GraftAgent:
                 region.sources = region.sources + ["ask"] * len(more)
         return call, memory, {"asks": len(asks), "added": asks, "calls": calls, "still_asking": wants_more(call.text)}
 
+
+READING_PROMPT = (Path(__file__).parent / "prompts" / "passage_reading.v1.md").read_text()
 
 ASK_RULE = ("If the memories above do not contain a fact you need to answer, reply with exactly NEED MORE MEMORIES and "
             "nothing else. If no memory could hold the answer, say that the memory does not hold it.")

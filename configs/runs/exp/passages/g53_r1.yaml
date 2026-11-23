@@ -1,0 +1,33 @@
+# FREE (GRAFT test 10, user 2026-11-22): G53, the index with reading: G49's passages, and Qwen may open the text around a passage or the rest of its chunk (OPEN lines, prompt passage_reading.v1, at most 3 asks, 1,024 tokens per line, every added token counted).
+# 1,024-token answer cap, repeat 1 as its own job (vLLM seed 20261119+1, VLLM_SEED); all test 10 jobs the same day.
+run_name: exp_passages_g53_r1
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  max_facts: 400
+  max_tokens: 40000
+  trex_guide: results/checkpoints/trex_guide.json
+  guide_linking: true
+  guide_planning: true
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+  passages:
+    arm: guided
+    budget_tokens: 4096
+    passage_tokens: 256
+    summary_facts: 30
+    reading: true
+    max_asks: 3
+    open_tokens: 1024
+    header: "PASSAGES (source text of the knowledge pool, most relevant first):"
+data:
+  length: 262k
+  splits:
+  - mh
+llm:
+  model: qwen
+  mode: local
+  answer_max_tokens: 1024
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1

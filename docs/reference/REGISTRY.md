@@ -76,6 +76,8 @@ History: draft 1 numbered Embedding RAG (bge-small) as a candidate; it is a base
 | G49 | Guided graph + passage index: G41's guided ranking, the found facts' source passages (turn-sized, up to 4,096 tokens) shown with a short fact summary; supersede and time marks carried to passages | (new, 2026-11-22) | LongMemEval dev, then the past-the-window pilot; 10 (FactConsolidation) | running (test 10) | design: [graft_passage_index_design.md](../design/graft_passage_index_design.md); passage nodes after HippoRAG 2 |
 | G50 | HippoRAG 2-style passages on GRAFT's graph, no guide: passage nodes, PPR (damping 0.5) seeded by question-to-fact and dense passage similarity, same passage budget | (new, 2026-11-22) | as G49; 10 (FactConsolidation) | running (test 10) | as G49 |
 | G51 | BM25 over the same passages, same passage budget | (new, 2026-11-22) | as G49; 10 (FactConsolidation) | running (test 10) | as G49 |
+| G52 | G35 at the passage arms' budget: G35's ranking, fact lines until their source text reaches 4,096 tokens (more facts, same tokens) | (new, 2026-11-22) | 10 | queued | the budget control for G49 (user, 2026-11-22) |
+| G53 | G49 with reading: Qwen may open the text around a shown passage or the rest of its session/chunk (OPEN lines, prompt `my_method/prompts/passage_reading.v1.md`), at most 3 asks, 1,024 tokens per line, every added token counted | (new, 2026-11-22) | 10 | queued (toy check on real Qwen first) | design: [graft_passage_index_design.md](../design/graft_passage_index_design.md), section Reading |
 Not a candidate: the **Haiku check** (`exp_real_replay38`, `exp_real_canary_replay38`) re-answers G08's saved
 2026-11-13 facts with no retrieval; it checks Haiku, not a method. It keeps its name and has a setup (S101).
 
@@ -250,6 +252,9 @@ since GRAFT runs there inside a Flotilla route.
 | S180 | G49 (guided ranking up to 400 facts, their source passages to 4,096 tokens, 30-fact summary) | Qwen3.8-27B W4A16 | 1024 | MAB FC 262k mh | `exp_passages_g49_r0..2` |
 | S181 | G50 (HippoRAG 2-style PPR passages, no guide, 4,096 tokens) | Qwen3.8-27B W4A16 | 1024 | MAB FC 262k mh | `exp_passages_g50_r0..2` |
 | S182 | G51 (BM25 passages, 4,096 tokens) | Qwen3.8-27B W4A16 | 1024 | MAB FC 262k mh | `exp_passages_g51_r0..2` |
+| S183 | G52 (G35 fact lines to 4,096 tokens) | Qwen3.8-27B W4A16 | 1024 | MAB FC 262k mh | `exp_passages_g52_r0..2` |
+| S184 | G53 (G49 + reading, at most 3 asks) | Qwen3.8-27B W4A16 | 1024 | MAB FC 262k mh | `exp_passages_g53_r0..2` |
+| S185 | G53 toy check (first 10 questions, not a result) | Qwen3.8-27B W4A16 | 1024 | MAB FC 262k mh, 10 questions | `exp_toy_passages_g53` |
 
 ## 4. Runs
 
@@ -271,4 +276,4 @@ setup column.
 - Qwen setups that never finished (S50, S52, S54: Qwen on the full T-REx candidates, jobs cancelled before an answer)
   keep their IDs.
 - Long-history study (design 2026-11-22, [graft_long_history_design.md](../design/graft_long_history_design.md)): no new candidate; G35, the writer-v2 winner and Flotilla's F15 get setups at run time. Flotilla's F35 (reasoning-graph route) uses GRAFT's work layer on an empty graph.
-- Next free IDs: G52, S183 (S179-S182 GRAFT test 10 on FactConsolidation; S shared with Flotilla; S147-S162 and S168-S170 are Flotilla setups, S171-S178 the passage-index comparison, S163-S167 the LongMemEval retrieval comparison). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).
+- Next free IDs: G54, S186 (S179-S185 GRAFT test 10 on FactConsolidation; S shared with Flotilla; S147-S162 and S168-S170 are Flotilla setups, S171-S178 the passage-index comparison, S163-S167 the LongMemEval retrieval comparison). New parts from G39 on: Fact count (G39, G40), Writer (G41, G42), user node (G43), guide source (G44, G45).

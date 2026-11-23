@@ -163,3 +163,60 @@ def test_agent_answers_from_passages_on_factconsolidation_chunks(tmp_path):
         assert meta["retrieved_text"] in prompts[0] and 0 < meta["passages_shown"] and meta["passage_tokens"] <= 30
         assert sum(meta["passage_links"].values()) == agent.store.stats()["facts"]
         assert ("facts_ranked" in meta) == (arm == "guided")
+
+
+def test_parse_open_takes_only_replies_that_end_in_open_lines():
+    """Checks that an OPEN request is read only when the reply ends with OPEN lines (bold or backticks allowed, a copied explanation after the scope allowed), duplicates dropped, at most 3; an answer that merely mentions opening is not a request.
+    Guards against: G53 treating a real answer as a request for more text, or missing a request Qwen formatted in markdown."""
+    from my_method.passages import parse_open
+    assert parse_open("OPEN P3 AROUND") == [(3, "AROUND")]
+    assert parse_open("Need more.\n**OPEN P1 session**\n`OPEN P4 AROUND (the text just before)`") == [(1, "SESSION"), (4, "AROUND")]
+    assert parse_open("OPEN P1 AROUND\nOPEN P1 AROUND\nOPEN P2 AROUND\nOPEN P3 AROUND\nOPEN P5 SESSION") == [(1, "AROUND"), (2, "AROUND"), (3, "AROUND")]
+    assert parse_open("I could OPEN P3 AROUND but the answer is Oslo.") == [] and parse_open("") == []
+
+
+def test_open_more_adds_neighbours_or_the_rest_of_the_chunk_within_its_cap():
+    """Checks that AROUND adds the passages just before and after the named shown passage in its chunk, SESSION the rest of the chunk in order, already shown passages are skipped, the added text stays within open_tokens, and an unknown passage number adds nothing.
+    Guards against: an OPEN request pulling text from another session, repeating what Qwen already has, or growing past its token cap."""
+    from my_method.passages import PassageIndex, open_more
+    st, F = toy_store()
+    idx = PassageIndex(st, CHUNKS, PassageConfig(passage_tokens=64, open_tokens=10_000), embed=fake_embed)
+    chunk0 = [p for p in idx.passages if p.chunk_id == 0]
+    mid = chunk0[2]
+    around = open_more(idx, [mid], 1, "AROUND")
+    assert [p.pid for p in around] == [chunk0[1].pid, chunk0[3].pid]
+    session = open_more(idx, [mid, chunk0[0]], 1, "SESSION")
+    assert [p.pid for p in session] == [p.pid for p in chunk0 if p.pid not in (mid.pid, chunk0[0].pid)]
+    idx.cfg.open_tokens = chunk0[1].tokens()
+    assert sum(p.tokens() for p in open_more(idx, [mid], 1, "SESSION")) <= idx.cfg.open_tokens
+    assert open_more(idx, [mid], 5, "AROUND") == []
+
+
+def test_reading_arm_opens_text_counts_tokens_and_stops_after_three_asks(tmp_path):
+    """Checks GRAFT's G53 loop with scripted replies: each OPEN reply adds passages to what Qwen sees next and its tokens are logged, the reading rule is shown only while asks remain, after 3 asks the last call gets the plain question, and the final answer's context includes the opened text.
+    Guards against: unbounded asking, asked text that never reaches Qwen, or opened tokens left out of the tokens shown."""
+    from types import SimpleNamespace as NS
+    from baselines.common.protocol import Task
+    from my_method.agent import GraftAgent
+    chunks = ["1. Anna Berg is a citizen of Norway. 2. Norway has the capital Oslo. 3. Bo Lund plays chess. "
+              "4. Bo Lund was born in Rome. 5. Rome is in Italy. 6. Cy Dahl speaks Danish. 7. Cy Dahl lives in Lund.",
+              "8. Anna Berg is a citizen of Chile. 9. Chile has the capital Santiago. 10. Ed Ek writes poems."]
+    gw = type("G", (), {"anthropic_base_url": "http://unused"})()
+    task = Task(sub_datasets=["factconsolidation_mh_6k"], chunk_size=512, chunks=chunks, questions=[])
+    cfg = {"model": "claude-haiku-5-5", "writer": "rule", "revisions": True, "embedding_model": "hash:16",
+           "work_dir": str(tmp_path / "w"), "retrieval": "ppr", "max_facts": 2, "max_tokens": 5120,
+           "include_outdated": False, "goat_targets": 3, "goat_topk": 12, "answer_max_tokens": 64,
+           "passages": {"arm": "guided", "budget_tokens": 12, "passage_tokens": 12, "open_tokens": 40,
+                        "reading": True, "max_asks": 3}}
+    agent = GraftAgent(cfg, gw, task)
+    agent.memorize(chunks)
+    replies = iter(["OPEN P1 AROUND", "**OPEN P1 SESSION**", "OPEN P2 AROUND", "OPEN P1 SESSION", "never reached"])
+    seen = []
+    agent.llm = NS(complete=lambda system, user, mt: (seen.append(user), NS(text=next(replies), stop_reason="end_turn"))[1])
+    text, meta = agent.answer(NS(q_index=0, query="What is the capital of the country Anna Berg is a citizen of?"))
+    r = meta["reading"]
+    assert r["calls"] == 4 and r["asks"] == 3 and text == "OPEN P1 SESSION" and r["still_asking"]
+    assert all("OPEN P<number> AROUND" in u for u in seen[:3]) and "OPEN P<number>" not in seen[3]
+    assert len(seen[1]) > len(seen[0]) and r["log"][0]["passages_added"] > 0
+    assert r["tokens_added"] == sum(a["tokens_added"] for a in r["log"]) and all(a["tokens_added"] <= 3 * 40 for a in r["log"])
+    assert meta["retrieved_text"] in seen[3] and meta["tokens_shown"] >= meta["passage_tokens"]

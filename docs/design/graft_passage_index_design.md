@@ -53,6 +53,25 @@ G49 against G41 the passages themselves. G50 keeps GRAFT's outdated marks so tha
 a strict HippoRAG 2 (its own OpenIE graph, no supersede) is the existing GRAFT baseline (S79-S85) and can be added
 later as a reference if wanted.
 
+## Reading (G53, user 2026-11-22)
+
+G49's passages are the starting point, with the same 4,096-token starting budget. While asks remain, the benchmark's
+question is followed by the reading rule (`my_method/prompts/passage_reading.v1.md`): if a passage seems cut off or
+something is missing, Qwen may reply with only `OPEN P<n> AROUND` (the passages just before and after P<n> in its
+chunk or session) or `OPEN P<n> SESSION` (the rest of that chunk or session, in order), at most 3 lines per reply.
+Each line adds at most 1,024 tokens, never repeats a shown passage, and the added passages are numbered on after the
+shown ones (so they can be opened in turn) and carry outdated marks like the rest. At most 3 asks; after the third,
+or after a reply that is not a request, the plain question is answered. A reply is a request only when its last
+non-empty line is an OPEN line. Every added token is counted: the log keeps each ask's lines, passages and tokens, and
+the tokens shown are those of the context on the final call. Tests with scripted replies; a toy check on real Qwen
+(first 10 FactConsolidation questions) before any run.
+
+On FactConsolidation a chunk is about two passages, so AROUND and SESSION mostly add the same neighbouring slice; on
+LongMemEval, AROUND is the neighbouring turns and SESSION the rest of the session.
+
+The budget control G52 (G35's fact lines until their source text reaches 4,096 tokens) separates "more text" from
+"passages" when G49 is compared with G35.
+
 ## Budget (proposed)
 
 - **Passages:** 4,096 tokens for G49, G50 and G51 (16 passages of at most 256 tokens; fewer when longer passages

@@ -1,5 +1,5 @@
 # FREE (GRAFT test 10, user 2026-11-22): G51, BM25 over the same passages, cut at 4,096 tokens. FactConsolidation mh 262k, Haiku-built graph, Qwen at a
-# 1,024-token answer cap, repeat 0 as its own job (vLLM seed 20261119+0, VLLM_SEED); all 12 jobs the same day.
+# 1,024-token answer cap, repeat 0 as its own job (vLLM seed 20261119+0, VLLM_SEED); all test 10 jobs the same day.
 run_name: exp_passages_g51_r0
 method: graft
 method_config:

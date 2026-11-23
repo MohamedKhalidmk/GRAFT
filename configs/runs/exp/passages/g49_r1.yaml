@@ -1,5 +1,5 @@
 # FREE (GRAFT test 10, user 2026-11-22): G49, the index: the guided ranking (up to 400 facts) brings each fact's source passage, cut at 4,096 tokens, then a 30-fact summary. FactConsolidation mh 262k, Haiku-built graph, Qwen at a
-# 1,024-token answer cap, repeat 1 as its own job (vLLM seed 20261119+1, VLLM_SEED); all 12 jobs the same day.
+# 1,024-token answer cap, repeat 1 as its own job (vLLM seed 20261119+1, VLLM_SEED); all test 10 jobs the same day.
 run_name: exp_passages_g49_r1
 method: graft
 method_config:
