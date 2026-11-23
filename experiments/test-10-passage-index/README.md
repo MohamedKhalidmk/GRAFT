@@ -22,15 +22,19 @@ spread.
 | G50 | S181 | HippoRAG 2-style passages on the same graph: passage nodes, PPR (damping 0.5) seeded by question-to-fact and dense passage similarity, no guide; 4,096 tokens |
 | G51 | S182 | BM25 on the question over the same passages; 4,096 tokens |
 
-- **Passages here:** FactConsolidation's chunks are numbered one-sentence facts, one per line, so a passage is one
-  source line, the same sentence G35 already shows as a fact's provenance. On this benchmark G49 therefore differs from
-  G35 mainly in how much it shows (as many guided lines as fit in 4,096 tokens, against 50 facts) and in its summary,
-  not in the kind of text. The 4,096-token budget counts passage text; G49's summary comes on top of it, and the
-  reported tokens shown include it.
+- **Passages here:** a FactConsolidation chunk is one line of about 15 consecutive numbered facts that mostly have
+  nothing to do with each other, so a passage is a slice of a chunk cut at sentence ends to at most 256 tokens (1,588
+  passages for the 262k history; every one of the 18,088 facts links to one, 17,374 exactly by its source sentence).
+  A shown passage therefore brings the needed fact together with its unrelated neighbours. At 4,096 tokens the passage
+  arms show about 19-21 passages (roughly 250-300 fact sentences), against G35's 50 fact lines (about 1,200 tokens), so
+  a G49 win can come from the larger budget as well as from the passages. The budget counts passage text; G49's
+  30-fact summary and the outdated notes on passages (G49, G50) come on top, and the reported tokens shown include them.
 - **Reported:** accuracy per repeat (mean, spread), gold in the context Qwen read (`answer_in_retrieved`), tokens shown
   per question, Qwen calls per question (G35 and G49: one question parse for the guide plan plus one answer; G50 and
   G51: one answer).
 
 ## Runs
 
-- [run-01](runs/run-01/) (2026-11-22): submitted.
+- [run-01](runs/run-01/) (2026-11-22): submitted. Smoke (Fir CPU 5357744, fake answers, real retrieval, 1 pass): all
+  four arms run end to end; gold in the context shown G35 53, G49 59, G50 47, G51 35 of 100 (the guided arms are low
+  here because fake mode scripts the guide's question parse; test 09's G35 had 59 with Qwen parsing).
