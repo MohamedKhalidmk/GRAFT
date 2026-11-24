@@ -22,6 +22,10 @@ if [[ -n "${SLURM_JOB_ID:-}" && -n "${SLURM_TMPDIR:-}" && "${GRAFT_LOCAL:-1}" ==
   for d in results data envs; do [[ -e "$REPO/$d" ]] && ln -sfn "$REPO/$d" "$L/$d"; done
   tar xf "$SCRATCH_ROOT/venv.tar" -C "$L"
   export REPO="$L" PYTHONPATH="$L" GRAFT_CORE_PYTHON="$L/.venv/bin/python"
+  # the gateway's local (vLLM/Qwen) backend needs openai, which the packed venv lacks (job 28252727 failed on it):
+  # install it from the Alliance wheelhouse (offline) when missing
+  "$L/.venv/bin/python" -c "import openai" 2>/dev/null || "$L/.venv/bin/python" -m pip install -q --no-index openai \
+    || echo "[local] WARNING: openai not installable; llm.mode local will fail"
   echo "[local] code and venv on $SLURM_TMPDIR in $(( $(date +%s) - t0 )) s"
 fi
 cd "$REPO"

@@ -1,3 +1,4 @@
+# Sources: subgraphrag (docs/reference/REFERENCES.md)
 """Weak node labels for GNN training, as in SubgraphRAG (Li et al., ICLR 2025).
 
 A node is positive if it lies on a shortest path between a question entity and an answer entity,

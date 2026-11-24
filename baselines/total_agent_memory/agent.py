@@ -1,3 +1,4 @@
+# Sources: total-agent-memory, memoryagentbench (docs/reference/REFERENCES.md)
 """total-agent-memory (TAM) baseline, run through the benchmark's own handler.
 
 Source: baselines/memoryagentbench/methods/total_agent_memory.py,

@@ -1,0 +1,29 @@
+# FREE (GRAFT test 10, user 2026-11-22): G50, HippoRAG 2-style passages on the same graph, no guide (PPR, damping 0.5), cut at 4,096 tokens. FactConsolidation mh 262k, Haiku-built graph, Qwen at a
+# 4,096-token answer cap (raised from 1,024 by the user 2026-11-23, run-02), repeat 2 as its own job (vLLM seed 20261119+2, VLLM_SEED); all test 10 jobs the same day.
+run_name: exp_passages4k_g50_r2
+method: graft
+method_config:
+  retrieval: ppr_goat_ppr
+  max_facts: 50
+  trex_guide: results/checkpoints/trex_guide.json
+  guide_linking: true
+  guide_planning: true
+  retrieval_workers: 8
+  gnn_checkpoint: results/checkpoints/gnn_bge_400w
+  shared_graph: results/checkpoints/shared_graphs/real_mh_262k_empty_start.json
+  passages:
+    arm: hipporag
+    budget_tokens: 4096
+    passage_tokens: 256
+    summary_facts: 30
+    header: "PASSAGES (source text of the knowledge pool, most relevant first):"
+data:
+  length: 262k
+  splits:
+  - mh
+llm:
+  model: qwen
+  mode: local
+  answer_max_tokens: 4096
+embedding_model: BAAI/bge-small-en-v1.5
+repeats: 1

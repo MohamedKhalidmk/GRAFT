@@ -1,3 +1,4 @@
+# Sources: memoryagentbench, densephrases (docs/reference/REFERENCES.md)
 """Thin bridge to the pinned MemoryAgentBench submodule.
 
 Data loading, chunking, prompt templates and scoring all come from the benchmark's own code,

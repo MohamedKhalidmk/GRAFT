@@ -1,3 +1,4 @@
+# Sources: mquake (docs/reference/REFERENCES.md)
 """Synthetic GNN training data: made-up worlds with revisions, no overlap with the benchmark.
 
 Each world is a stream of numbered fact sentences about invented entities (random syllable names,

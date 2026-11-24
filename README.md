@@ -4,6 +4,8 @@
 
 <h1 align="center">GRAFT</h1>
 
+<p align="center"><b><a href="https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/reference/PROTOCOL.md">Protocol</a> · <a href="docs/reference/REGISTRY.md">Registry</a> · <a href="https://github.com/MohamedKhalidmk/Flotilla/blob/restructure/docs/reference/run_log.md">Run log</a> · <a href="docs/reference/TESTS.md">Tests</a> · <a href="docs/reference/REFERENCES.md">References</a></b></p>
+
 <p align="center"><b>Revision-aware graph memory for LLM agents.</b><br>
 New knowledge is grafted onto a graph that remembers where every fact came from and which version is newest.</p>
 
@@ -96,6 +98,8 @@ Every test has a README (Question · Setup · Result · Decision · Revisions), 
 | `baselines/` | BM25, HippoRAG 2, Mem0, Letta, long context, and MemoryAgentBench (submodule, unmodified) |
 | `configs/` | Run configs |
 | `experiments/` | Numbered tests, each with README, config, runs and table |
+| `docs/reference/` | REGISTRY (frozen candidate and setup IDs), TESTS (every test in plain words) and the 2026-11-13 run write-up; PROTOCOL and the run log are Flotilla's (linked at the top) |
+| `docs/session/` | Handoff, status (Open experiments), working setup, project history: a copy of Flotilla's, kept identical |
 | `docs/design/` | Designs written before the code; `docs/design/theme/` holds the logo, diagram and chart sources |
 | `assets/` | README images (built from the sources in `docs/design/theme/`) |
 | `results/` | Raw runs, checkpoints, tables and figures |

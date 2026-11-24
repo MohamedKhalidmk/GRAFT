@@ -1,0 +1,4 @@
+{"run": "run-01", "date": "2026-11-22", "status": "scored; G39 and G40 undecided (user, 2026-11-22): 30% bar not confirmed; both go into the LongMemEval retrieval comparison",
+ "results": "$HOME/scratch/sgar/results/runs/exp_qwen1024_{b_guide,g39,g40}_r*_20261122-* (Nibi)",
+ "jobs": {"G35": [28366767, 28366768, 28448320], "G39": [28412989, 28412991, 28412999], "G40": [28413001, 28413026, 28448321]},
+ "excluded": {"28366769": "G35 r2, port clash", "28413036": "G40 r2, port clash"}}

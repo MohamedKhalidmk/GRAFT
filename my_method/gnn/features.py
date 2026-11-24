@@ -1,3 +1,4 @@
+# Sources: subgraphrag, hipporag, networkx (docs/reference/REFERENCES.md)
 """Question-conditioned node features for a subgraph of the memory graph.
 
 GOAt's GCN has one edge type and no edge features, so what the graph's typed edges would carry

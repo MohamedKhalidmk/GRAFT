@@ -1,3 +1,4 @@
+# Sources: goat (docs/reference/REFERENCES.md)
 """Run GOAt's `gcn_explain` on GRAFT's trained GCN_NC for one question subgraph.
 
 GOAt reads the model's per-layer activations from forward hooks and its weights by parameter

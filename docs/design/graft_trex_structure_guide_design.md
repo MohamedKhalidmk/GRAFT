@@ -1,5 +1,7 @@
 # T-REx as a structure guide, not an answer source (design, for review)
 
+> IDs ([registry](../reference/REGISTRY.md), 2026-11-21): arm A = G08, arm B (the guide) = G35, arm C (bridge) = G36, arm D (background) = G37, arm E (guide + working memory) = G38.
+
 Test 06 in GRAFT alone. No code yet.
 
 ## Why
@@ -88,7 +90,7 @@ Keep rule: B (or C) is kept if it beats A by more than the repeat spread.
 | C, 3 repeats | Fir CPU (1.58M-node graph) | about $0.08 | 3 to 5 h, with a 6 h limit |
 | Total | | about $0.30, with a $1 cap per job (about $0.50 with both optional arms) | about a day |
 
-All spend is logged in docs/run_log.md. Keep the halt check (stop if most questions get no facts) in every job.
+All spend is logged in docs/reference/run_log.md. Keep the halt check (stop if most questions get no facts) in every job.
 
 ## Risks
 

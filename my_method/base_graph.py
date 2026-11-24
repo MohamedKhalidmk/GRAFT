@@ -1,3 +1,4 @@
+# Sources: t-rex, wikidata, rog, triad (docs/reference/REFERENCES.md)
 """GRAFT layer 1: a base graph built beforehand from general outside data, in GRAFT's schema (--source rog: RoG
 Freebase triples; --source trex: a general Wikidata slice from T-REx, chosen without the benchmark: most common
 relations, most-linked entities, provenance span = the aligned Wikipedia sentence).

@@ -1,3 +1,4 @@
+# Sources: nltk-stopwords (docs/reference/REFERENCES.md)
 """Before/after count of links to single-stopword names ("The", "Who"), questions and documents. Free, no API.
 
     python scripts/fir/stopword_links.py GRAPH.json PREDICTIONS.jsonl [QUERY_LINKING.jsonl]

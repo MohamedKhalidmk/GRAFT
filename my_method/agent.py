@@ -18,6 +18,8 @@ Config keys (defaults in eval/methods.py, all switchable in the UI):
 """
 
 import json
+import math
+import re
 import multiprocessing
 from pathlib import Path
 
@@ -117,7 +119,8 @@ class GraftAgent:
         else:
             schema = Schema.load(REPO / config["schema_path"])
             self.writer = LLMWriter(self.llm, schema, config["schema"], config["revisions"], config["writer_max_tokens"],
-                                   pattern)
+                                   pattern, prompt=config.get("writer_prompt", "default"),
+                                   reply_log=(self.work_dir / "writer_replies.jsonl") if config.get("log_writer_replies") else None)
         self.texts = TextEmbedder(load_embedder(config["embedding_model"]))
         if config.get("writer_linking") == "llm" and isinstance(self.writer, LLMWriter):  # Haiku links names to base entities
             from my_method.writer import EntityLinker
@@ -146,6 +149,7 @@ class GraftAgent:
             linker.cache, linker.log = meta["link_cache"], meta["link_log"]
 
     def memorize(self, chunks: list[str]) -> dict:
+        self._chunks = list(chunks)  # the passage arms (G49-G51) read the history's own text
         shared = self.config.get("shared_graph")  # one built graph reused by several read variants
         shared = REPO / shared if shared else None
         if shared and Path(shared).exists():
@@ -201,7 +205,9 @@ class GraftAgent:
                               query_graph=c.get("query_graph", False), query_match_min=c.get("query_match_min", 0.85),
                               query_linking=c.get("query_linking", "embedding"),
                               document_facts_only=c.get("document_facts_only", False),
-                              background_facts=c.get("background_facts", 0))
+                              background_facts=c.get("background_facts", 0),
+                              adaptive=c.get("adaptive", ""), min_facts=c.get("min_facts", 10), drop_max=c.get("drop_max", 100),
+                              user_node=c.get("user_node", False))
         if c.get("bridge_weight") is not None:  # test 06 arm C: outside-base edges walk at this weight
             self.store.bridge_weight = float(c["bridge_weight"])
             self.store._simple = None
@@ -322,6 +328,14 @@ class GraftAgent:
         texts = [question_text(q.query) for q in self.questions]
         schema = Schema.load(REPO / self.config["schema_path"]).describe()
         self.retriever.prepare_queries(texts, lambda q: parse_question_graph(self.llm, schema, q))  # the plan
+        r = self.retriever
+        if r.cfg.guide_planning and getattr(r, "guide", None):  # test 06 guide + working memory: the guide's chain,
+            r.plans = {}                                         # followed once per question here, before workers fork
+            for q in texts:
+                edges = r.query_graphs.get(q, [])
+                for _, rel, _ in edges:
+                    r.guide.canon(rel)
+                r.plans[q] = r.guide.plan(self.store, edges, r.link(q))
         shared = self.config.get("shared_graph")
         if shared:
             self.texts.load_saved(REPO / shared)
@@ -355,6 +369,26 @@ class GraftAgent:
                 self._working_memory_all()
             text, meta = self.wm[question.q_index]
             return text, {k: v for k, v in meta.items() if k != "working_memory"}
+        if self.config.get("passages"):  # G49-G51 (GRAFT test 10): source passages instead of fact lines
+            return self._answer_passages(question)
+        region = self._region(question)
+        if self.config.get("ask_more"):  # G40: Qwen may ask for the next batch of the pool
+            call, memory, asks = self._answer_asking(region, question)
+        else:
+            call, memory = answer(self.llm, self.store, region, question.query, self.sub_dataset,
+                                  self.config["answer_max_tokens"])
+            asks = None
+        return call.text, {"stop_reason": call.stop_reason, "retrieved_text": memory, "facts_shown": len(region.facts),
+                           "pool_facts": len(region.pool) if region.pool else None, "asks": asks,
+                           "linked_entities": region.linked_entities, "region_facts": len(region.facts),
+                           "subgraph_nodes": region.subgraph_nodes, "fallback": region.fallback,
+                           "subgraph_text": "\n".join(self.store.fact(f)["provenance"]["span"] for f in region.subgraph_facts),
+                           "fact_sources": region.sources, "query_graph": region.query_graph,
+                           "plan": getattr(region, "plan", None)}
+
+
+    def _region(self, question: Question) -> Region:
+        """The guided retrieval's region for one question (all questions at once with retrieval_workers > 1)."""
         workers = self.config.get("retrieval_workers", 1)
         if workers > 1 and not self.regions:
             self._retrieve_all(workers)
@@ -365,14 +399,124 @@ class GraftAgent:
             region = self.retriever.retrieve(question_text(question.query))
             self._seen_regions = getattr(self, "_seen_regions", []) + [region]
             self._check_regions(self._seen_regions, final=False)
-        call, memory = answer(self.llm, self.store, region, question.query, self.sub_dataset,
-                              self.config["answer_max_tokens"])
-        return call.text, {"stop_reason": call.stop_reason, "retrieved_text": memory,
-                           "linked_entities": region.linked_entities, "region_facts": len(region.facts),
-                           "subgraph_nodes": region.subgraph_nodes, "fallback": region.fallback,
-                           "subgraph_text": "\n".join(self.store.fact(f)["provenance"]["span"] for f in region.subgraph_facts),
-                           "fact_sources": region.sources, "query_graph": region.query_graph,
-                           "plan": getattr(region, "plan", None)}
+        return region
+
+    def _answer_passages(self, question: Question) -> tuple[str, dict]:
+        """GRAFT test 10 (docs/design/graft_passage_index_design.md): the history's own passages, chosen by the guided
+        ranking (guided, G49), HippoRAG 2-style PPR without the guide (hipporag, G50) or BM25 (bm25, G51), all cut to
+        one token budget, in the benchmark's RAG prompt in place of the fact lines."""
+        from my_method.passages import PassageConfig, PassageIndex
+        settings = self.config["passages"]
+        if getattr(self, "_pindex", None) is None:
+            import numpy as np
+            cfg = PassageConfig(**{k: v for k, v in settings.items() if k in PassageConfig.__dataclass_fields__})
+
+            def embed(texts):
+                v = np.asarray(self.retriever.texts.embed_texts(texts), dtype=float)
+                return v / np.maximum(np.linalg.norm(v, axis=1, keepdims=True), 1e-12)
+            self._pindex = PassageIndex(self.store, self._chunks, cfg, embed=embed)
+            print(f"[graft] passage index ({cfg.arm}): {len(self._pindex.passages)} passages, fact links "
+                  f"{self._pindex.link_counts()}", flush=True)
+        idx = self._pindex
+        region = self._region(question) if idx.cfg.arm == "guided" else None
+        memory, res = idx.retrieve(question_text(question.query), list(region.facts) if region else None,
+                                   set(region.outdated) if region else None)
+        reading = None
+        if settings.get("reading"):  # G53: Qwen may open more of the original text, at most max_asks times
+            call, memory, res, reading = self._read_more(idx, res, question, settings)
+        else:
+            chat = format_chat(message=memory + "\n" + question.query,
+                               system_message=get_template(self.sub_dataset, "system", AGENT_NAME))
+            call = self.llm.complete(chat[0]["content"], chat[1]["content"], self.config["answer_max_tokens"])
+        meta = {"stop_reason": call.stop_reason, "retrieved_text": memory, "passage_arm": idx.cfg.arm,
+                "reading": reading, "tokens_shown": math.ceil(len(memory) / 4),
+                "passages_shown": len(res.passages), "passage_tokens": res.tokens(),
+                "passage_outdated": len(res.outdated_notes), "passage_summary": len(res.summary),
+                "passage_links": idx.link_counts() if question.q_index == 0 else None}
+        if region is not None:
+            meta.update({"facts_ranked": len(region.facts), "plan": getattr(region, "plan", None),
+                         "linked_entities": region.linked_entities, "fallback": region.fallback})
+        return call.text, meta
+
+    def _read_more(self, idx, res, question: Question, settings: dict):
+        """G53 (prompt my_method/prompts/passage_reading.v1.md): show the passages with the reading rule; each reply made
+        only of OPEN lines adds the asked text as new passages (counted in tokens) and asks again; after max_asks asks,
+        or a reply that is not a request, the plain question is answered. Returns (call, memory, result, log)."""
+        from my_method.passages import PassageResult, _outdated_notes, open_more, parse_open, render
+        rule = READING_PROMPT.rsplit("-->", 1)[-1].strip()  # the text after the header comments
+        max_asks = settings.get("max_asks", 3)
+        shown, asks, calls = list(res.passages), [], 0
+        system = get_template(self.sub_dataset, "system", AGENT_NAME)
+
+        def block():
+            notes = {**res.outdated_notes, **_outdated_notes(self.store, idx.links[0], shown[len(res.passages):])}
+            return render(self.store, PassageResult(shown, notes, res.summary, res.link), idx.cfg.header)
+        while True:
+            memory = block()
+            asking = len(asks) < max_asks
+            query = question.query + ("\n\n" + rule.format(asks_left=max_asks - len(asks), open_tokens=idx.cfg.open_tokens)
+                                      if asking else "")
+            chat = format_chat(message=memory + "\n" + query, system_message=system)
+            call = self.llm.complete(chat[0]["content"], chat[1]["content"], self.config["answer_max_tokens"])
+            calls += 1
+            wanted = parse_open(call.text) if asking else []
+            if not wanted:
+                break
+            added = []
+            for number, scope in wanted:
+                for p in open_more(idx, shown, number, scope):
+                    if p.pid not in {q.pid for q in shown}:
+                        shown.append(p)
+                        added.append(p)
+            asks.append({"open": [f"P{n} {sc}" for n, sc in wanted], "passages_added": len(added),
+                         "tokens_added": sum(p.tokens() for p in added)})
+            if not added:  # the ask opened nothing new (already shown, or an unknown passage): answer now
+                memory = block()
+                chat = format_chat(message=memory + "\n" + question.query, system_message=system)
+                call = self.llm.complete(chat[0]["content"], chat[1]["content"], self.config["answer_max_tokens"])
+                calls += 1
+                break
+        final = PassageResult(shown, {**res.outdated_notes, **_outdated_notes(self.store, idx.links[0], shown[len(res.passages):])},
+                              res.summary, res.link)
+        return call, memory, final, {"asks": len(asks), "calls": calls, "log": asks,
+                                     "tokens_added": sum(a["tokens_added"] for a in asks),
+                                     "still_asking": bool(parse_open(call.text))}
+
+    def _answer_asking(self, region: Region, question: Question):
+        """G40 (docs/design/graft_adaptive_retrieval_design.md): show the drop-cutoff facts; on NEED MORE MEMORIES add
+        the next ask_batch pool facts and ask again; at most ask_max asks and ask_cap facts; stop when the pool is used up."""
+        c = self.config
+        batch, max_asks, cap = c.get("ask_batch", 50), c.get("ask_max", 3), c.get("ask_cap", 200)
+        pool = region.pool or region.facts
+        asks, calls = [], 0
+        while True:
+            call, memory = answer(self.llm, self.store, region, question.query + "\n\n" + ASK_RULE, self.sub_dataset,
+                                  c["answer_max_tokens"])
+            calls += 1
+            if not wants_more(call.text) or len(asks) >= max_asks or len(region.facts) >= cap:
+                break
+            more = [f for f in pool[len(region.facts):len(region.facts) + batch] if f not in region.facts]
+            more = more[:max(cap - len(region.facts), 0)]
+            if not more:  # the batch adds nothing new: the pool is used up
+                break
+            asks.append(len(more))
+            region.facts = region.facts + more
+            if region.sources:
+                region.sources = region.sources + ["ask"] * len(more)
+        return call, memory, {"asks": len(asks), "added": asks, "calls": calls, "still_asking": wants_more(call.text)}
+
+
+READING_PROMPT = (Path(__file__).parent / "prompts" / "passage_reading.v1.md").read_text()
+
+ASK_RULE = ("If the memories above do not contain a fact you need to answer, reply with exactly NEED MORE MEMORIES and "
+            "nothing else. If no memory could hold the answer, say that the memory does not hold it.")
+
+
+def wants_more(text: str) -> bool:
+    """The model asked for more memories (G40): the reply is the ask phrase, alone or with only punctuation around it."""
+    lines = [re.sub(r"[^a-z ]", "", l.lower()).strip() for l in (text or "").splitlines()]
+    lines = [l for l in lines if l]
+    return bool(lines) and lines[-1] == "need more memories"  # alone, or as the last line after the model's reasoning
 
 
 SGARAgent = GraftAgent  # old name, kept for older scripts

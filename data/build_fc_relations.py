@@ -1,3 +1,4 @@
+# Sources: mquake, wikidata (docs/reference/REFERENCES.md)
 """Build my_method/fc_relations.json: the 37 relation sentence templates FactConsolidation uses.
 
 FactConsolidation's facts are MQuAKE-CF's cloze templates filled with a subject and an object

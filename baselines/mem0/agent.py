@@ -1,3 +1,4 @@
+# Sources: mem0, memoryagentbench (docs/reference/REFERENCES.md)
 """Mem0 baseline, following the benchmark's Mem0 path step by step.
 
 Source: baselines/memoryagentbench/agent.py, `_initialize_mem0_agent` and `_handle_mem0_agent`.

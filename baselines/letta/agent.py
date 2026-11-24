@@ -1,3 +1,4 @@
+# Sources: letta, memoryagentbench (docs/reference/REFERENCES.md)
 """MemGPT / Letta baseline, following the benchmark's Letta path step by step.
 
 Source: baselines/memoryagentbench/agent.py, `_initialize_letta_agent`, `_handle_letta_agent`,

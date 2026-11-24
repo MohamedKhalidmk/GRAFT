@@ -10,6 +10,8 @@ from eval.run import run
 
 @pytest.mark.parametrize("source", ["bundled", "upstream"])
 def test_mem0_fake_run(source, tmp_path, monkeypatch):
+    """Checks that each Mem0 variant runs end to end on the fake gateway, stores memories, and records ADD events, plus UPDATE events for the bundled one.
+    Guards against: Mem0 silently storing nothing, or the bundled version's update path never running, while still answering questions."""
     if not METHODS[f"mem0_{source}"].python.exists():
         pytest.skip(f"run scripts/setup/mem0-{source}.sh first")
     monkeypatch.setenv("RESULTS_DIR", str(tmp_path))

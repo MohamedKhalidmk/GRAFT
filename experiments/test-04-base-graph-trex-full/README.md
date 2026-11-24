@@ -4,6 +4,18 @@
 |---|---|---|---|
 | 04 | 2026-11-21 | done | [run-02](runs/run-02/run.json) |
 
+## Candidates and setups
+
+IDs from the [registry](../../docs/reference/REGISTRY.md) (frozen 2026-11-21). A candidate is the method, a setup is the candidate plus model,
+answer cap, benchmark and scoring; old run folders keep their names.
+
+| Candidate | Setup | Row in this test |
+|---|---|---|
+| G08 | S17 | Mode C, GOAt, empty-start graph (test 05 arm A) |
+| G27 | S48 | Mode C, EiG |
+| G28 | S51 | Mode C, GOAt (2 of 3 repeats: job time limit) |
+| G29 | S53 | Question layer + EiG |
+
 ## Question
 
 Does a large general base graph (all T-REx triples on its 45 most common Wikidata properties) under the documents help GRAFT answer?
@@ -35,6 +47,7 @@ Not adopted. A full T-REx base under the documents halves GRAFT's accuracy (17 t
 
 ## Revisions
 
+- 2026-11-21: **run-01's answer passes are invalid** (setups S48, S51, S53; registry rule: pre-fix runs keep their IDs and are marked invalid): `exp_c_real_mh_262k_ans256_trexfull_link_build_eig` (answer pass), `exp_c_real_mh_262k_ans256_trexfull_goat`, `exp_c_real_mh_262k_ans256_trexfull_qgraph_eig`. NetworkX PageRank's stop rule grows with graph size, so on 1.58M nodes it stopped after one step and returned 0 facts; the all-caps entity "THE" also linked to "the" in 89 of 100 questions. Both were fixed with no config switch; run-02 (pprfix) replaces these passes. The run-01 graph build itself stays valid.
 - 2026-11-20: test folder created from the existing runs and the Flotilla run log.
 - 2026-11-21: why accuracy halved, 10 failed questions checked (runs/run-02/analysis/).
 - 2026-11-21: run-02 answer passes done; decision: not adopted; Qwen moved to the empty-start graph.

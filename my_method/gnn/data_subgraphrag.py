@@ -1,3 +1,4 @@
+# Sources: subgraphrag, rog (docs/reference/REFERENCES.md)
 """SubgraphRAG's training data: WebQSP and CWQ questions over Freebase subgraphs.
 
 These are the RoG-preprocessed sets SubgraphRAG trains on (Hugging Face rmanluo/RoG-webqsp and

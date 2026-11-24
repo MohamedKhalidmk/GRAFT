@@ -28,7 +28,7 @@ for model, prefix in [("Haiku", "exp_wm_empty"), ("Haiku", "exp_real_wm_empty"),
           tin += sum(s.get("input_tokens", 0) for s in sc); tout += sum(s.get("output_tokens", 0) for s in sc)
       n = 100 * len(reps)
       per_rep_acc.append(acc); per_rep_gold.append(gold)
-      rows.append({"model": model, "arm": arm, "what": what, "repeats": len(reps), "accuracy_mean": round(statistics.mean(acc), 1),
+      rows.append({"candidate": T.ids(R)[0], "setup": T.ids(R)[1], "model": model, "arm": arm, "what": what, "repeats": len(reps), "accuracy_mean": round(statistics.mean(acc), 1),
                    "accuracy_sd": round(statistics.stdev(acc), 1) if len(acc) > 1 else 0, "per_repeat": " / ".join(f"{a:.0f}" for a in acc),
                    "gold_in_final_facts": round(statistics.mean(gold), 1), "calls_per_question": round(calls / n, 2),
                    "input_tokens_per_question": round(tin / n), "output_tokens_per_question": round(tout / n),
@@ -45,7 +45,7 @@ panels = []
 for title, keep in [("Haiku, round 1 (2026-11-20)", lambda r: r["model"] == "Haiku" and "run-01" in r["run"]),
                     ("Haiku, round 2 (2026-11-21, same day)", lambda r: r["model"] == "Haiku" and "run-02" in r["run"]),
                     ("Qwen", lambda r: r["model"] == "Qwen")]:
-    bars = [T.bar(f"{r['arm']} · {r['what']}", a, COLOUR.get(r["arm"], T.STONE)) for r, a in zip(rows, per_rep_acc) if keep(r)]
+    bars = [T.bar(f"{r['candidate']} · {r['what']}", a, COLOUR.get(r["arm"], T.STONE)) for r, a in zip(rows, per_rep_acc) if keep(r)]
     if bars:
         panels.append({"title": title + ": % right", "rows": bars})
 T.bar_chart(HERE / "figure.png", "Test 05 · Working memory in the graph",

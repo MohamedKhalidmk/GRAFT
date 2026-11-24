@@ -1,3 +1,4 @@
+# Sources: factconsolidation, memoryagentbench (docs/reference/REFERENCES.md)
 """Prefetch the MemoryAgentBench FactConsolidation data into the Hugging Face cache.
 
 Run on a machine with internet (e.g. a Fir login node) before running jobs on nodes that may

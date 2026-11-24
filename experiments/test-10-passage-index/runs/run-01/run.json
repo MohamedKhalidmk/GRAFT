@@ -1,0 +1,41 @@
+{
+ "run": "run-01",
+ "date": "2026-11-22",
+ "status": "superseded by run-02 (user 2026-11-23: answer cap raised to 4,096 for all arms). G35, G49, G50, G51, G52 completed at the 1,024 cap; G53 cancelled at about 55 of 100 questions. Results kept on Nibi under exp_passages_*, not used.",
+ "jobs": {
+  "G35": [
+   28588394,
+   28588395,
+   28588397
+  ],
+  "G49": [
+   28588398,
+   28588399,
+   28588400
+  ],
+  "G50": [
+   28588401,
+   28588402,
+   28588403
+  ],
+  "G51": [
+   28588404,
+   28588405,
+   28588406
+  ],
+  "G52": [
+   28605267,
+   28605269,
+   28605270
+  ],
+  "G53": [
+   28605271,
+   28605293,
+   28605327
+  ]
+ },
+ "where": "Nibi 3g.40gb slices, 1:30 limit, VLLM_SEED 20261119+k",
+ "smoke": "Fir CPU 5357744 (fake answers, real retrieval: configs/runs/exp/passages/fake_*.yaml)",
+ "results": "$HOME/scratch/sgar/results/runs/exp_passages_{g35,g49,g50,g51}_r*_2026112*_j* (Nibi)",
+ "toy_check_G53": "Fir 5364165 (slice) ran; 5364164 and Nibi 28601752 cancelled; see toy_check_g53.md"
+}

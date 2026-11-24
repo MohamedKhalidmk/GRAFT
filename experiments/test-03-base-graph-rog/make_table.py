@@ -26,8 +26,8 @@ for kind, what, base, pat, colour in ARMS:
                  "per_repeat": "" if fake else s["per_repeat"], "gold_in_final_facts": s["gold_in_final_facts"],
                  "cost_per_100_questions_usd": s["cost_per_100_questions_usd"], "run": T.rel(R, HERE)})
     if not fake:
-        acc.append(T.bar(what, [r["acc"] for r in reps], colour))
-    gold.append(T.bar(what, [r["gold"] for r in reps], colour))
+        acc.append(T.bar(T.tag(what, R), [r["acc"] for r in reps], colour))
+    gold.append(T.bar(T.tag(what, R), [r["gold"] for r in reps], colour))
 
 T.write_tables(HERE, rows)
 T.bar_chart(HERE / "figure.png", "Test 03 · Base graph from RoG (Freebase)",

@@ -1,3 +1,4 @@
+# Sources: bm25, memoryagentbench (docs/reference/REFERENCES.md)
 """BM25 baseline, following the benchmark's RAG path step by step.
 
 Source: baselines/memoryagentbench/agent.py, `_handle_rag_agent` (memorize) and

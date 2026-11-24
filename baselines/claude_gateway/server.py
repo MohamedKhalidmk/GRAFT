@@ -1,3 +1,4 @@
+# Sources: anthropic-sdk, claude-haiku (docs/reference/REFERENCES.md)
 """The Claude gateway: one local HTTP server every method talks to.
 
 Endpoints
@@ -50,10 +51,11 @@ class OpenAIBackend:
     """A local OpenAI-compatible server (vLLM serving Qwen) behind the Claude Messages interface: every GRAFT call
     (writer, linker, question parse, answer) keeps its prompt, only the model changes. Thinking off, greedy."""
 
-    def __init__(self, base_url: str, model: str):
+    def __init__(self, base_url: str, model: str, thinking: bool = False):
         from openai import OpenAI
         self.client = OpenAI(base_url=base_url, api_key="EMPTY", max_retries=3, timeout=3600)
-        self.served = model
+        self.served, self.thinking = model, thinking  # thinking (G42 writer arm): Qwen reasons first; the reply is
+        # only its final text (the server's reasoning parser keeps the reasoning apart), so JSON parsing is unchanged
 
     @staticmethod
     def _text(content) -> str:
@@ -68,7 +70,7 @@ class OpenAIBackend:
         msgs += [{"role": m["role"], "content": self._text(m["content"])} for m in params["messages"]]
         r = self.client.chat.completions.create(model=self.served, messages=msgs, max_tokens=params["max_tokens"],
                                                 temperature=0.0,
-                                                extra_body={"chat_template_kwargs": {"enable_thinking": False}})
+                                                extra_body={"chat_template_kwargs": {"enable_thinking": self.thinking}})
         c = r.choices[0]
         return {"id": r.id, "type": "message", "role": "assistant", "model": self.served,
                 "content": [{"type": "text", "text": c.message.content or ""}],
@@ -190,11 +192,12 @@ def main() -> None:
     parser.add_argument("--embedding-model", required=True)
     parser.add_argument("--usage-log", required=True)
     parser.add_argument("--fake", action="store_true", help="never call the Anthropic API")
+    parser.add_argument("--thinking", action="store_true", help="local backend: Qwen thinks before replying (off by default)")
     parser.add_argument("--openai-base-url", default=None,
                         help="answer with a local OpenAI-compatible server (vLLM) instead of Claude, e.g. http://127.0.0.1:8000/v1")
     args = parser.parse_args()
 
-    backend = FakeBackend() if args.fake else OpenAIBackend(args.openai_base_url, args.model) if args.openai_base_url \
+    backend = FakeBackend() if args.fake else OpenAIBackend(args.openai_base_url, args.model, args.thinking) if args.openai_base_url \
         else RealBackend()
     gw = Gateway(args.model, backend, load_embedder(args.embedding_model), args.usage_log)
     server = ThreadingHTTPServer(("127.0.0.1", args.port), make_handler(gw))

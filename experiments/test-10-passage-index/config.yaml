@@ -1,0 +1,11 @@
+test: 10
+runs:
+  run-01:
+    G35: [configs/runs/exp/passages/g35_r0.yaml, configs/runs/exp/passages/g35_r1.yaml, configs/runs/exp/passages/g35_r2.yaml]
+    G49: [configs/runs/exp/passages/g49_r0.yaml, configs/runs/exp/passages/g49_r1.yaml, configs/runs/exp/passages/g49_r2.yaml]
+    G50: [configs/runs/exp/passages/g50_r0.yaml, configs/runs/exp/passages/g50_r1.yaml, configs/runs/exp/passages/g50_r2.yaml]
+    G51: [configs/runs/exp/passages/g51_r0.yaml, configs/runs/exp/passages/g51_r1.yaml, configs/runs/exp/passages/g51_r2.yaml]
+    G52: [configs/runs/exp/passages/g52_r0.yaml, configs/runs/exp/passages/g52_r1.yaml, configs/runs/exp/passages/g52_r2.yaml]
+    G53: [configs/runs/exp/passages/g53_r0.yaml, configs/runs/exp/passages/g53_r1.yaml, configs/runs/exp/passages/g53_r2.yaml]
+  toy_check: [configs/runs/exp/passages/toy_g53.yaml]
+  smoke: [configs/runs/exp/passages/fake_g35.yaml, configs/runs/exp/passages/fake_g49.yaml, configs/runs/exp/passages/fake_g50.yaml, configs/runs/exp/passages/fake_g51.yaml]

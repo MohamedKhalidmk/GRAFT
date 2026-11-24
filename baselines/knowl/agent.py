@@ -1,3 +1,4 @@
+# Sources: knowl, memoryagentbench (docs/reference/REFERENCES.md)
 """Knowl baseline (supersede-at-write memory), run through the benchmark's own handler.
 
 Source: baselines/memoryagentbench/methods/knowl.py, `initialize_knowl_agent` and

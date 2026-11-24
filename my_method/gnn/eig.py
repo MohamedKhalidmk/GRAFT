@@ -1,3 +1,4 @@
+# Sources: eig-search (docs/reference/REFERENCES.md)
 """EiG-Search edge attribution (Lu et al., ICML 2024; github.com/sluxsr/EiG-Search, main.py node-classification
 branch) on GRAFT's trained GCN_NC.
 

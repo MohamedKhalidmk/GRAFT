@@ -1,3 +1,4 @@
+# Sources: nltk-stopwords (docs/reference/REFERENCES.md)
 """Drop junk-named entities from the T-REx base graph and from the graph built on it. Free, no API.
 
     python scripts/fir/clean_base.py BASE.json SHARED.json OUT_SUFFIX [--generic-df 0.01]

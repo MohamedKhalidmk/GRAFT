@@ -1,3 +1,4 @@
+# Sources: hipporag, memoryagentbench (docs/reference/REFERENCES.md)
 """HippoRAG-v2 baseline, following the benchmark's HippoRAG path step by step.
 
 Source: baselines/memoryagentbench/agent.py, `_handle_rag_agent` (memorize: every chunk wrapped in

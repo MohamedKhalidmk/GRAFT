@@ -1,3 +1,4 @@
+# Sources: eig-search (docs/reference/REFERENCES.md)
 """EiG-Search attribution: the batched version matches EiG-Search's own per-edge loop (main.py, NC branch)."""
 import torch
 
@@ -18,6 +19,8 @@ def _graph(n=30, m=40, dim=16, seed=0):
 
 
 def test_batched_matches_eig_loop():
+    """Checks that the batched EiG edge attributions give the same top-k scores and edges as EiG-Search's own per-edge loop.
+    Guards against: the faster batched version ranking different edges than the published method, so results labelled EiG are not EiG's."""
     torch.manual_seed(0)
     x, ei = _graph()
     model = GCN_NC(16, 2, 3, 8).eval()

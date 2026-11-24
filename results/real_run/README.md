@@ -1,6 +1,6 @@
 # Real run: Claude Haiku 5.5 on FactConsolidation multi-hop
 
-Raw results of the paid real runs written up in [`docs/experiments.md`](../../docs/experiments.md).
+Raw results of the paid real runs written up in [`docs/reference/experiments.md`](../../docs/reference/experiments.md).
 FactConsolidation from MemoryAgentBench, 262K tokens (537 chunks of 512 tokens), the 100 multi-hop
 (MH) questions. Claude Haiku 5.5 (`claude-haiku-5-5`) writes the memory graph and answers. Public
 benchmark data only. Run on the Fir cluster (one H100, 8 CPU cores) on 2026-11-13.

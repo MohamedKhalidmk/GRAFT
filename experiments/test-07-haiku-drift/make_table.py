@@ -24,7 +24,7 @@ for day, what, base, pat, colour in ARMS:
                  "accuracy_sd": s["accuracy_sd"], "per_repeat": s["per_repeat"], "gold_in_final_facts": s["gold_in_final_facts"],
                  "mean_output_tokens": round(sum(r["out_tok"] for r in reps) / sum(r["n"] for r in reps), 1),
                  "cost_per_100_questions_usd": s["cost_per_100_questions_usd"], "folder": T.rel(R, HERE)})
-    bars.append(T.bar(what, [r["acc"] for r in reps], colour))
+    bars.append(T.bar(T.tag(what, R), [r["acc"] for r in reps], colour))
 
 T.write_tables(HERE, rows)
 T.bar_chart(HERE / "figure.png", "Test 07 · Haiku drift",

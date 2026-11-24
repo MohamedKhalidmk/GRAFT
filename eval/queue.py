@@ -8,6 +8,7 @@ A failing config is recorded and the queue moves on to the next one.
 
 import argparse
 import json
+import sys
 import os
 import time
 import traceback
@@ -38,7 +39,7 @@ def main() -> None:
             f.write(json.dumps({"ts": time.time(), **fields}) + "\n")
 
     event(status="queued", configs=args.configs)
-    tables = set()
+    tables, failed = set(), []
     for config in args.configs:
         cfg = yaml.safe_load(Path(config).read_text())
         event(status="started", config=config, run_name=cfg["run_name"])
@@ -49,9 +50,12 @@ def main() -> None:
         except BaseException as e:  # record and continue with the rest of the queue
             event(status="failed", config=config, run_name=cfg["run_name"], error=f"{type(e).__name__}: {e}",
                   traceback=traceback.format_exc()[-2000:])
+            failed.append(cfg["run_name"])
     for length, mode in tables:
         build(length, mode)
-    event(status="done")
+    event(status="done", failed=failed)
+    if failed:  # the job must not end as COMPLETED when a run died (G35 and G40 repeats, Nibi, 2026-11-22)
+        sys.exit(f"{len(failed)} of {len(args.configs)} runs failed: {', '.join(failed)} (see {log_path})")
 
 
 if __name__ == "__main__":

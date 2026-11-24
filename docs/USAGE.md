@@ -12,7 +12,7 @@ GRAFT was called SGAR during development. Files under `results/`, the cluster fo
 prompt headers (`SGAR-EXTRACT`, `SGAR-OPS`) and the benchmark agent name `Structure_rag_sgar` keep the
 old name so the recorded runs stay reproducible; configs that say `method: sgar` still run.
 
-- [docs/design/](design/): designs before code. [docs/experiments.md](experiments.md): the full write-up of the
+- [docs/design/](design): designs before code. [docs/reference/experiments.md](reference/experiments.md): the full write-up of the
   read-order and baseline runs.
 
 ## Quick start

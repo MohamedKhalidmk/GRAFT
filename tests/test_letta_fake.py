@@ -15,6 +15,8 @@ from eval.run import run
 
 @pytest.mark.parametrize("method", ["letta_bundled", "letta_upstream"])
 def test_fake_run_answers_every_question(method: str) -> None:
+    """Checks that each Letta variant runs end to end in fake mode, stores every chunk, searches then answers per question, and returns the fake answer.
+    Guards against: a Letta failure turning into the benchmark's 'Error' answer and being scored as a normal wrong answer instead of failing."""
     if not METHODS[method].python.exists():
         pytest.skip(f"environment for {method} is not installed")
     out = run(str(REPO / "configs" / "runs" / f"{method}_fake_6k.yaml"))

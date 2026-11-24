@@ -1,5 +1,7 @@
 # GRAFT working memory: design (before coding)
 
+> IDs ([registry](../reference/REGISTRY.md), 2026-11-21): arm A = G08, arm B = G30, arm C = G31 (v1) and G33 (v2), arm C- = G32 (v1) and G34 (v2). Later combined with the guide as G38.
+
 Status: design for review, 2026-11-20. Nothing is coded yet. Test in GRAFT alone, on the GRAFT questions
 (FactConsolidation 262k, multi-hop, 100 questions), before anything goes into Flotilla's Memory routes.
 
