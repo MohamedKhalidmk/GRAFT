@@ -48,7 +48,7 @@ f. PROTOCOL.md's status line now names protocol-v10 (fixed 2026-11-21).
    - the four Memory routes: `submit_longmemeval.sh memory <route> <time> <shards>`
    - grading with Haiku: `submit_longmemeval.sh judge <time> <name>` (after 2c; paid, key via the dialog)
    - merge into new labels:
-     `python -m flotilla.strategy_labels --pool-labels $SCRATCH/flotilla/test04-labels/run-03 --memory-items $SCRATCH/flotilla/data/longmemeval/memory_items.jsonl --verdicts <judge>/verdicts.jsonl --memory-split $SCRATCH/flotilla/data/longmemeval/split.json --runs <route>=<dirs> ... --build-runs $LME/runs/prepare/* --graft-cache $LME/graft_cache --out $SCRATCH/flotilla/test04-labels/run-04-lme`
+     `python -m flotilla.routers.strategy_labels --pool-labels $SCRATCH/flotilla/test04-labels/run-03 --memory-items $SCRATCH/flotilla/data/longmemeval/memory_items.jsonl --verdicts <judge>/verdicts.jsonl --memory-split $SCRATCH/flotilla/data/longmemeval/split.json --runs <route>=<dirs> ... --build-runs $LME/runs/prepare/* --graft-cache $LME/graft_cache --out $SCRATCH/flotilla/test04-labels/run-04-lme`
    Base routes and GRAFT run on 3g.40gb MIG slices (full H100s queue for days); time limits from the pilot +50%.
 2. **Train the four supervised routers once on all ten routes:**
    `LABELS=$SCRATCH/flotilla/test04-labels/run-04-lme bash scripts/fir/submit_strategy_router.sh train <name>`
