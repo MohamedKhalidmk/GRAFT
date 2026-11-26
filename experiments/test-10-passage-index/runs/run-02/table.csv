@@ -1,0 +1,19 @@
+candidate,setup,arm,repeat,right,gold_in_context,tokens_mean,tokens_min,tokens_max,calls_per_q,asks_per_q,opened_tokens_per_q,cut_at_cap,run
+G35,S179,"guided facts, 50 lines",0,51,59,1192,1008,1656,2.02,,,12,exp_passages4k_g35_r0_20261125-060636_j5706487
+G35,S179,"guided facts, 50 lines",1,52,59,1190,1008,1657,2.01,,,10,exp_passages4k_g35_r1_20261125-060636_j5706488
+G35,S179,"guided facts, 50 lines",2,51,59,1192,1008,1662,2.01,,,14,exp_passages4k_g35_r2_20261125-060636_j5706489
+G52,S183,"guided facts to 4,096 tokens",0,56,62,4025,1364,7495,2.01,,,19,exp_passages4k_g52_r0_20261126-032133_j5706499
+G52,S183,"guided facts to 4,096 tokens",1,55,62,4026,1364,7495,2.01,,,16,exp_passages4k_g52_r1_20261126-032500_j5706500
+G52,S183,"guided facts to 4,096 tokens",2,59,62,4026,1364,7495,2.01,,,21,exp_passages4k_g52_r2_20261126-032625_j5706501
+G49,S180,the index: guided passages,0,46,62,4560,4443,4759,2.02,,,11,exp_passages4k_g49_r0_20261126-023515_j5706490
+G49,S180,the index: guided passages,1,47,63,4555,4436,4723,2.02,,,10,exp_passages4k_g49_r1_20261126-031346_j5706491
+G49,S180,the index: guided passages,2,47,62,4553,4428,4731,2.02,,,12,exp_passages4k_g49_r2_20261126-031714_j5706492
+G53,S184,the index with reading,0,48,61,4681,4450,5369,2.74,0.73,91,16,exp_passages4k_g53_r0_20261126-032613_j5706502
+G53,S184,the index with reading,1,47,61,4685,4450,5491,2.73,0.72,95,14,exp_passages4k_g53_r1_20261126-032604_j5706503
+G53,S184,the index with reading,2,48,62,4688,4450,5651,2.74,0.72,99,14,exp_passages4k_g53_r2_20261126-032605_j5706504
+G50,S181,HippoRAG 2-style passages,0,24,47,5573,4997,6016,1.0,,,49,exp_passages4k_g50_r0_20261126-031714_j5706493
+G50,S181,HippoRAG 2-style passages,1,22,47,5573,4997,6016,1.0,,,48,exp_passages4k_g50_r1_20261126-031755_j5706494
+G50,S181,HippoRAG 2-style passages,2,26,47,5573,4997,6016,1.0,,,46,exp_passages4k_g50_r2_20261126-032133_j5706495
+G51,S182,BM25 passages,0,17,35,4299,4270,4333,1.0,,,64,exp_passages4k_g51_r0_20261126-032138_j5706496
+G51,S182,BM25 passages,1,20,35,4299,4270,4333,1.0,,,60,exp_passages4k_g51_r1_20261126-032152_j5706497
+G51,S182,BM25 passages,2,18,35,4299,4270,4333,1.0,,,61,exp_passages4k_g51_r2_20261126-032144_j5706498

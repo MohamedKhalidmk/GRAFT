@@ -1,7 +1,7 @@
 {
  "run": "run-02",
  "date": "2026-11-23",
- "status": "moved to Fir 2026-11-24 04:00 (Nibi maintenance 24 Nov 07:50 to 25 Nov 16:00 Eastern); Nibi copies held",
+ "status": "done 2026-11-26: all 18 Fir jobs 5706487-5706504 completed (G35 on 25 Nov, the other five arms on 26 Nov); table.csv and table.md built from the Fir runs. The 18 held Nibi copies 28630848-28630865 still need cancelling (Nibi unreachable on 26 Nov).",
  "change": "answer cap 4,096 tokens for every arm (was 1,024 in run-01), so G53's longer reasoning is not cut; run names exp_passages4k_*",
  "jobs": {
   "G35": [
@@ -69,5 +69,6 @@
    5706503,
    5706504
   ]
- }
+ },
+ "fir_jobs": "5706487-5706504"
 }
