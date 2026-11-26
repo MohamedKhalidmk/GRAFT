@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>GRAFT poster</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=block" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+@page{size:1800pt 1275pt;margin:0}
+:root{--green:#3E9142;--navy:#22344A;--ink:#1F1D1A;--mut:#6B675F;--line:#DEDAD0;--card:#F6F3EC;--beige:#F3EFE6;--grey:#C8C5BC;--yellow:#F2C230;--red:#C8362E}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:2400px;height:1700px;background:#fff;color:var(--ink);font-family:Inter,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:2400px;height:1700px;padding:56px 80px 44px;display:grid;grid-template-rows:auto 500px 1fr auto;gap:34px;overflow:hidden;position:relative}
+.page:before{content:"";position:absolute;left:0;top:0;right:0;height:14px;background:linear-gradient(90deg,var(--green) 0 55%,var(--yellow) 55% 70%,var(--red) 70% 80%,var(--navy) 80%)}
+header{display:flex;align-items:center;gap:44px}
+.logo{width:230px;height:230px;flex:none}
+.word{font-family:"Source Serif 4",serif;font-weight:700;font-size:150px;line-height:.85;letter-spacing:-3px;color:var(--ink)}
+.word span{color:var(--green)}
+h1{font-family:"Source Serif 4",serif;font-weight:400;font-size:62px;line-height:1.1;margin-top:14px;color:var(--ink)}
+h1 em{font-style:normal;color:var(--green);font-weight:600}
+.by{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:16px}
+.badges{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end}
+.b{display:inline-flex;align-items:center;gap:10px;border-radius:999px;padding:10px 22px;font-size:24px;font-weight:700;color:#fff;white-space:nowrap}
+.b svg{width:26px;height:26px}
+.b.n{background:var(--navy)}.b.g{background:var(--green)}.b.y{background:var(--yellow);color:var(--ink)}.b.r{background:var(--red)}.b.o{background:#fff;color:var(--ink);border:2px solid var(--line)}
+.author{font-size:28px;color:var(--mut)}.author b{color:var(--ink)}
+.card{background:var(--card);border-radius:28px;padding:32px 38px;position:relative;overflow:hidden}
+.row1{display:grid;grid-template-columns:900px 1fr;gap:34px}
+.row2{display:grid;grid-template-columns:600px 1fr 700px;gap:34px;min-height:0}
+.lane{writing-mode:vertical-rl;transform:rotate(180deg);font-size:24px;font-weight:800;letter-spacing:4px;color:var(--mut);text-align:center}
+.pipe{display:grid;grid-template-columns:50px 1fr;row-gap:30px;column-gap:20px;align-items:stretch;height:100%}
+.steps{display:flex;align-items:center}
+.step{flex:1;height:100%;background:#fff;border:2px solid var(--line);border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.step svg{width:84px;height:84px}
+.step b{font-family:"Source Serif 4",serif;font-weight:600;font-size:38px;line-height:1}
+.step.end{background:var(--green);border-color:var(--green);color:#fff}
+.arr{width:46px;flex:none;display:grid;place-items:center}.arr svg{width:34px;height:34px}
+.k{font-size:22px;font-weight:800;letter-spacing:3px;color:var(--mut);text-transform:uppercase}
+.big{font-family:"Source Serif 4",serif;font-weight:700;font-size:172px;line-height:.85;color:var(--green);letter-spacing:-5px}
+footer{display:flex;align-items:center;gap:36px;border-top:2px solid var(--line);padding-top:20px}
+.src{font-size:18px;color:var(--mut);line-height:1.45;flex:1}
+.next{display:flex;align-items:center;gap:22px;background:var(--navy);color:#fff;border-radius:22px;padding:20px 28px;font-size:24px;font-weight:600}
+.next svg{width:60px;height:60px;flex:none}
+.qr{display:flex;align-items:center;gap:16px;font-size:20px;font-weight:600}
+#qr svg{width:116px;height:116px;display:block}
+</style></head>
+<body><div class="page">
+
+<header>
+  <img class="logo" src="../../assets/graft.png" alt="">
+  <div>
+    <div class="word">GR<span>A</span>FT</div>
+    <h1>graph memory that knows which fact is <em>newest</em></h1>
+  </div>
+  <div class="by">
+    <div class="badges">
+      <span class="b n"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 15l3-4 2 2 3-5"/></svg>MemoryAgentBench</span>
+      <span class="b r"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M4 5h16v11H10l-5 4v-4H4z"/></svg>LongMemEval</span>
+    </div>
+    <div class="badges">
+      <span class="b y"><svg viewBox="0 0 24 24" fill="none" stroke="#1F1D1A" stroke-width="2.4"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></svg>Qwen3.8-27B</span>
+      <span class="b o"><svg viewBox="0 0 24 24" fill="#D97757"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg>Claude Haiku 5.5</span>
+    </div>
+    <div class="author"><b>Khaled Abuela</b> · Nov 2026</div>
+  </div>
+</header>
+
+<!-- ROW 1 -->
+<div class="row1">
+  <section class="card" style="padding:28px 30px">
+    <svg viewBox="0 -34 840 538" style="width:100%;height:100%" font-family="Inter">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#C8362E"/></marker></defs>
+      <!-- two chat bubbles -->
+      <g>
+        <circle cx="34" cy="50" r="30" fill="#22344A"/><circle cx="34" cy="42" r="10" fill="#fff"/><path d="M16 68a18 14 0 0 1 36 0" fill="#fff"/>
+        <path d="M78 14h300a20 20 0 0 1 20 20v32a20 20 0 0 1-20 20H98l-20 14V34a20 20 0 0 1 0-20z" fill="#fff" stroke="#DEDAD0" stroke-width="2"/>
+        <text x="100" y="60" font-size="28" font-weight="600">I live in Lyon.</text>
+        <text x="98" y="0" font-size="20" fill="#9A968D" font-weight="700">MAY 2023</text>
+      </g>
+      <g>
+        <circle cx="440" cy="50" r="30" fill="#22344A"/><circle cx="440" cy="42" r="10" fill="#fff"/><path d="M422 68a18 14 0 0 1 36 0" fill="#fff"/>
+        <path d="M484 14h330a20 20 0 0 1 20 20v32a20 20 0 0 1-20 20H504l-20 14V34a20 20 0 0 1 0-20z" fill="#fff" stroke="#3E9142" stroke-width="2.5"/>
+        <text x="506" y="60" font-size="28" font-weight="600">I moved to Toronto.</text>
+        <text x="504" y="0" font-size="20" fill="#3E9142" font-weight="700">JULY 2023</text>
+      </g>
+      <!-- question -->
+      <rect x="250" y="122" width="340" height="56" rx="28" fill="#22344A"/>
+      <text x="420" y="159" font-size="27" font-weight="700" fill="#fff" text-anchor="middle">Where do I live?</text>
+      <path d="M330 178 L 200 212 M510 178 L 640 212" stroke="#9A968D" stroke-width="3" stroke-dasharray="6 6"/>
+      <!-- plain memory -->
+      <rect x="0" y="214" width="404" height="290" rx="22" fill="#fff"/>
+      <circle cx="40" cy="250" r="20" fill="#C8362E"/><path d="M32 242l16 16M48 242l-16 16" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      <text x="72" y="259" font-size="26" font-weight="800" fill="#6B675F">plain memory</text>
+      <line x1="104" y1="380" x2="262" y2="314" stroke="#22344A" stroke-width="5"/>
+      <line x1="104" y1="380" x2="262" y2="446" stroke="#22344A" stroke-width="5"/>
+      <circle cx="90" cy="380" r="40" fill="#22344A"/><circle cx="90" cy="368" r="13" fill="#fff"/><path d="M68 398a22 17 0 0 1 44 0" fill="#fff"/>
+      <rect x="246" y="290" width="132" height="50" rx="25" fill="#F2C230"/><text x="312" y="324" font-size="26" text-anchor="middle" font-weight="700">Lyon ?</text>
+      <rect x="230" y="422" width="164" height="50" rx="25" fill="#F2C230"/><text x="312" y="456" font-size="26" text-anchor="middle" font-weight="700">Toronto ?</text>
+      <!-- GRAFT -->
+      <rect x="436" y="214" width="404" height="290" rx="22" fill="#fff" stroke="#3E9142" stroke-width="4"/>
+      <circle cx="476" cy="250" r="20" fill="#3E9142"/><path d="M467 250l6 6 12-12" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <image href="../../assets/graft.png" x="502" y="226" width="48" height="48"/>
+      <text x="556" y="259" font-size="26" font-weight="800" fill="#3E9142">GRAFT</text>
+      <line x1="540" y1="380" x2="690" y2="314" stroke="#C8C5BC" stroke-width="5" stroke-dasharray="10 8"/>
+      <line x1="540" y1="380" x2="690" y2="446" stroke="#3E9142" stroke-width="6"/>
+      <circle cx="526" cy="380" r="40" fill="#22344A"/><circle cx="526" cy="368" r="13" fill="#fff"/><path d="M504 398a22 17 0 0 1 44 0" fill="#fff"/>
+      <rect x="682" y="290" width="120" height="50" rx="25" fill="#EFEDE7"/><text x="742" y="324" font-size="26" text-anchor="middle" fill="#A8A49B" text-decoration="line-through">Lyon</text>
+      <rect x="666" y="422" width="152" height="50" rx="25" fill="#3E9142"/><text x="742" y="456" font-size="26" text-anchor="middle" fill="#fff" font-weight="800">Toronto</text>
+      <path d="M812 428 C 846 400, 846 366, 806 344" fill="none" stroke="#C8362E" stroke-width="4" marker-end="url(#ah)"/>
+    </svg>
+  </section>
+
+  <section class="card">
+    <div class="pipe">
+      <div class="lane">WRITE</div>
+      <div class="steps">
+        <div class="step"><svg viewBox="0 0 48 48" fill="none" stroke="#22344A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h36v24H22l-9 8v-8H6z"/><path d="M13 16h22M13 23h14"/></svg><b>Chat</b></div>
+        <div class="arr"><svg viewBox="0 0 24 24"><path d="M3 12h16m-6-6 6 6-6 6" stroke="#9A968D" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="step"><svg viewBox="0 0 48 48" fill="none" stroke-width="2.6" stroke-linecap="round"><circle cx="9" cy="24" r="6" fill="#22344A" stroke="none"/><path d="M15 24h18" stroke="#22344A"/><path d="M28 19l5 5-5 5" stroke="#22344A"/><rect x="34" y="17" width="12" height="14" rx="7" fill="#F2C230" stroke="none"/></svg><b>Facts</b></div>
+        <div class="arr"><svg viewBox="0 0 24 24"><path d="M3 12h16m-6-6 6 6-6 6" stroke="#9A968D" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="step"><svg viewBox="0 0 48 48" fill="none" stroke="#22344A" stroke-width="2.8" stroke-linecap="round"><path d="M20 28a8 8 0 0 0 11 1l7-7a8 8 0 0 0-11-11l-3 3"/><path d="M28 20a8 8 0 0 0-11-1l-7 7a8 8 0 0 0 11 11l3-3"/></svg><b>Link</b></div>
+        <div class="arr"><svg viewBox="0 0 24 24"><path d="M3 12h16m-6-6 6 6-6 6" stroke="#9A968D" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="step"><svg viewBox="0 0 48 48" fill="none" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="18" height="12" rx="6" fill="#EFEDE7" stroke="#C8C5BC"/><path d="M6 14h14" stroke="#A8A49B"/><rect x="26" y="28" width="18" height="12" rx="6" fill="#3E9142" stroke="none"/><path d="M35 26 C 35 16, 30 14, 24 14" stroke="#C8362E"/><path d="M27 10l-4 4 4 4" stroke="#C8362E"/></svg><b>Replace</b></div>
+        <div class="arr"><svg viewBox="0 0 24 24"><path d="M3 12h16m-6-6 6 6-6 6" stroke="#9A968D" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="step end"><img src="../../assets/graft.png" style="width:92px;height:92px" alt=""><b>Graph</b></div>
+      </div>
+      <div class="lane">READ</div>
+      <div class="steps">
+        <div class="step"><svg viewBox="0 0 48 48" fill="none" stroke="#22344A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="18"/><path d="M19 19a5 5 0 1 1 6 5v3M24.5 33v.5"/></svg><b>Ask</b></div>
+        <div class="arr"><svg viewBox="0 0 24 24"><path d="M3 12h16m-6-6 6 6-6 6" stroke="#9A968D" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="step"><svg viewBox="0 0 48 48" fill="none" stroke="#22344A" stroke-width="2.6" stroke-linecap="round"><path d="M10 12l14 6M10 12l2 18M24 18l-12 12M24 18l12 10M12 30l14 8M36 28l-10 10" stroke="#C8C5BC"/><path d="M10 12l14 6 12 10" stroke="#3E9142" stroke-width="3.4"/><circle cx="10" cy="12" r="4" fill="#22344A" stroke="none"/><circle cx="24" cy="18" r="4" fill="#3E9142" stroke="none"/><circle cx="12" cy="30" r="4" fill="#22344A" stroke="none"/><circle cx="36" cy="28" r="4" fill="#3E9142" stroke="none"/><circle cx="26" cy="38" r="4" fill="#22344A" stroke="none"/></svg><b>Walk</b></div>
+        <div class="arr"><svg viewBox="0 0 24 24"><path d="M3 12h16m-6-6 6 6-6 6" stroke="#9A968D" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="step"><svg viewBox="0 0 48 48" fill="none" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="18" stroke="#22344A"/><path d="M24 13v11l8 5" stroke="#22344A"/><circle cx="38" cy="10" r="7" fill="#F2C230" stroke="none"/></svg><b>Newest</b></div>
+        <div class="arr"><svg viewBox="0 0 24 24"><path d="M3 12h16m-6-6 6 6-6 6" stroke="#9A968D" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="step end"><svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="18"/><path d="m15 24 6 6 12-12"/></svg><b>Answer</b></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ROW 2 -->
+<div class="row2">
+  <section class="card" style="display:flex;flex-direction:column;justify-content:space-between">
+    <div>
+      <div style="display:flex;align-items:center;gap:16px"><span class="k">Best</span><span class="b y" style="font-size:20px;padding:6px 16px">Qwen3.8-27B</span></div>
+      <div class="big" style="margin-top:18px">48.3%</div>
+      <svg viewBox="0 0 560 50" style="width:100%;margin-top:16px" font-family="Inter">
+        <rect x="0" y="10" width="426.6" height="30" rx="15" fill="#E7E3D9"/>
+        <rect x="0" y="10" width="388.7" height="30" rx="15" fill="#22344A"/>
+        <rect x="372" y="10" width="54.6" height="30" rx="0" fill="#3E9142"/>
+        <rect x="400" y="10" width="26.6" height="30" rx="15" fill="#3E9142"/>
+        <text x="194" y="32" font-size="18" fill="#fff" font-weight="700" text-anchor="middle">44.0 no guide</text>
+        <text x="440" y="32" font-size="20" fill="#3E9142" font-weight="800">+4.3 guide</text>
+      </svg>
+    </div>
+    <svg viewBox="0 0 536 310" style="width:100%" font-family="Inter">
+      <text x="0" y="22" font-size="22" font-weight="800" fill="#6B675F" letter-spacing="2">FACT WRITER</text>
+      <!-- answers found: 65 dots -->
+      <g id="dots"></g>
+      <text x="0" y="200" font-size="20" fill="#6B675F">answers in graph</text>
+      <text x="536" y="200" font-size="22" fill="#6B675F" text-anchor="end"><tspan fill="#A8A49B">28</tspan> → <tspan font-weight="800" fill="#3E9142" font-size="30">44</tspan> / 65</text>
+      <!-- empty chats -->
+      <rect x="0" y="234" width="430" height="28" rx="6" fill="#C8C5BC"/><text x="440" y="256" font-size="22" fill="#A8A49B" font-weight="600">936</text>
+      <rect x="0" y="270" width="36.8" height="28" rx="6" fill="#3E9142"/><text x="48" y="292" font-size="28" fill="#3E9142" font-weight="800">80</text>
+      <text x="110" y="292" font-size="20" fill="#6B675F">chats with no facts</text>
+    </svg>
+  </section>
+
+  <section class="card">
+    <div style="display:flex;align-items:baseline;gap:20px"><span class="k">Facts edited later</span><span style="font-family:'Source Serif 4';font-size:64px;font-weight:700;color:var(--green);margin-left:auto">2.3×</span></div>
+    <svg viewBox="0 20 760 580" style="width:100%;height:480px;display:block;margin-top:0" font-family="Inter">
+      <g font-size="18" fill="#9A968D">
+        <line x1="60" x2="750" y1="440" y2="440" stroke="#1F1D1A" stroke-width="2"/>
+        <line x1="60" x2="750" y1="340" y2="340" stroke="#E3DFD6" stroke-dasharray="4 6"/><text x="48" y="346" text-anchor="end">10</text>
+        <line x1="60" x2="750" y1="240" y2="240" stroke="#E3DFD6" stroke-dasharray="4 6"/><text x="48" y="246" text-anchor="end">20</text>
+        <line x1="60" x2="750" y1="140" y2="140" stroke="#E3DFD6" stroke-dasharray="4 6"/><text x="48" y="146" text-anchor="end">30</text>
+        <text x="48" y="446" text-anchor="end">0</text>
+      </g>
+      <rect x="100" y="93" width="170" height="347" rx="12" fill="#3E9142"/>
+      <text x="185" y="76" font-family="Source Serif 4" font-size="60" font-weight="700" fill="#3E9142" text-anchor="middle">34.7%</text>
+      <rect x="330" y="290" width="170" height="150" rx="12" fill="#B9A6D6"/>
+      <text x="415" y="274" font-family="Source Serif 4" font-size="50" font-weight="600" text-anchor="middle">15%</text>
+      <rect x="560" y="400" width="170" height="40" rx="10" fill="#C8C5BC"/>
+      <text x="645" y="384" font-family="Source Serif 4" font-size="50" font-weight="600" text-anchor="middle">4%</text>
+      <image href="../../assets/graft.png" x="140" y="452" width="90" height="90"/>
+      <image href="../assets/hippo.png" x="365" y="448" width="100" height="100"/>
+      <g transform="translate(600 456)"><rect width="90" height="84" rx="20" fill="#fff" stroke="#DEDAD0" stroke-width="2"/><text x="45" y="38" font-size="20" font-weight="800" text-anchor="middle" fill="#6B675F">abc</text><circle cx="40" cy="55" r="11" fill="none" stroke="#6B675F" stroke-width="3.5"/><path d="M48 63l10 10" stroke="#6B675F" stroke-width="3.5" stroke-linecap="round"/></g>
+      <g font-size="24" font-weight="800" text-anchor="middle"><text x="185" y="584" fill="#3E9142">GRAFT</text><text x="415" y="584">HippoRAG 2</text><text x="645" y="584">BM25</text></g>
+    </svg>
+  </section>
+
+  <section class="card">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span class="k">Variants</span><span class="b y" style="font-size:20px;padding:6px 16px">Qwen3.8-27B</span></div>
+    <svg viewBox="0 0 560 560" style="width:100%;height:500px;display:block" font-family="Inter">
+      <g font-size="17" fill="#9A968D" text-anchor="middle">
+        <line x1="0" x2="0" y1="0" y2="520" stroke="#1F1D1A" stroke-width="2"/>
+        <line x1="150" x2="150" y1="0" y2="520" stroke="#E3DFD6" stroke-dasharray="4 6"/>
+        <line x1="300" x2="300" y1="0" y2="520" stroke="#E3DFD6" stroke-dasharray="4 6"/>
+        <line x1="450" x2="450" y1="0" y2="520" stroke="#E3DFD6" stroke-dasharray="4 6"/>
+        <text x="0" y="548">0</text><text x="150" y="548">20</text><text x="300" y="548">40</text><text x="450" y="548">60</text>
+      </g>
+      <g font-size="22" font-weight="600">
+        <!-- 7.5 px per point; each row: icon chips + bar -->
+        <g transform="translate(0 8)"><rect width="362.3" height="76" rx="10" fill="#3E9142"/><text x="18" y="47" fill="#fff" font-weight="800">guide</text><text x="376" y="51" font-size="34" font-weight="800" fill="#3E9142">48.3</text></g>
+        <g transform="translate(0 112)"><rect width="350.3" height="76" rx="10" fill="#22344A"/><text x="18" y="47" fill="#fff">guide + w. mem.</text><text x="364" y="50" font-size="30" font-weight="700">46.7</text></g>
+        <g transform="translate(0 216)"><rect width="330" height="76" rx="10" fill="#22344A"/><text x="18" y="47" fill="#fff">no guide</text><text x="344" y="50" font-size="30" font-weight="700">44.0</text></g>
+        <g transform="translate(0 320)"><rect width="255" height="76" rx="10" fill="#9AA3AE"/><text x="18" y="47" fill="#fff">w. mem., graph</text><text x="268" y="50" font-size="30" font-weight="700">34.0</text></g>
+        <g transform="translate(0 424)"><rect width="245.3" height="76" rx="10" fill="#9AA3AE"/><text x="18" y="47" fill="#fff">w. mem., prompt</text><text x="258" y="50" font-size="30" font-weight="700">32.7</text></g>
+      </g>
+    </svg>
+  </section>
+</div>
+
+<footer>
+  <div class="next"><svg viewBox="0 0 48 48" fill="none" stroke="#F2C230" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24h30M28 14l10 10-10 10"/></svg>Next: link facts back to the source text · histories longer than the context window</div>
+  <div class="src">FactConsolidation multi-hop (MemoryAgentBench), 100 questions, Claude Haiku 5.5 answers in every method; GRAFT mean of 6 runs, HippoRAG 2 and BM25 1 run each. Variants: mean of 3 same-day runs. Fact writer: LongMemEval, 76 dev chat histories.</div>
+  <div class="qr"><div id="qr"></div><div>github.com/<br>MohamedKhalidmk/GRAFT</div></div>
+</footer>
+</div>
+<script>
+// 65 dots: 28 old (grey ring), 44 new (green)
+(function(){const g=document.getElementById('dots');let s='';for(let i=0;i<65;i++){const c=i%13,r=Math.floor(i/13);const x=20+c*41,y=58+r*24;const fill=i<44?'#3E9142':'#E3DFD6';s+=`<circle cx="${x}" cy="${y}" r="9" fill="${fill}"/>`;if(i<28)s+=`<circle cx="${x}" cy="${y}" r="3.5" fill="#fff"/>`;}g.innerHTML=s;})();
+try{const q=qrcode(0,'M');q.addData('https://github.com/MohamedKhalidmk/GRAFT');q.make();document.getElementById('qr').innerHTML=q.createSvgTag({cellSize:4,margin:0,scalable:true});}catch(e){}
+</script>
+</body></html>
