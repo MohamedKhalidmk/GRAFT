@@ -19,24 +19,34 @@ So arm (b) "mixed" and arm (d) "wrong base" have both been measured on FactConso
 both hurt. What is new here is (1) a domain base that matches the questions, (2) the layered rule where user facts win and
 the base is read only when the user facts do not cover the question, and (3) a domain-specific writing guide.
 
-## Arms (all against G35, the guided graph with 50 fact lines)
+## Arms (built on G52, against G52 and G35)
+
+Changed 2026-11-26 (user): the arms build on G52 (G35's guided facts up to 4,096 tokens), since G52 leads test 10.
+G35 and G52 on patient facts only are the two baselines, run on the same MedMemoryBench questions, the same day, the same
+seeds, mean of 3, 4,096-token answer cap. If the same-day G35 against G52 rerun (Flotilla STATUS row 47) shows G35 ahead
+of G52, the user is told before any arm runs.
 
 | Arm | Graph | Base facts | Conflict rule | What it tests |
 |---|---|---|---|---|
-| G35 | user facts, general guide | none | newest user fact wins (as today) | baseline |
+| G35 | user facts, general guide, 50 fact lines | none | newest user fact wins (as today) | baseline |
+| G52 | user facts, general guide, facts up to 4,096 tokens | none | as G35 | baseline the arms build on |
 | a. Guided | user facts, written with a domain guide (e.g. a medical relation schema in place of the general T-REx guide) | none | as G35 | does a domain guide alone help |
 | b. Mixed | domain base + user facts in one graph | yes, ranked like user facts | none, all facts equal | does background knowledge help when nothing marks it |
 | c. Layered | same base + user facts | yes, a separate layer | user facts always win; base facts are read only for entities or relations no user fact covers, and are labelled "background" in the prompt | does the layer rule keep the gain and remove the harm |
 | d. Wrong base | layered, with an off-topic base of the same size | yes, off-topic | as c | how much the base costs as clutter |
 
-Fixed across arms: same writer (G41's fixed writer), same 50-line budget for the facts read (plus a check at G52's
-4,096 tokens if G52 is kept after its same-day rerun), Qwen W4A16, thinking off, answer cap 4,096, 3 repeats with vLLM
-seeds 20261119+k, all arms submitted together the same day.
+Fixed across arms: same writer (G41's fixed writer), G52's 4,096-token fact budget for arms a to d, Qwen W4A16,
+thinking off, answer cap 4,096 (the standard Qwen cap from 2026-11-26), 3 repeats with vLLM seeds 20261119+k set per
+job (VLLM_SEED), all arms submitted together the same day.
 
 ## Test sets
 
 1. **Domain set, where background should help.** Options, best first:
-   - **MedMemoryBench (2026; arXiv 2605.11814; data on Hugging Face, CC BY 4.0, code Apache 2.0).** 20 chronic-disease
+   - **MedMemoryBench (2026; arXiv 2605.11814; data on Hugging Face, Cyan27/MedMemoryBench, commit 8fff0b9).** Licence
+     checked 2026-11-26: the data is **CC BY-NC-SA 4.0** (research only, no commercial use, derived data shared under the
+     same licence), not CC BY 4.0 as first reported; the code is Apache 2.0. Download held for the user's call. Size 1.30 GB
+     in all, about 748 MB for English (dialogues 386 MB, dialogues with noise 359 MB, queries 2.2 MB); fits in Fir scratch
+     (19 TiB, 353 GB used). 20 chronic-disease
      patients, about 100 doctor and patient sessions each, about 1,986 questions. Its multiple-choice (398),
      inference-generation (397) and multi-hop clinical (191) questions need medical knowledge plus the patient's own facts
      (allergies, contraindications); state-update (200) tests changed facts, which matches "user facts win". Short types
@@ -61,8 +71,18 @@ seeds 20261119+k, all arms submitted together the same day.
 
 ## Keep rule (set before results)
 
-An arm is kept only if it beats G35 on the domain set by more than the larger repeat spread of the two, and its
-FactConsolidation mean is not below G35's by more than G35's repeat spread.
+An arm is kept only if it beats G52 on the domain set by more than the larger repeat spread of the two, and its
+FactConsolidation mean is not below G52's by more than G52's repeat spread. G35 is reported beside them.
+
+## Jobs and GPU-hours (estimate, 3g.40gb slices; before any submission)
+
+| Step | Jobs | Slice GPU-hours |
+|---|---|---|
+| Patient graphs, 5 patients x 2 guides (general for G35, G52, b to d; domain guide for a), about 100 sessions each | 10 | 20 to 40 (G41 took about 0.75 h per 50-session history; MedMemoryBench sessions are longer, checked after download) |
+| Domain base from openFDA labels or Hetionet (writer on the base text), plus the off-topic T-REx base (exists) | 1 to 2 | 2 to 4 |
+| Fake-answer smoke, both sets, all arms | 2 | 0.5 (CPU possible) |
+| Qwen answer runs: 6 arms (G35, G52, a, b, c, d) x 2 sets x 3 repeats | 36 | 30 to 45 (FactConsolidation G52 0.75 h a run in test 10; base arms longer) |
+| Total | about 50 | about 55 to 90 |
 
 ## Order and cost
 
