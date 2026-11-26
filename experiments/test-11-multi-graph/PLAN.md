@@ -74,15 +74,37 @@ job (VLLM_SEED), all arms submitted together the same day.
 An arm is kept only if it beats G52 on the domain set by more than the larger repeat spread of the two, and its
 FactConsolidation mean is not below G52's by more than G52's repeat spread. G35 is reported beside them.
 
-## Jobs and GPU-hours (estimate, 3g.40gb slices; before any submission)
+## MedMemoryBench as downloaded (2026-11-26)
+
+- Approved by the user 2026-11-26: CC BY-NC-SA 4.0 is fine for GRAFT thesis research (non-commercial). Results on it are
+  tagged NC-SA and kept out of the Flotilla model card. The data stays on Fir scratch and is never committed.
+- Downloaded on Fir: English only, pinned to commit 8fff0b9, 714 MB, sizes match the Hugging Face listing
+  (/scratch/khaledmk/sgar/data/medmemorybench/8fff0b9).
+- Shape: 20 patients (all "chronic"), 101 sessions each, about 800k tokens of dialogue per patient (about 7 times a
+  LongMemEval-S history); 1,939 questions asked at checkpoints after sessions 10, 20, ..., 100, each seeing only the
+  sessions before it. Types: multiple choice 398 (traps: temporal state 138, allergy cross-reaction 72,
+  contraindication 67, preference 61, drug interaction 56; most have 2 correct options), entity 400, date 374,
+  inference 381, state update 195, multi-hop 191.
+- Selection (seed 20261126; test11_questions.jsonl and test11_selection.json next to the data): 10 patients
+  (2, 3, 4, 5, 10, 11, 12, 14, 18, 19), checkpoints 10 and 20, gradable types only: all 40 multiple-choice questions,
+  plus 20 state-update, 20 entity and 20 date questions drawn from the 136 available; 49 at checkpoint 10, 51 at 20.
+  Inference and multi-hop answers are free text and would need a judge, so they are left out of the Qwen step.
+- Grading (free, MedMemoryBench's own rules): multiple choice right only if the chosen option set equals the correct
+  set; state update and entity by match to the short gold; date by the target date.
+- Graphs: each patient's first 20 sessions (median about 150k tokens), with a snapshot after session 10 so checkpoint-10
+  questions never see sessions 11 to 20.
+
+## Jobs and GPU-hours (estimate, 3g.40gb slices; nothing submitted)
 
 | Step | Jobs | Slice GPU-hours |
 |---|---|---|
-| Patient graphs, 5 patients x 2 guides (general for G35, G52, b to d; domain guide for a), about 100 sessions each | 10 | 20 to 40 (G41 took about 0.75 h per 50-session history; MedMemoryBench sessions are longer, checked after download) |
-| Domain base from openFDA labels or Hetionet (writer on the base text), plus the off-topic T-REx base (exists) | 1 to 2 | 2 to 4 |
-| Fake-answer smoke, both sets, all arms | 2 | 0.5 (CPU possible) |
-| Qwen answer runs: 6 arms (G35, G52, a, b, c, d) x 2 sets x 3 repeats | 36 | 30 to 45 (FactConsolidation G52 0.75 h a run in test 10; base arms longer) |
-| Total | about 50 | about 55 to 90 |
+| Patient graphs: 10 patients x 2 guides (general guide for G35, G52, b to d; domain guide for a), 20 sessions each, snapshot at 10 (G41 took about 1 h per 115k-token history) | 20 (40 if the writer cannot snapshot and the first 10 sessions are built separately) | 26 to 40 |
+| Domain base and domain guide from Hetionet (CC0, 16.1 MB, github.com/hetio/hetionet; download needs your yes): structured triples, no LLM | 1 CPU | 0 |
+| Off-topic base for arm d: the T-REx slice from tests 04 and 06 (exists) | 0 | 0 |
+| Fake-answer smoke on both sets, all arms | 2 CPU | 0 |
+| Qwen answer runs, MedMemoryBench: 6 arms (G35, G52, a, b, c, d) x 3 repeats | 18 | about 14 |
+| Qwen answer runs, FactConsolidation: 6 arms x 3 repeats, the same day | 18 | about 18 |
+| Total | 59 (79) | about 58 to 72 |
 
 ## Order and cost
 
