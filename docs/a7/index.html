@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
 body{margin:0}
+img{max-width:100%}
 
 /* Layout: a simple vertical deck of full-height slides on one white ground; big question title, text left, one visual right. */
 :root{
@@ -16,18 +17,18 @@ body{margin:0}
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace; --sheet:cubic-bezier(.32,.72,0,1);
   color-scheme:light;
 }
-html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
+html{scroll-snap-type:y proximity;scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
 .slide{min-height:100svh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;
-  padding-block:64px 88px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-sizing:border-box}
-.wrap{width:min(1240px,100%);margin:0 auto;display:flex;flex-direction:column;gap:clamp(22px,3.6vh,40px)}
+  padding-block:clamp(40px,7vh,72px) clamp(72px,10vh,96px);padding-left:max(24px,6vw,env(safe-area-inset-left,0px));padding-right:max(24px,6vw,env(safe-area-inset-right,0px));box-sizing:border-box}
+.wrap{width:min(1320px,100%);margin:0 auto;display:flex;flex-direction:column;gap:clamp(18px,3.4vh,40px)}
 h1,h2{margin:0;font-weight:800;letter-spacing:-.035em;line-height:.98;text-wrap:balance}
-h1{font-size:clamp(80px,13vw,190px)}
-h2{font-size:clamp(38px,5.4vw,80px)}
+h1{font-size:clamp(72px,min(13vw,22vh),200px)}
+h2{font-size:clamp(34px,min(5vw,8.5vh),84px)}
 .dim{color:var(--ink3)}
 .cols{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:start}
 .cols>*{min-width:0}
-.prose{font-size:clamp(17px,1.45vw,21px);line-height:1.6;color:var(--ink2);max-width:62ch;margin:0}
+.prose{font-size:clamp(16px,min(1.4vw,2.5vh),22px);line-height:1.6;color:var(--ink2);max-width:62ch;margin:0}
 .prose b{color:var(--ink);font-weight:600}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 button{font-family:inherit}
@@ -88,7 +89,7 @@ button{font-family:inherit}
 .tag.ok{background:var(--ok-soft);color:var(--ok);border:0}
 
 /* contribution */
-.claim{font-size:clamp(28px,3.4vw,50px);font-weight:700;letter-spacing:-.03em;line-height:1.12;margin:0;max-width:26ch;text-wrap:balance}
+.claim{font-size:clamp(24px,min(3.2vw,5.2vh),50px);font-weight:700;letter-spacing:-.03em;line-height:1.12;margin:0;max-width:26ch;text-wrap:balance}
 .claim em{font-style:normal;color:var(--accent)}
 .types{display:flex;flex-wrap:wrap;gap:12px}
 .type{background:var(--card);border-radius:16px;padding:16px 18px;max-width:420px}
@@ -119,7 +120,12 @@ button{font-family:inherit}
 .bw{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .bw .card h3{font-size:18px;line-height:1.25}
 
-#methods .wrap{gap:16px}
+#methods .wrap{gap:14px}
+#methods .fig{max-width:min(100%,calc((100svh - 400px) * 2000 / 726));margin:0 auto}
+#methods .steps,#methods .stepd{width:min(100%,calc((100svh - 400px) * 2000 / 726),1320px);margin:0 auto}
+.click{cursor:pointer;transition:transform .25s var(--sheet),box-shadow .25s}
+.card.click:hover,.stage.click:hover{transform:translateY(-3px);box-shadow:0 10px 24px -14px rgba(0,0,0,.25)}
+.more{font:600 12px/1 var(--sans);color:var(--accent);white-space:nowrap;margin-left:4px}
 /* refs */
 .refs{columns:2 380px;column-gap:48px;margin:0;padding:0;list-style:none}
 .refs li{break-inside:avoid;padding:10px 0;border-top:1px solid var(--line);font-size:14.5px;color:var(--ink2)}
@@ -229,9 +235,9 @@ button{font-family:inherit}
     <h2 class="rv">How will we know it works?</h2>
     <p class="prose rv" style="--d:100ms;max-width:none">We start with FactConsolidation because it tests what clinical records demand: facts that change and conflict over a long history, as when an allergy is later corrected. There, GRAFT reaches 56.7% against 18.3% for BM25. Since handling conflicting facts doesn’t guarantee answering ordinary ones, we then run the full MemoryAgentBench, covering plain retrieval, test-time learning and long-range understanding, against HippoRAG 2 and BM25 on the same model. We compare against HippoRAG 2 because it has the highest overall score among the retrieval and memory methods on MemoryAgentBench <button class="cite" data-src="mabtable">MemoryAgentBench</button>, and against BM25 as the simple baseline without a graph. Finally, we move to clinical data: our clinic partner’s records cannot yet be reported, so we have applied for access to Stanford’s EHRSHOT and MIMIC as public benchmarks.</p>
     <div class="stages">
-      <div class="stage rv" style="--d:180ms"><h3>1. Conflicting facts</h3><p>Multi-hop FactConsolidation, 100 questions, 3 runs.</p><span class="tag ok">Done · 56.7 vs 18.3</span></div>
-      <div class="stage rv" style="--d:260ms"><h3>2. Full MemoryAgentBench</h3><p>Retrieval, test-time learning, long-range understanding, conflicts. Against HippoRAG 2 and BM25.</p><span class="tag">Next</span></div>
-      <div class="stage rv" style="--d:340ms"><h3>3. Clinical records</h3><p>EHRSHOT (Stanford) and MIMIC, once access is granted.</p><span class="tag">Access applied for</span></div>
+      <div class="stage click rv" data-src="st1" role="button" tabindex="0" style="--d:180ms"><h3>1. Conflicting facts <span class="more">why →</span></h3><p>Multi-hop FactConsolidation, 100 questions, 3 runs.</p><span class="tag ok">Done · 56.7 vs 18.3</span></div>
+      <div class="stage click rv" data-src="st2" role="button" tabindex="0" style="--d:260ms"><h3>2. Full MemoryAgentBench <span class="more">why →</span></h3><p>Retrieval, test-time learning, long-range understanding, conflicts. Against HippoRAG 2 and BM25.</p><span class="tag">Next</span></div>
+      <div class="stage click rv" data-src="st3" role="button" tabindex="0" style="--d:340ms"><h3>3. Clinical records <span class="more">why →</span></h3><p>EHRSHOT (Stanford) and MIMIC, once access is granted.</p><span class="tag">Access applied for</span></div>
     </div>
   </div>
 </section>
@@ -251,12 +257,12 @@ button{font-family:inherit}
   <div class="wrap">
     <h2 class="rv">What do we already know?</h2>
     <div class="rw rv" style="--d:100ms">
-      <div class="card"><h3>Long context fails on change</h3><p>Models miss facts in the middle of long inputs <button class="cite" data-src="liu">Liu 2024</button>. Every method scores at most 28% on multi-hop conflicts <button class="cite" data-src="mab">MAB</button>.</p></div>
-      <div class="card"><h3>Graph retrieval <button class="cite" data-src="reading">reading list</button></h3><p>HippoRAG 2 (PageRank over a schema-free graph), GFM-RAG (pretrained GNN retriever), G-Retriever, GNN-RAG, SubgraphRAG.</p></div>
-      <div class="card"><h3>Memory that revises</h3><p>A-Mem rewrites notes, Text2Mem names memory operations, plus Mem0 and Zep.</p></div>
-      <div class="card"><h3>Medical</h3><p>MedGraphRAG, EHRNoteQA and EHRSHOT: medical, but mostly static questions, not one patient over time.</p></div>
-      <div class="card"><h3>Explaining the graph</h3><p>GOAt and EiG-Search show which part of a graph drives a GNN’s output.</p></div>
-      <div class="card"><h3>Arguments against us</h3><p><i>Does Memory Need Graphs?</i> says gains come from settings, not the graph. SubgraphRAG says a simple scorer may be enough.</p></div>
+      <div class="card click" data-src="rw_long" role="button" tabindex="0"><h3>Long context fails on change <span class="more">papers →</span></h3><p>Models miss facts in the middle of long inputs <button class="cite" data-src="liu">Liu 2024</button>. Every method scores at most 28% on multi-hop conflicts <button class="cite" data-src="mab">MAB</button>.</p></div>
+      <div class="card click" data-src="rw_graph" role="button" tabindex="0"><h3>Graph retrieval <span class="more">papers →</span></h3><p>HippoRAG 2 (PageRank over a schema-free graph), GFM-RAG (pretrained GNN retriever), G-Retriever, GNN-RAG, SubgraphRAG.</p></div>
+      <div class="card click" data-src="rw_rev" role="button" tabindex="0"><h3>Memory that revises <span class="more">papers →</span></h3><p>A-Mem rewrites notes, Text2Mem names memory operations, plus Mem0 and Zep.</p></div>
+      <div class="card click" data-src="rw_med" role="button" tabindex="0"><h3>Medical <span class="more">papers →</span></h3><p>MedGraphRAG, EHRNoteQA and EHRSHOT: medical, but mostly static questions, not one patient over time.</p></div>
+      <div class="card click" data-src="rw_xai" role="button" tabindex="0"><h3>Explaining the graph <span class="more">papers →</span></h3><p>GOAt and EiG-Search show which part of a graph drives a GNN’s output.</p></div>
+      <div class="card click" data-src="rw_atk" role="button" tabindex="0"><h3>Arguments against us <span class="more">papers →</span></h3><p><i>Does Memory Need Graphs?</i> says gains come from settings, not the graph. SubgraphRAG says a simple scorer may be enough.</p></div>
     </div>
     <div class="card gap rv" style="--d:200ms"><h3>The gap</h3><p>No method combines writing onto a ready-made guide graph, superseding outdated facts and explainable GNN retrieval, tested on changing facts. Medical memory benchmarks are rare and mostly static.</p></div>
   </div>
@@ -276,10 +282,10 @@ button{font-family:inherit}
     <h2 class="rv">What do we have so far?</h2>
     <div class="cols">
       <div class="bars rv" style="--d:100ms" aria-label="Results so far">
-        <div class="grp">QWEN · MEAN OF 3 RUNS</div>
+        <button class="grp click" data-src="run_q" style="border:0;background:none;padding:0;text-align:left">QWEN · MEAN OF 3 RUNS <span class="more">each run →</span></button>
         <div class="bar"><span class="lab">GRAFT</span><span class="track" style="background:var(--card)"><span class="fill g" style="--w:56.7%"></span></span><span class="v g num">56.7</span></div>
         <div class="bar"><span class="lab">BM25</span><span class="track" style="background:var(--card)"><span class="fill" style="--w:18.3%"></span></span><span class="v num">18.3</span></div>
-        <div class="grp">CLAUDE HAIKU</div>
+        <button class="grp click" data-src="run_h" style="border:0;background:none;padding:0;text-align:left">CLAUDE HAIKU <span class="more">each run →</span></button>
         <div class="bar"><span class="lab">GRAFT</span><span class="track" style="background:var(--card)"><span class="fill g" style="--w:45.7%"></span></span><span class="v g num">45.7</span></div>
         <div class="bar"><span class="lab">HippoRAG 2</span><span class="track" style="background:var(--card)"><span class="fill h" style="--w:15%"></span></span><span class="v num">15</span></div>
         <div class="bar"><span class="lab">BM25</span><span class="track" style="background:var(--card)"><span class="fill" style="--w:4%"></span></span><span class="v num">4</span></div>
@@ -424,9 +430,22 @@ const SREG={guide:[96,66,210,276],wb1:[329,100,52,52],llm:[418,96,280,206],wb2:[
 function sgHi(keys){return `<svg class="hi" viewBox="0 0 2000 726" preserveAspectRatio="none" aria-hidden="true">${keys.map(r=>{const [x,y,w,h]=SREG[r];return `<rect x="${x-6}" y="${y-6}" width="${w+12}" height="${h+12}" rx="14" fill="rgba(255,87,34,.14)" stroke="#ff5722" stroke-width="7" class="wring"/>`}).join("")}</svg>`}
 
 
-const READING=[["Evaluating Memory in LLM Agents via Incremental Multi-Turn Interactions (MemoryAgentBench)", "ICLR 2026", "Evaluation + baselines to beat", "S+"], ["EHRNoteQA: An LLM Benchmark for Real-World Clinical Practice Using Discharge Summaries", "NeurIPS 2024 D&B", "Dataset + evaluation", "S"], ["G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and Question Answering", "NeurIPS 2024", "Compare against (closest)", "S−"], ["Does Memory Need Graphs? A Unified Framework and Empirical Analysis for Long-Term Dialog Memory", "ACL 2026", "Attack to answer", "A+"], ["A-Mem: Agentic Memory for LLM Agents", "NeurIPS 2025", "Compare against", "A+"], ["GNN-RAG: Graph Neural Retrieval for Efficient LLM Reasoning on Knowledge Graphs", "ACL 2025 Findings", "Compare against", "A+"], ["HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models", "NeurIPS 2024", "Compare against", "A+"], ["LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory", "ICLR 2025", "Evaluation framework", "A"], ["Beyond a Million Tokens: Benchmarking and Enhancing Long-Term Memory in LLMs (BEAM)", "ICLR 2026", "Evaluation + baseline (LIGHT)", "A"], ["DialSim: A Dialogue Simulator for Evaluating Long-Term Multi-Party Dialogue Understanding of Conversational Agents", "ICLR 2026", "Evaluation (multi-party)", "A"], ["MedAlign: A Clinician-Generated Dataset for Instruction Following with Electronic Medical Records", "AAAI 2024", "Dataset", "A"], ["MedAgentBench: A Virtual EHR Environment to Benchmark Medical LLM Agents", "NEJM AI 2025", "Evaluation (clinical)", "A"], ["GAM: Hierarchical Graph-based Agentic Memory for LLM Agents", "ACL 2026", "Compare against", "A"], ["Towards Doctor-Like Reasoning: Medical RAG Fusing Knowledge with Patient Analogy (DoctorRAG)", "NeurIPS 2025", "Compare against (medical)", "A"], ["From Recall to Forgetting: Benchmarking Long-Term Memory for Personalized Agents (Memora / FAMA)", "ACL 2026 Findings", "Evaluation (FAMA metric only)", "A−"], ["Large Language Models with Temporal Reasoning for Longitudinal Clinical Summarization and Prediction", "EMNLP 2025 Findings", "Dataset source + evidence", "A−"], ["AMemGym: Interactive Memory Benchmarking for Assistants in Long-Horizon Conversations", "ICLR 2026", "Evaluation (diagnosis framing)", "A−"], ["MemoryArena: Benchmarking Agent Memory in Interdependent Multi-Session Agentic Tasks", "ICML 2026", "Evaluation", "A−"], ["RealMem: Benchmarking LLMs in Real-World Memory-Driven Interaction", "ACL 2026 Findings", "Evaluation", "A−"], ["MemBench: Towards More Comprehensive Evaluation on the Memory of LLM-based Agents", "ACL 2025 Findings", "Evaluation", "A−"], ["Evaluating Very Long-Term Conversational Memory of LLM Agents (LoCoMo)", "ACL 2024", "Evaluation (comparability)", "A−"], ["TIMER: Temporal Instruction Modeling and Evaluation for Longitudinal Clinical Records", "npj Digital Medicine 2025", "Dataset (clinical, time)", "A−"], ["In Prospect and Retrospect: Reflective Memory Management for Long-term Personalized Dialogue Agents", "ACL 2025", "Compare against", "A−"], ["LiCoMemory: Lightweight and Cognitive Agentic Memory", "ACL 2026 Findings", "Compare against", "A−"], ["Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory", "ECAI 2025", "Compare against", "A−"], ["Memory OS of AI Agent (MemoryOS)", "EMNLP 2025", "Compare against", "A−"], ["Agentic Memory: Unified Long-Term and Short-Term Memory Management (AgeMem)", "ACL 2026", "Compare against", "A−"], ["TReMu: Towards Neuro-Symbolic Temporal Reasoning for LLM-Agents with Memory in Multi-Session Dialogues", "ACL 2025 Findings", "Background (event time)", "B+"], ["GOAt: Explaining Graph Neural Networks via Graph Output Attribution", "ICLR 2024", "Background (GNN read)", "B+"], ["EiG-Search: Generating Edge-Induced Subgraphs for GNN Explanation in Linear Time", "ICML 2024", "Background (GNN read)", "B+"], ["Text2Mem: A Unified Memory Operation Language for Memory Operating System", "ACL 2026 Findings", "Background (memory ops)", "B+"], ["EHRSHOT: An EHR Benchmark for Few-Shot Evaluation of Foundation Models", "NeurIPS 2023 D&B", "Background (clinical data)", "B+"], ["Common Ground Tracking in Multimodal Dialogue", "LREC-COLING 2024", "Motivation (shared state)", "B+"], ["Why Do Multi-Agent LLM Systems Fail? (MAST)", "NeurIPS 2025 D&B", "Motivation (the problem)", "B+"], ["Cognitive Architectures for Language Agents (CoALA)", "TMLR", "Background (vocabulary)", "B+"], ["TOD-Flow: Modeling the Structure of Task-Oriented Dialogues", "EMNLP 2023", "Background (dialogue graphs)", "B"], ["MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework", "ICLR 2024", "Background (multi-agent)", "B"], ["CAMEL: Communicative Agents for 'Mind' Exploration of Large Language Model Society", "NeurIPS 2023", "Background (multi-agent)", "B"]];
+const READING=[["Evaluating Memory in LLM Agents via Incremental Multi-Turn Interactions (MemoryAgentBench)", "ICLR 2026", "Evaluation + baselines to beat", "S+"], ["EHRNoteQA: An LLM Benchmark for Real-World Clinical Practice Using Discharge Summaries", "NeurIPS 2024 D&B", "Dataset + evaluation", "S"], ["G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and Question Answering", "NeurIPS 2024", "Compare against (closest)", "S−"], ["Does Memory Need Graphs? A Unified Framework and Empirical Analysis for Long-Term Dialog Memory", "ACL 2026", "Attack to answer", "A+"], ["A-Mem: Agentic Memory for LLM Agents", "NeurIPS 2025", "Compare against", "A+"], ["GNN-RAG: Graph Neural Retrieval for Efficient LLM Reasoning on Knowledge Graphs", "ACL 2025 Findings", "Compare against", "A+"], ["HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models", "NeurIPS 2024", "Compare against", "A+"], ["LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory", "ICLR 2025", "Evaluation framework", "A"], ["Beyond a Million Tokens: Benchmarking and Enhancing Long-Term Memory in LLMs (BEAM)", "ICLR 2026", "Evaluation + baseline (LIGHT)", "A"], ["DialSim: A Dialogue Simulator for Evaluating Long-Term Multi-Party Dialogue Understanding of Conversational Agents", "ICLR 2026", "Evaluation (multi-party)", "A"], ["MedAlign: A Clinician-Generated Dataset for Instruction Following with Electronic Medical Records", "AAAI 2024", "Dataset", "A"], ["MedAgentBench: A Virtual EHR Environment to Benchmark Medical LLM Agents", "NEJM AI 2025", "Evaluation (clinical)", "A"], ["GAM: Hierarchical Graph-based Agentic Memory for LLM Agents", "ACL 2026", "Compare against", "A"], ["Towards Doctor-Like Reasoning: Medical RAG Fusing Knowledge with Patient Analogy (DoctorRAG)", "NeurIPS 2025", "Compare against (medical)", "A"], ["From Recall to Forgetting: Benchmarking Long-Term Memory for Personalized Agents (Memora / FAMA)", "ACL 2026 Findings", "Evaluation (FAMA metric only)", "A−"], ["Large Language Models with Temporal Reasoning for Longitudinal Clinical Summarization and Prediction", "EMNLP 2025 Findings", "Dataset source + evidence", "A−"], ["AMemGym: Interactive Memory Benchmarking for Assistants in Long-Horizon Conversations", "ICLR 2026", "Evaluation (diagnosis framing)", "A−"], ["MemoryArena: Benchmarking Agent Memory in Interdependent Multi-Session Agentic Tasks", "ICML 2026", "Evaluation", "A−"], ["RealMem: Benchmarking LLMs in Real-World Memory-Driven Interaction", "ACL 2026 Findings", "Evaluation", "A−"], ["MemBench: Towards More Comprehensive Evaluation on the Memory of LLM-based Agents", "ACL 2025 Findings", "Evaluation", "A−"], ["Evaluating Very Long-Term Conversational Memory of LLM Agents (LoCoMo)", "ACL 2024", "Evaluation (comparability)", "A−"], ["TIMER: Temporal Instruction Modeling and Evaluation for Longitudinal Clinical Records", "npj Digital Medicine 2025", "Dataset (clinical, time)", "A−"], ["In Prospect and Retrospect: Reflective Memory Management for Long-term Personalized Dialogue Agents", "ACL 2025", "Compare against", "A−"], ["LiCoMemory: Lightweight and Cognitive Agentic Memory", "ACL 2026 Findings", "Compare against", "A−"], ["Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory", "ECAI 2025", "Compare against", "A−"], ["Memory OS of AI Agent (MemoryOS)", "EMNLP 2025", "Compare against", "A−"], ["Agentic Memory: Unified Long-Term and Short-Term Memory Management (AgeMem)", "ACL 2026", "Compare against", "A−"], ["TReMu: Towards Neuro-Symbolic Temporal Reasoning for LLM-Agents with Memory in Multi-Session Dialogues", "ACL 2025 Findings", "Background (event time)", "B+"], ["GOAt: Explaining Graph Neural Networks via Graph Output Attribution", "ICLR 2024", "Background (GNN read)", "B+"], ["EiG-Search: Generating Edge-Induced Subgraphs for GNN Explanation in Linear Time", "ICML 2024", "Background (GNN read)", "B+"], ["Text2Mem: A Unified Memory Operation Language for Memory Operating System", "ACL 2026 Findings", "Background (memory ops)", "B+"], ["EHRSHOT: An EHR Benchmark for Few-Shot Evaluation of Foundation Models", "NeurIPS 2023 D&B", "Background (clinical data)", "B+"], ["Common Ground Tracking in Multimodal Dialogue", "LREC-COLING 2024", "Motivation (shared state)", "B+"], ["Why Do Multi-Agent LLM Systems Fail? (MAST)", "NeurIPS 2025 D&B", "Motivation (the problem)", "B+"], ["Cognitive Architectures for Language Agents (CoALA)", "TMLR", "Background (vocabulary)", "B+"], ["TOD-Flow: Modeling the Structure of Task-Oriented Dialogues", "EMNLP 2023", "Background (dialogue graphs)", "B"], ["MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework", "ICLR 2024", "Background (multi-agent)", "B"], ["CAMEL: Communicative Agents for 'Mind' Exploration of Large Language Model Society", "NeurIPS 2023", "Background (multi-agent)", "B"], ["GFM-RAG: Graph Foundation Model for RAG", "NeurIPS 2025", "Compare against (closest pipeline)", "S"], ["SubgraphRAG: Simple is Effective", "ICLR 2025", "Compare against (closest rival)", "S−"], ["HippoRAG 2: From RAG to Memory", "ICML 2025", "Compare against (graph baseline)", "A+"], ["MedGraphRAG: Medical Graph RAG", "ACL 2025", "Compare against (medical)", "A"]];
+const RW={
+  rw_long:["Papers on long context and memory benchmarks",["MemoryAgentBench","LongMemEval","BEAM","LoCoMo","MemoryArena"]],
+  rw_graph:["Papers on graph retrieval",["HippoRAG","GFM-RAG","G-Retriever","GNN-RAG","SubgraphRAG","GAM:"]],
+  rw_rev:["Papers on memory that revises",["A-Mem","Text2Mem","Mem0","MemoryOS","AgeMem","LiCoMemory"]],
+  rw_med:["Papers on medical records",["EHRNoteQA","EHRSHOT","MedAlign","MedAgentBench","MedGraphRAG","TIMER","Longitudinal","DoctorRAG"]],
+  rw_xai:["Papers on explaining GNNs",["GOAt","EiG-Search"]],
+  rw_atk:["Papers that argue against this approach",["Does Memory Need Graphs","SubgraphRAG"]]};
+const RUNS={
+  run_q:{t:"Qwen, multi-hop FactConsolidation",s:"GRAFT test 10, run-02 · 100 questions · 3 repeats",q:"<b>GRAFT (G52):</b> 56, 55, 59 → <mark>mean 56.7</mark><br><b>BM25</b> over the same passages: 17, 20, 18 → mean 18.3<br>Same model, same documents, same answer budget (up to 4,096 tokens).",u:"https://github.com/MohamedKhalidmk/GRAFT"},
+  run_h:{t:"Claude Haiku, multi-hop FactConsolidation",s:"GRAFT README results table · 100 questions",q:"<b>GRAFT:</b> <mark>45.7</mark> (mean of 3)<br><b>HippoRAG 2:</b> 15 (one run, so less certain)<br><b>BM25:</b> 4",u:"https://github.com/MohamedKhalidmk/GRAFT"},
+  st1:{t:"Stage 1 · Conflicting facts",s:"Done",q:"Multi-hop FactConsolidation from MemoryAgentBench: a long history where facts are edited later, and each question needs two facts, either of which may have changed. This is the same thing that happens when an allergy is corrected. <mark>GRAFT 56.7 vs BM25 18.3</mark> on Qwen, 3 repeats."},
+  st2:{t:"Stage 2 · Full MemoryAgentBench",s:"Next · queued",q:"Handling conflicting facts doesn’t prove GRAFT answers ordinary questions. The full benchmark adds <mark>accurate retrieval, test-time learning and long-range understanding</mark>, against HippoRAG 2 and BM25 on the same model, 3 same-day repeats each. The real HippoRAG 2 run on Qwen comes first.",u:"https://openreview.net/forum?id=DT7JyQC3MR"},
+  st3:{t:"Stage 3 · Clinical records",s:"Access applied for",q:"Our clinic partner’s records can’t be reported yet, so we applied for <mark>Stanford’s EHRSHOT and MIMIC</mark> as public benchmarks. MedMemoryBench (100 questions over 10 patients) is the first medical test once runs resume."}};
 const SRC={
-  reading:{t:"My reading list",s:"CSC 595 A2 and A3 · 38 peer-reviewed papers, rated by how I will use them (S = use directly, A = useful with a gap, B = background)",wide:true,table:true},
+  reading:{t:"My reading list",s:"CSC 595 A2 and A3 · 38 peer-reviewed papers, rated by how I will use them (S = use directly, A = useful with a gap, B = background)",wide:true,table:true,u:"https://docs.google.com/spreadsheets/d/1IM33hWfn-5fu01OaAi4Q6e9S_WL38GZWeGP7TprzWYA/edit"},
   cihi:{t:"Emergency department wait times on the rise across Canada",s:"CIHI, NACRS emergency department data for 2024–25 · reported July 2026",
     q:"<mark>1.5 million patients (10%) waited more than 14 hours in the ED</mark>, a 28% increase from 2018–19. One in 10 admitted patients spent more than two days in the ED, and 7.7% left before seeing a physician. Two-thirds of visits were triaged as high-acuity.",
     u:"https://www.canhealth.com/2026/07/08/ed-wait-times-on-the-rise-across-canada/"},
@@ -456,10 +475,11 @@ const SRC={
     u:"https://github.com/MohamedKhalidmk/GRAFT"}
 };
 const scrim=$("#scrim"),modal=$("#modal"),mbody=$("#mbody");let lastFocus=null;
-function openSrc(k){const d=SRC[k];if(!d)return;
+function openSrc(k){let d=SRC[k];if(!d&&RW[k])d={t:RW[k][0],s:"From my reading list · tap \u201cOpen the source\u201d for the full sheet",table:true,wide:true,filter:RW[k][1],u:SRC.reading.u};if(!d&&RUNS[k])d=RUNS[k];if(!d)return;
   let h=`<h4 id="mtitle">${esc(d.t)}</h4><p class="src">${esc(d.s)}</p>`;
   if(d.q)h+=`<p class="quote">${d.q}</p>`;
-  if(d.table)h+=`<div class="rlw"><table class="rl"><tr><th>Paper</th><th>Venue</th><th>I use it for</th><th>Rating</th></tr>${READING.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1]||"")}</td><td>${esc(r[2]||"")}</td><td class="r">${esc(r[3]||"")}</td></tr>`).join("")}</table></div>`;
+  const rows=d.filter?READING.filter(r=>d.filter.some(k=>r[0].includes(k))):READING;
+  if(d.table)h+=`<div class="rlw"><table class="rl"><tr><th>Paper</th><th>Venue</th><th>I use it for</th><th>Rating</th></tr>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1]||"")}</td><td>${esc(r[2]||"")}</td><td class="r">${esc(r[3]||"")}</td></tr>`).join("")}</table></div>`;
   if(d.fig)h+=`<figure><div class="fig">${sgarFig("m")}</div></figure>`;
   if(d.img)h+=`<figure><img src="${d.img}" alt="${esc(d.cap)}"><figcaption>${esc(d.cap)}</figcaption></figure>`;
   if(d.img2)h+=`<figure><img src="${d.img2}" alt="${esc(d.cap2)}"><figcaption>${esc(d.cap2)}</figcaption></figure>`;
@@ -468,6 +488,7 @@ function openSrc(k){const d=SRC[k];if(!d)return;
   lastFocus=document.activeElement;scrim.classList.add("open");scrim.setAttribute("aria-hidden","false");$("#mx").focus();}
 function closeSrc(){scrim.classList.remove("open");scrim.setAttribute("aria-hidden","true");if(lastFocus)lastFocus.focus();}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-src]");if(b)openSrc(b.dataset.src);});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.matches&&e.target.matches("[role=button][data-src]"))openSrc(e.target.dataset.src);});
 $("#mx").addEventListener("click",closeSrc);scrim.addEventListener("click",e=>{if(e.target===scrim)closeSrc();});
 
 function countUp(root){root.querySelectorAll("[data-count]").forEach(el=>{const to=+el.dataset.count,dec=+el.dataset.dec||0,suf=el.dataset.suffix||"";
