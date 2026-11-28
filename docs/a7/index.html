@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GRAFT Research Plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+body{margin:0}
+
+/* Layout: a simple vertical deck of full-height slides on one white ground; big question title, text left, one visual right. */
+:root{
+  --bg:#ffffff; --card:#f5f5f7; --ink:#1d1d1f; --ink2:#5e5e63; --ink3:#86868b; --line:#e5e5ea;
+  --accent:#e8531f; --accent-soft:#ffece4; --hippo:#8b5fc7; --ok:#197e10; --ok-soft:#e5f3e3;
+  --mark:#ffd54a; --scrim:rgba(12,12,11,.42); --shadow:0 40px 100px -24px rgba(0,0,0,.45);
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace; --sheet:cubic-bezier(.32,.72,0,1);
+  color-scheme:light;
+}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.slide{min-height:100svh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;
+  padding-block:64px 88px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-sizing:border-box}
+.wrap{width:min(1240px,100%);margin:0 auto;display:flex;flex-direction:column;gap:clamp(22px,3.6vh,40px)}
+h1,h2{margin:0;font-weight:800;letter-spacing:-.035em;line-height:.98;text-wrap:balance}
+h1{font-size:clamp(80px,13vw,190px)}
+h2{font-size:clamp(38px,5.4vw,80px)}
+.dim{color:var(--ink3)}
+.cols{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:start}
+.cols>*{min-width:0}
+.prose{font-size:clamp(17px,1.45vw,21px);line-height:1.6;color:var(--ink2);max-width:62ch;margin:0}
+.prose b{color:var(--ink);font-weight:600}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cite{font:600 .72em/1 var(--sans);color:var(--accent);background:var(--accent-soft);border:0;border-radius:999px;padding:.38em .7em;margin:0 .1em;cursor:pointer;vertical-align:.12em;white-space:nowrap;transition:transform .2s var(--sheet)}
+.cite:hover{transform:translateY(-2px)}
+.peek{align-self:flex-start;font:600 15px/1 var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:11px 16px;cursor:pointer;transition:transform .2s var(--sheet)}
+.peek:hover{transform:translateY(-2px)}
+
+/* gentle motion: visible at rest, rises when the slide arrives */
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.slide.on .rv{animation:rise .8s var(--sheet) both;animation-delay:var(--d,0ms)}
+
+/* cover */
+.cover .wrap{gap:24px}
+.cover img{width:clamp(96px,11vw,140px);height:auto;transform-origin:50% 92%;animation:sway 5s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+.cover .meta{font-size:clamp(17px,1.4vw,21px);color:var(--ink2);margin:0}
+
+/* cards */
+.card{background:var(--card);border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card h3{margin:0;font-size:17px;letter-spacing:-.01em}
+.card p{margin:0;font-size:15px;color:var(--ink2)}
+.card.gap{background:var(--accent-soft)} .card.gap h3{color:var(--accent)} .card.gap p{color:var(--ink)}
+
+/* chain */
+.chain{display:flex;flex-direction:column}
+.link{background:var(--card);border-radius:18px;padding:18px 20px;display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:baseline}
+.link .k{font:600 14px/1 var(--mono);color:var(--ink3);grid-row:span 2}
+.link h3{margin:0;font-size:20px;letter-spacing:-.01em}
+.link p{margin:0;color:var(--ink2);font-size:16px}
+.link.end{background:var(--accent-soft)} .link.end .k{color:var(--accent)}
+.down{width:2px;height:20px;background:var(--line);margin-left:30px}
+
+/* stat */
+.stat{background:var(--card);border-radius:22px;padding:clamp(24px,3vw,40px);display:flex;flex-direction:column;gap:14px}
+.stat .big{font:700 clamp(96px,13vw,190px)/.85 var(--sans);letter-spacing:-.05em;color:var(--accent)}
+.stat p{margin:0;font-size:18px;color:var(--ink2)} .stat p b{color:var(--ink)}
+
+/* bars */
+.bars{display:flex;flex-direction:column;gap:16px}
+.bars .grp{font:600 13px/1 var(--mono);color:var(--ink3);margin-top:6px}
+.bar{display:grid;grid-template-columns:120px 1fr 60px;gap:14px;align-items:center}
+.bar .lab{font-size:16px;font-weight:600}
+.bar .track{height:30px;background:var(--bg);border-radius:8px;overflow:hidden}
+.bar .fill{display:block;height:100%;width:0;border-radius:8px;background:#b8b8bd;transition:width 1.2s var(--sheet)}
+.bar .fill.g{background:var(--accent)} .bar .fill.h{background:var(--hippo)}
+.slide.on .bar .fill{width:var(--w)}
+.bar .v{font:600 18px/1 var(--mono);text-align:right} .bar .v.g{color:var(--accent)}
+.note{font-size:14px;color:var(--ink3);margin:0}
+
+/* stages */
+.stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.stage{background:var(--card);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.stage h3{margin:0;font-size:20px;letter-spacing:-.015em;line-height:1.2}
+.stage p{margin:0;font-size:15.5px;color:var(--ink2)}
+.tag{align-self:flex-start;font:600 12.5px/1 var(--sans);padding:6px 10px;border-radius:999px;background:var(--bg);color:var(--accent);border:1.5px dashed var(--accent)}
+.tag.ok{background:var(--ok-soft);color:var(--ok);border:0}
+
+/* contribution */
+.claim{font-size:clamp(28px,3.4vw,50px);font-weight:700;letter-spacing:-.03em;line-height:1.12;margin:0;max-width:26ch;text-wrap:balance}
+.claim em{font-style:normal;color:var(--accent)}
+.types{display:flex;flex-wrap:wrap;gap:12px}
+.type{background:var(--card);border-radius:16px;padding:16px 18px;max-width:420px}
+.type b{display:block;font-size:17px;margin-bottom:4px} .type span{color:var(--ink2);font-size:15px}
+
+/* related */
+.rw{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+
+/* figure + steps */
+.fig{position:relative;aspect-ratio:2000/726;border-radius:16px;overflow:hidden;background:#fff;border:1px solid var(--line);width:100%;box-sizing:border-box}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.fig .hl{position:absolute;border:3px solid var(--accent);border-radius:10px;background:rgba(255,87,34,.12);pointer-events:none;opacity:0;
+  transition:left .7s var(--sheet),top .7s var(--sheet),width .7s var(--sheet),height .7s var(--sheet),opacity .4s}
+.figbtn{border:0;padding:0;background:transparent;width:100%;display:block;cursor:pointer}
+.steps{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.steps .sec{font:600 12px/1 var(--mono);color:var(--ink3);padding:0 4px}
+.st{border:0;background:var(--card);border-radius:999px;min-width:36px;height:36px;padding:0 12px;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;transition:background .25s,color .25s}
+.st.on{background:var(--ink);color:#fff}
+.stepd{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;align-items:start}
+.stepd>*{min-width:0}
+.stepd h3{margin:0 0 6px;font-size:24px;letter-spacing:-.02em}
+.stepd p{margin:0;font-size:16px;color:var(--ink2)}
+.stepd pre{margin:0;font:13.5px/1.55 var(--mono);white-space:pre-wrap;background:var(--card);border-radius:12px;padding:12px 14px}
+.stepd .h{color:var(--accent);font-weight:600} .stepd .o{color:var(--ink3);text-decoration:line-through} .stepd .gr{color:var(--ok);font-weight:600}
+.swap{animation:rise .45s var(--sheet) both}
+
+/* backwards */
+.bw{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.bw .card h3{font-size:18px;line-height:1.25}
+
+#methods .wrap{gap:16px}
+/* refs */
+.refs{columns:2 380px;column-gap:48px;margin:0;padding:0;list-style:none}
+.refs li{break-inside:avoid;padding:10px 0;border-top:1px solid var(--line);font-size:14.5px;color:var(--ink2)}
+.refs a{color:var(--ink);text-decoration-color:var(--accent);text-underline-offset:3px;text-decoration-thickness:2px}
+
+/* nav */
+.nav{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:5px;z-index:20}
+.navb{width:36px;height:36px;border-radius:50%;border:0;background:transparent;color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.navb:hover{background:var(--card)}
+.count{font:600 13px/1 var(--mono);color:var(--ink2);min-width:52px;text-align:center}
+.prog{position:fixed;left:0;top:0;height:3px;background:var(--accent);width:0;z-index:20;transition:width .3s}
+
+/* modal */
+.scrim{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:var(--scrim);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.open{opacity:1;pointer-events:auto}
+.modal{position:relative;width:min(820px,100%);max-height:calc(100svh - 32px);overflow:auto;border-radius:22px;background:#fff;box-shadow:var(--shadow);padding:32px 32px 28px;transform:translateY(24px) scale(.985);transition:transform .38s var(--sheet);box-sizing:border-box}
+.scrim.open .modal{transform:none}
+.modal.wide{width:min(1180px,100%)}
+.x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:0;background:var(--card);color:var(--ink);cursor:pointer;display:grid;place-items:center;z-index:2}
+.modal h4{margin:0 40px 4px 0;font-size:24px;letter-spacing:-.02em;line-height:1.2}
+.modal .src{margin:0 0 18px;color:var(--ink3);font-size:14px}
+.modal .why{margin:0 0 16px;font-size:16px;color:var(--ink2)}
+.modal figure{margin:0 0 16px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#fff}
+.modal figure img{display:block;width:100%;height:auto}
+.modal figure .fig{border:0;border-radius:0}
+.modal figcaption{font-size:13px;color:var(--ink2);padding:8px 12px;border-top:1px solid var(--line);background:#fafafa}
+.quote{margin:0 0 16px;padding:18px 20px;border-radius:12px;background:var(--card);font-size:17px;line-height:1.6}
+.quote mark{background:var(--mark);color:var(--ink);border-radius:3px;padding:0 3px}
+.open{display:inline-flex;align-items:center;gap:8px;font:600 15px/1 var(--sans);color:var(--accent);text-decoration:none;padding:12px 16px;border-radius:999px;background:var(--accent-soft)}
+
+.rl{width:100%;border-collapse:collapse;font-size:14px;margin:0 0 16px}
+.rl th{text-align:left;font-weight:600;color:var(--ink3);padding:8px 10px;border-bottom:1px solid var(--line)}
+.rl td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+.rl td:first-child{color:var(--ink)}
+.rl .r{font-weight:700;color:var(--accent);white-space:nowrap}
+.rlw{overflow-x:auto}
+@media (max-width:860px){
+  .rw{grid-template-columns:minmax(0,1fr)!important}
+  .cols,.stages,.rw,.bw,.stepd{grid-template-columns:minmax(0,1fr)}
+  .bar{grid-template-columns:96px 1fr 52px}
+  html{scroll-snap-type:none}
+  .slide{min-height:auto;padding-block:64px}
+  .modal{padding:24px 18px 20px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.slide.on .rv,.swap,.cover img{animation:none}.scrim,.modal,.prog,.bar .fill,.fig .hl{transition:none}}
+</style>
+
+<div class="prog" id="prog"></div>
+
+<section class="slide cover" id="cover">
+  <div class="wrap">
+    <img class="rv" src="assets/graft.png" alt="GRAFT logo: a new shoot grafted onto a cut stem">
+    <h1 class="rv" style="--d:80ms">GRAFT</h1>
+    <p class="meta rv" style="--d:160ms">Khaled Abuela · CSC 595 research project template</p>
+  </div>
+</section>
+
+<section class="slide" id="problem">
+  <div class="wrap">
+    <h2 class="rv">What problem are we solving?</h2>
+    <div class="cols">
+      <p class="prose rv" style="--d:100ms">Hospital care in Canada is already short on time: in 2024–25, about 1.5 million emergency patients waited more than 14 hours <button class="cite" data-src="cihi">CIHI 2025</button>, while doctors lose 18.5 million hours a year to unnecessary paperwork <button class="cite" data-src="cfib">CFIB 2024</button>. Agents could take on the coordination between patients, MOAs, nurses and doctors, but giving each role its own agent adds failure points and lets the agents fall out of sync <button class="cite" data-src="mast">MAST 2025</button>. A single shared agent avoids this, yet it then has to hold a long, changing history in which roles often record conflicting facts, and current models miss facts buried in long contexts <button class="cite" data-src="liu">Liu et al. 2024</button> and struggle to resolve outdated or inconsistent ones <button class="cite" data-src="mab">MemoryAgentBench</button>. <b>As a result, no existing setup gives every role one consistent, up-to-date view of the patient.</b></p>
+      <div class="chain">
+        <div class="link rv" style="--d:180ms"><span class="k">01</span><h3>No agents</h3><p>Long waits, and doctors buried in paperwork.</p></div>
+        <div class="down rv" style="--d:240ms"></div>
+        <div class="link rv" style="--d:300ms"><span class="k">02</span><h3>One agent per role</h3><p>More failure points. Agents fall out of sync.</p></div>
+        <div class="down rv" style="--d:360ms"></div>
+        <div class="link end rv" style="--d:420ms"><span class="k">03</span><h3>One shared agent</h3><p>Forgets the long history and can’t tell which version of a fact is current.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="motivation">
+  <div class="wrap">
+    <h2 class="rv">Why does it matter?</h2>
+    <div class="cols">
+      <p class="prose rv" style="--d:100ms">Agents cannot keep a full history in context, so they forget, and the field’s main answer to this is retrieval, through RAG and agent memory systems. These methods, however, assume the stored facts agree with each other, while a patient’s record does not: an allergy noted by a nurse may later be corrected, as in a penicillin case. HippoRAG 2, among the strongest retrieval methods on MemoryAgentBench, illustrates the gap: on multi-hop FactConsolidation, which tests exactly these changing facts, it scores only 5% with GPT-4o-mini <button class="cite" data-src="mabtable">MemoryAgentBench, Table 3</button>. <b>Retrieval alone therefore cannot give an agent a reliable, up-to-date memory of a patient.</b></p>
+      <div class="stat rv" style="--d:200ms">
+        <div class="big num" data-count="5" data-dec="0" data-suffix="%">5%</div>
+        <p><b>HippoRAG 2 on multi-hop FactConsolidation.</b> Its lowest score in the whole table, while it has the best overall score of all retrieval and memory agents.</p>
+        <button class="peek" data-src="mabtable">See my highlighted table</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="solution">
+  <div class="wrap">
+    <h2 class="rv">What is our solution?</h2>
+    <div class="cols">
+      <p class="prose rv" style="--d:100ms">We propose GRAFT, a graph memory that the agent grafts onto rather than builds from scratch. Like grafting a branch onto an established plant, GRAFT gives the model a fixed structure to extend: a ready-made guide graph with its relations and supersede rules already in place, which the model copies as it writes every new fact with its source and time, so a newer fact supersedes the older one. This plays to what large language models do best, following an existing pattern rather than inventing structure from nothing, as schema-free methods such as HippoRAG 2 ask them to <button class="cite" data-src="h2">HippoRAG 2</button>. At question time, a graph neural network selects the few current facts the agent actually reads. <b>In our tests, GRAFT reaches 56.7% on FactConsolidation, against 18.3% for BM25 retrieval without a graph</b> <button class="cite" data-src="graft">GRAFT test 10</button>.</p>
+      <div class="stat rv" style="--d:200ms">
+        <div class="bars" aria-label="Accuracy on multi-hop FactConsolidation, Qwen, mean of 3 runs">
+          <div class="grp">MULTI-HOP FACTCONSOLIDATION · QWEN · MEAN OF 3</div>
+          <div class="bar"><span class="lab">GRAFT</span><span class="track"><span class="fill g" style="--w:56.7%"></span></span><span class="v g num" data-count="56.7" data-dec="1">56.7</span></div>
+          <div class="bar"><span class="lab">BM25</span><span class="track"><span class="fill" style="--w:18.3%"></span></span><span class="v num" data-count="18.3" data-dec="1">18.3</span></div>
+        </div>
+        <button class="figbtn" data-src="figure" aria-label="Open the GRAFT figure"><div class="fig" id="figSol"></div></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="evaluation">
+  <div class="wrap">
+    <h2 class="rv">How will we know it works?</h2>
+    <p class="prose rv" style="--d:100ms;max-width:none">We start with FactConsolidation because it tests what clinical records demand: facts that change and conflict over a long history, as when an allergy is later corrected. There, GRAFT reaches 56.7% against 18.3% for BM25. Since handling conflicting facts doesn’t guarantee answering ordinary ones, we then run the full MemoryAgentBench, covering plain retrieval, test-time learning and long-range understanding, against HippoRAG 2 and BM25 on the same model. We compare against HippoRAG 2 because it has the highest overall score among the retrieval and memory methods on MemoryAgentBench <button class="cite" data-src="mabtable">MemoryAgentBench</button>, and against BM25 as the simple baseline without a graph. Finally, we move to clinical data: our clinic partner’s records cannot yet be reported, so we have applied for access to Stanford’s EHRSHOT and MIMIC as public benchmarks.</p>
+    <div class="stages">
+      <div class="stage rv" style="--d:180ms"><h3>1. Conflicting facts</h3><p>Multi-hop FactConsolidation, 100 questions, 3 runs.</p><span class="tag ok">Done · 56.7 vs 18.3</span></div>
+      <div class="stage rv" style="--d:260ms"><h3>2. Full MemoryAgentBench</h3><p>Retrieval, test-time learning, long-range understanding, conflicts. Against HippoRAG 2 and BM25.</p><span class="tag">Next</span></div>
+      <div class="stage rv" style="--d:340ms"><h3>3. Clinical records</h3><p>EHRSHOT (Stanford) and MIMIC, once access is granted.</p><span class="tag">Access applied for</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="contribution">
+  <div class="wrap">
+    <h2 class="rv">What do we contribute?</h2>
+    <p class="claim rv" style="--d:100ms">GRAFT is a general memory and retrieval technique: by grafting the agent onto a guided graph, it can be adapted to <em>any application</em>, keeping memory current as facts change while aiming to beat leading methods across short-term, long-term and conflicting memory.</p>
+    <div class="types rv" style="--d:200ms">
+      <div class="type"><b>Artefact · a new technique</b><span>The full system: writing that extends a ready-made guide graph, supersede edges, and GNN retrieval explained by GOAt.</span></div>
+      <div class="type"><b>Empirical research</b><span>Tested against HippoRAG 2 and BM25 on MemoryAgentBench, then on clinical records.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="related">
+  <div class="wrap">
+    <h2 class="rv">What do we already know?</h2>
+    <div class="rw rv" style="--d:100ms">
+      <div class="card"><h3>Long context fails on change</h3><p>Models miss facts in the middle of long inputs <button class="cite" data-src="liu">Liu 2024</button>. Every method scores at most 28% on multi-hop conflicts <button class="cite" data-src="mab">MAB</button>.</p></div>
+      <div class="card"><h3>Graph retrieval <button class="cite" data-src="reading">reading list</button></h3><p>HippoRAG 2 (PageRank over a schema-free graph), GFM-RAG (pretrained GNN retriever), G-Retriever, GNN-RAG, SubgraphRAG.</p></div>
+      <div class="card"><h3>Memory that revises</h3><p>A-Mem rewrites notes, Text2Mem names memory operations, plus Mem0 and Zep.</p></div>
+      <div class="card"><h3>Medical</h3><p>MedGraphRAG, EHRNoteQA and EHRSHOT: medical, but mostly static questions, not one patient over time.</p></div>
+      <div class="card"><h3>Explaining the graph</h3><p>GOAt and EiG-Search show which part of a graph drives a GNN’s output.</p></div>
+      <div class="card"><h3>Arguments against us</h3><p><i>Does Memory Need Graphs?</i> says gains come from settings, not the graph. SubgraphRAG says a simple scorer may be enough.</p></div>
+    </div>
+    <div class="card gap rv" style="--d:200ms"><h3>The gap</h3><p>No method combines writing onto a ready-made guide graph, superseding outdated facts and explainable GNN retrieval, tested on changing facts. Medical memory benchmarks are rare and mostly static.</p></div>
+  </div>
+</section>
+
+<section class="slide" id="methods">
+  <div class="wrap">
+    <h2 class="rv">How does it work?</h2>
+    <div class="fig rv" style="--d:100ms" id="figHow"><div class="hl" id="hl1"></div><div class="hl" id="hl2"></div></div>
+    <div class="steps rv" style="--d:160ms" id="steps"></div>
+    <div class="stepd" id="stepd" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="slide" id="results">
+  <div class="wrap">
+    <h2 class="rv">What do we have so far?</h2>
+    <div class="cols">
+      <div class="bars rv" style="--d:100ms" aria-label="Results so far">
+        <div class="grp">QWEN · MEAN OF 3 RUNS</div>
+        <div class="bar"><span class="lab">GRAFT</span><span class="track" style="background:var(--card)"><span class="fill g" style="--w:56.7%"></span></span><span class="v g num">56.7</span></div>
+        <div class="bar"><span class="lab">BM25</span><span class="track" style="background:var(--card)"><span class="fill" style="--w:18.3%"></span></span><span class="v num">18.3</span></div>
+        <div class="grp">CLAUDE HAIKU</div>
+        <div class="bar"><span class="lab">GRAFT</span><span class="track" style="background:var(--card)"><span class="fill g" style="--w:45.7%"></span></span><span class="v g num">45.7</span></div>
+        <div class="bar"><span class="lab">HippoRAG 2</span><span class="track" style="background:var(--card)"><span class="fill h" style="--w:15%"></span></span><span class="v num">15</span></div>
+        <div class="bar"><span class="lab">BM25</span><span class="track" style="background:var(--card)"><span class="fill" style="--w:4%"></span></span><span class="v num">4</span></div>
+        <p class="note">Multi-hop FactConsolidation, accuracy % of 100 questions. HippoRAG 2 on Haiku is a single run. <button class="cite" data-src="graft">Source</button></p>
+      </div>
+      <div class="rv" style="--d:200ms;display:flex;flex-direction:column;gap:12px;min-width:0">
+        <div class="card"><h3>Why it misses</h3><p>In 20 hand-checked misses, the fact was never written or was ranked too low. The model never ignored a fact it was shown.</p></div>
+        <div class="card"><h3>What we expect next</h3><p>GRAFT leads on conflicting facts and at least matches HippoRAG 2 on plain retrieval across the full MemoryAgentBench, with the same pattern on clinical data.</p></div>
+        <div class="card gap"><h3>Still pending</h3><p>The real HippoRAG 2 on Qwen, and a same-day rerun of the two best GRAFT settings.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="plan">
+  <div class="wrap">
+    <h2 class="rv">Working backwards <span class="dim">from the paper.</span></h2>
+    <div class="bw">
+      <div class="card rv" style="--d:100ms"><h3>1. Will reviewers care?</h3><p>Yes, if GRAFT beats HippoRAG 2 on the same model across the full MemoryAgentBench and holds on clinical data.</p></div>
+      <div class="card rv" style="--d:180ms"><h3>2. What shows it?</h3><p>A table of the four MemoryAgentBench abilities for GRAFT, HippoRAG 2 and BM25, plus a medical column. A chart of accuracy as history grows from 6K to 262K tokens.</p></div>
+      <div class="card rv" style="--d:260ms"><h3>3. What makes that data?</h3><p>Full MemoryAgentBench on Qwen, 3 same-day runs. Then MedMemoryBench (100 questions, 10 patients), EHRSHOT and MIMIC.</p></div>
+      <div class="card rv" style="--d:340ms"><h3>4. What comes first?</h3><p>Freeze the best setting, run the real HippoRAG 2 on Qwen, check the judge’s cost, finish credentialing. Target: ICLR, September 2027.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="refs">
+  <div class="wrap">
+    <h2 class="rv">Sources</h2>
+    <ul class="refs rv" style="--d:100ms">
+      <li><a href="https://www.canhealth.com/2026/07/08/ed-wait-times-on-the-rise-across-canada/" target="_blank" rel="noopener">CIHI NACRS emergency department data, 2024–25</a> (reported by Canadian Healthcare Technology, July 2026)</li>
+      <li><a href="https://www.cfib-fcei.ca/hubfs/research/reports/2024/2024-02-Patients-before-paperwork-Update.pdf" target="_blank" rel="noopener">CFIB, Patients Before Paperwork, 2024 update</a></li>
+      <li><a href="https://arxiv.org/abs/2503.13657" target="_blank" rel="noopener">Cemri et al., Why Do Multi-Agent LLM Systems Fail? (MAST)</a>, NeurIPS 2025 D&amp;B</li>
+      <li><a href="https://aclanthology.org/2024.tacl-1.9/" target="_blank" rel="noopener">Liu et al., Lost in the Middle: How Language Models Use Long Contexts</a>, TACL 2024</li>
+      <li><a href="https://openreview.net/forum?id=DT7JyQC3MR" target="_blank" rel="noopener">Hu, Wang &amp; McAuley, MemoryAgentBench</a>, ICLR 2026</li>
+      <li><a href="https://proceedings.mlr.press/v267/gutierrez25a.html" target="_blank" rel="noopener">Gutiérrez et al., From RAG to Memory (HippoRAG 2)</a>, ICML 2025</li>
+      <li><a href="https://github.com/MohamedKhalidmk/GRAFT" target="_blank" rel="noopener">GRAFT repository</a>: test 10 (Qwen) and the README results table (Haiku)</li>
+      <li><button class="cite" data-src="reading" style="font-size:13px">My reading list</button> 38 papers, including GFM-RAG, G-Retriever, GNN-RAG, SubgraphRAG, <i>Does Memory Need Graphs?</i>, A-Mem, Text2Mem, Mem0, Zep, MedGraphRAG, EHRNoteQA, EHRSHOT, GOAt, EiG-Search</li>
+    </ul>
+  </div>
+</section>
+
+<nav class="nav" aria-label="Slides">
+  <button class="navb" id="prev" aria-label="Previous slide"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span class="count" id="count">1 / 11</span>
+  <button class="navb" id="next" aria-label="Next slide"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</nav>
+
+<div class="scrim" id="scrim" aria-hidden="true">
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <button class="x" id="mx" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+    <div id="mbody"></div>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- SGAR figure, drawn in the style of HippoRAG 2's Figure 2 (2000 × 726) ---------- */
+const FBLUE="#4a6bbf",FGREEN="#77a84f",FLAV="#dfe3f1",FLAVS="#9aa3c7",FPEACH="#fbe3d3",FRED="#d9342b",FORANGE="#ff8a50",FPLAN="#ff5722";
+function sgarFig(id){const o=[];const P=s=>o.push(s);
+ const SER='font-family="Times New Roman,Times,serif"',SAN='font-family="Helvetica Neue,Arial,sans-serif"';
+ const T=(x,y,s,sz=26,a="middle",ex="")=>P(`<text x="${x}" y="${y}" ${SER} font-size="${sz}" text-anchor="${a}" fill="#1d1d1f" ${ex}>${s}</text>`);
+ const TAG=(x,y,s,plan)=>P(`<text x="${x}" y="${y}" ${SAN} font-size="17" font-weight="700" letter-spacing="1" text-anchor="middle" fill="${plan?FPLAN:"#8a8a8a"}">${s}</text>`);
+ const H=(x,y,s)=>P(`<text x="${x}" y="${y}" ${SAN} font-size="36" font-weight="700" fill="#1d1d1f">${s}</text>`);
+ const AR=(x1,y1,x2,y2,plan)=>P(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${plan?FPLAN:"#1d1d1f"}" stroke-width="3" ${plan?'stroke-dasharray="8 6"':""} marker-end="url(#${id}${plan?"p":"a"})"/>`);
+ const B=(x,y,n,c,r=24)=>{P(`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`);P(`<text x="${x}" y="${y+r*.38}" ${SAN} font-size="${r*1.1}" text-anchor="middle" fill="#fff">${n}</text>`)};
+ const E=(x,y,f="#eef4fb",s="#1d1d1f",r=11)=>P(`<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" stroke="${s}" stroke-width="1.8"/>`);
+ const F=(x,y,f=FPEACH,s="#1d1d1f",h=9)=>P(`<rect x="${x-h}" y="${y-h}" width="${2*h}" height="${2*h}" rx="3" fill="${f}" stroke="${s}" stroke-width="1.8"/>`);
+ const L=(x1,y1,x2,y2,ex='stroke="#1d1d1f" stroke-width="1.8"')=>P(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" ${ex}/>`);
+ const SUP=(x1,y1,x2,y2)=>P(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${FRED}" stroke-width="2.6" stroke-dasharray="7 5" marker-end="url(#${id}r)"/>`);
+ P(`<svg viewBox="0 0 2000 726" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GRAFT method figure: the LLM extends a ready-made guide graph while writing, and a GNN picks facts while reading."><defs>`+[["a","#1d1d1f",7],["r",FRED,6],["p",FPLAN,7]].map(([k,c,s])=>`<marker id="${id}${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="${s}" markerHeight="${s}" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="${c}"/></marker>`).join("")+`</defs><rect width="2000" height="726" fill="#fff"/>`);
+ /* offline writing */
+ H(18,50,"Offline Writing");
+ /* 1 guided graph: small, ready-made, with relations and SUPERSEDES rules */
+ P(`<circle cx="200" cy="168" r="96" fill="#ececf0" stroke="#b9b9c0" stroke-width="2"/>`);
+ const gg={a:[150,115],b:[245,108],c:[198,172],d:[262,205],e:[140,222]},gq={ab:[198,110],ac:[172,142],cd:[232,190],ce:[168,198]};
+ [["a","ab","b"],["a","ac","c"],["c","cd","d"],["c","ce","e"]].forEach(([s1,f,t])=>{L(...gg[s1],...gq[f],'stroke="#8a8a8a" stroke-width="1.6"');L(...gq[f],...gg[t],'stroke="#8a8a8a" stroke-width="1.6"')});
+ Object.values(gg).forEach(p=>E(...p,"#fff","#8a8a8a",10));Object.values(gq).forEach(p=>F(...p,"#fff","#8a8a8a",8));F(256,150,"#e6e6e6","#9a9a9a",8);SUP(gq.cd[0]+6,gq.cd[1]-10,256-8,150+9);
+ T(200,300,"Guided graph",28);T(200,330,"relations + SUPERSEDES rules",20,"middle",'fill="#555"');
+ AR(306,170,404,170);B(355,126,1,FBLUE);
+ /* 2 chunks pass through the LLM, which copies the guide's pattern */
+ [[426,104],[446,118],[466,132]].forEach(([x,y])=>{P(`<path d="M${x} ${y} h44 l16 16 v62 h-60 z" fill="#fff" stroke="#1d1d1f" stroke-width="2.2"/><path d="M${x+44} ${y} v16 h16" fill="none" stroke="#1d1d1f" stroke-width="2.2"/>`)});
+ [156,170,184,198].forEach(y=>L(476,y,514,y,'stroke="#1d1d1f" stroke-width="2"'));
+ AR(534,170,572,170);
+ P(`<rect x="580" y="138" width="112" height="64" rx="32" fill="${FPEACH}" stroke="#1d1d1f" stroke-width="2.6"/>`);T(636,180,"LLM",28,"middle",'font-weight="700"');
+ T(560,262,"Chunks",26);T(560,292,"in the guide’s pattern",20,"middle",'fill="#555"');
+ AR(700,170,790,170);B(745,126,2,FBLUE);
+ /* 3 full graph: the guide plus the grafted facts */
+ P(`<circle cx="960" cy="166" r="146" fill="${FLAV}" stroke="${FLAVS}" stroke-width="2"/>`);
+ const G={a:[880,110],b:[1000,96],c:[940,180],d:[1050,230],e:[870,250],f:[1060,140],g:[990,272],h:[905,292]},Q={ab:[940,103],ac:[910,145],cd:[995,205],ce:[905,215],bf:[1030,118],dg:[1020,255],eh:[885,275]};
+ [["a","ab","b"],["a","ac","c"],["c","cd","d"],["c","ce","e"]].forEach(([s1,f,t])=>{L(...G[s1],...Q[f],'stroke="#8a8a8a" stroke-width="1.6"');L(...Q[f],...G[t],'stroke="#8a8a8a" stroke-width="1.6"')});
+ [["b","bf","f"],["d","dg","g"],["e","eh","h"]].forEach(([s1,f,t])=>{L(...G[s1],...Q[f]);L(...Q[f],...G[t])});
+ ["a","b","c","d","e"].forEach(k=>E(...G[k],"#fff","#8a8a8a",10));["ab","ac","cd","ce"].forEach(k=>F(...Q[k],"#fff","#8a8a8a",8));
+ ["f","g","h"].forEach(k=>E(...G[k],"#eef4fb","#1d1d1f",11));["bf","dg","eh"].forEach(k=>F(...Q[k],FPEACH,"#1d1d1f",9));
+ const old=[1075,195];L(...G.d,...old,'stroke="#9a9a9a" stroke-width="1.6"');F(...old,"#e6e6e6","#9a9a9a");SUP(Q.dg[0]+10,Q.dg[1]-12,old[0]-6,old[1]+10);
+ T(960,340,"Full graph",28);
+ B(1132,60,3,FBLUE,17);
+
+ [[1,"Start from the guided graph"],[2,"LLM writes chunks in its pattern"],[3,"Full graph: guide + grafted facts"]].forEach(([n,s],i)=>{B(1292,118+i*42,n,FBLUE,17);T(1320,127+i*42,s,24,"start")});
+
+
+ P(`<rect x="1690" y="18" width="272" height="306" rx="34" fill="#fff" stroke="#1d1d1f" stroke-width="2.6"/>`);
+ const ly=k=>56+k*38;
+ E(1730,ly(0));T(1766,ly(0)+8,"Entity Node",22,"start");F(1730,ly(1));T(1766,ly(1)+8,"Fact Node",22,"start");F(1730,ly(2),"#e6e6e6","#9a9a9a");T(1766,ly(2)+8,"Outdated Fact",22,"start");
+ E(1730,ly(3),FORANGE);T(1766,ly(3)+8,"Linked Entity",22,"start");L(1712,ly(4),1750,ly(4),'stroke="#1d1d1f" stroke-width="2.4"');T(1766,ly(4)+8,"Role Edge",22,"start");SUP(1710,ly(5),1752,ly(5));T(1766,ly(5)+8,"SUPERSEDES",22,"start");
+ 
+ L(0,358,2000,358,'stroke="#1d1d1f" stroke-width="3" stroke-dasharray="12 8"');
+ /* online reading */
+ H(18,402,"Online Reading & QA");
+ P(`<rect x="10" y="475" width="150" height="76" rx="14" fill="#f0b866" stroke="#b77d2a" stroke-width="2.6"/>`);T(85,522,"Query",30);
+ AR(162,513,236,513);B(201,470,1,FGREEN);
+ P(`<rect x="250" y="468" width="130" height="92" rx="18" fill="#fff" stroke="#1d1d1f" stroke-width="2.6"/>`);L(280,520,315,497);L(315,497,350,530);E(280,520,FORANGE);E(315,497);E(350,530);T(315,600,"Linked entities",24);
+ const cl=cx=>[[-55,-40],[-10,-60],[40,-35],[-40,15],[10,0],[55,20],[-15,55],[35,58],[-62,48]].map(([dx,dy])=>[cx+dx*.82,515+dy*.82]);
+ const lk=[[0,1],[1,2],[0,3],[3,4],[4,2],[4,5],[3,6],[6,7],[5,7],[3,8]];
+ const circ=(c,plan)=>P(`<circle cx="${c}" cy="515" r="78" fill="${plan?"#fff":FLAV}" stroke="${plan?FPLAN:FLAVS}" stroke-width="${plan?2.6:2}" ${plan?'stroke-dasharray="9 6"':""}/>`);
+ // 2 region (built now)
+ AR(384,513,446,513);B(416,470,2,FGREEN);
+ circ(530);let n1=cl(530);lk.forEach(([a,b])=>L(...n1[a],...n1[b]));n1.forEach((p,i)=>i%2?F(p[0],p[1],FPEACH,"#1d1d1f",7):E(p[0],p[1],i===4?FORANGE:"#eef4fb","#1d1d1f",9));T(530,626,"PPR region",24);TAG(530,654,"BUILT NOW",0);
+ // 3 gnn
+ AR(612,513,668,513);B(642,470,3,FGREEN);
+ circ(752);let n2=cl(752);const sc=[.3,.9,.5,.8,1,.4,.2,.6,.1];lk.forEach(([a,b])=>L(...n2[a],...n2[b]));n2.forEach((p,i)=>{const c=`rgb(${Math.round(238-180*sc[i])},${Math.round(244-150*sc[i])},${Math.round(251-60*sc[i])})`;i%2?F(p[0],p[1],c,"#1d1d1f",7):E(p[0],p[1],c,"#1d1d1f",9)});T(752,626,"GNN scores",24);
+ // 4 goat
+ AR(834,513,890,513);B(864,470,4,FGREEN);
+ circ(974);let n3=cl(974);const key=[[3,4],[4,2],[1,2]];lk.forEach(([a,b])=>{const k=key.some(([x,y])=>x===a&&y===b);L(...n3[a],...n3[b],k?`stroke="${FRED}" stroke-width="5"`:'stroke="#8a8a8a" stroke-width="1.4"')});n3.forEach((p,i)=>i%2?F(p[0],p[1],FPEACH,"#1d1d1f",7):E(p[0],p[1],"#eef4fb","#1d1d1f",9));T(974,626,"GOAt picks",24);
+ // 5 PPR expands from GOAt's picks (planned)
+ AR(1056,513,1112,513);B(1086,470,5,FGREEN);
+ circ(1196);let n4=cl(1196);lk.forEach(([a,b])=>L(...n4[a],...n4[b],'stroke="#8a8a8a" stroke-width="1.4"'));[1,2,4,3].forEach(i=>P(`<circle cx="${n4[i][0]}" cy="${n4[i][1]}" r="22" fill="rgba(255,87,34,.15)"/>`));n4.forEach((p,i)=>i%2?F(p[0],p[1],FPEACH,"#1d1d1f",7):E(p[0],p[1],[1,2,4,3].includes(i)?FORANGE:"#eef4fb","#1d1d1f",9));T(1196,626,"Short PPR",24);TAG(1196,654,"BUILT NOW",0);
+ // 6 newest facts -> answer
+ AR(1278,513,1328,513);B(1303,470,6,FGREEN);
+ P(`<rect x="1336" y="462" width="130" height="108" rx="18" fill="#fff" stroke="#1d1d1f" stroke-width="2.6"/>`);[490,516,542].forEach((y,i)=>{F(1360,y,i===2?"#e6e6e6":FPEACH,i===2?"#9a9a9a":"#1d1d1f",8);L(1377,y,1450,y,i===2?'stroke="#9a9a9a" stroke-width="2.4"':'stroke="#1d1d1f" stroke-width="2.4"')});L(1352,535,1455,549,`stroke="${FRED}" stroke-width="2.4"`);T(1401,605,"Newest facts",24);
+ AR(1401,460,1401,440);P(`<rect x="1336" y="378" width="130" height="58" rx="12" fill="#e8f2e6" stroke="#3d6b36" stroke-width="2.6"/>`);T(1401,416,"Answer",28);
+ [[1,"Entity linking (name match)",0],[2,"PPR keeps the region (400 nodes)",0],[3,"GNN scores the nodes",0],[4,"GOAt picks the key nodes",0],[5,"Short PPR from the picks",0],[6,"The LLM answers from those facts",0]].forEach(([n,s,pl],i)=>{B(1508,470+i*36,n,FGREEN,15);T(1532,478+i*36,s,21,"start",pl?`fill="${FPLAN}"`:"")});
+ P("</svg>");return o.join("")}
+const SREG={guide:[96,66,210,276],wb1:[329,100,52,52],llm:[418,96,280,206],wb2:[719,100,52,52],graph:[806,16,310,346],
+ l1:[1268,98,410,40],l2:[1268,140,410,40],l3:[1268,182,410,40],
+ lgEnt:[1700,38,252,38],lgFact:[1700,76,252,38],lgOld:[1700,114,252,38],lgLink:[1700,152,252,38],lgRole:[1700,190,252,38],lgSup:[1700,228,252,38],
+ query:[4,468,162,90],ob1:[177,446,48,48],linked:[244,462,142,152],ob2:[392,446,48,48],reg:[448,433,164,232],ob3:[618,446,48,48],gnn:[670,433,164,206],ob4:[840,446,48,48],goat:[892,433,164,206],ob5:[1062,446,48,48],exp:[1114,433,164,232],ob6:[1279,446,48,48],nf:[1330,456,142,162],ans:[1330,372,142,68],
+ on1:[1490,452,505,36],on2:[1490,488,505,36],on3:[1490,524,505,36],on4:[1490,560,505,36],on5:[1490,596,505,36],on6:[1490,632,505,36]};
+function sgHi(keys){return `<svg class="hi" viewBox="0 0 2000 726" preserveAspectRatio="none" aria-hidden="true">${keys.map(r=>{const [x,y,w,h]=SREG[r];return `<rect x="${x-6}" y="${y-6}" width="${w+12}" height="${h+12}" rx="14" fill="rgba(255,87,34,.14)" stroke="#ff5722" stroke-width="7" class="wring"/>`}).join("")}</svg>`}
+
+
+const READING=[["Evaluating Memory in LLM Agents via Incremental Multi-Turn Interactions (MemoryAgentBench)", "ICLR 2026", "Evaluation + baselines to beat", "S+"], ["EHRNoteQA: An LLM Benchmark for Real-World Clinical Practice Using Discharge Summaries", "NeurIPS 2024 D&B", "Dataset + evaluation", "S"], ["G-Retriever: Retrieval-Augmented Generation for Textual Graph Understanding and Question Answering", "NeurIPS 2024", "Compare against (closest)", "S−"], ["Does Memory Need Graphs? A Unified Framework and Empirical Analysis for Long-Term Dialog Memory", "ACL 2026", "Attack to answer", "A+"], ["A-Mem: Agentic Memory for LLM Agents", "NeurIPS 2025", "Compare against", "A+"], ["GNN-RAG: Graph Neural Retrieval for Efficient LLM Reasoning on Knowledge Graphs", "ACL 2025 Findings", "Compare against", "A+"], ["HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models", "NeurIPS 2024", "Compare against", "A+"], ["LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory", "ICLR 2025", "Evaluation framework", "A"], ["Beyond a Million Tokens: Benchmarking and Enhancing Long-Term Memory in LLMs (BEAM)", "ICLR 2026", "Evaluation + baseline (LIGHT)", "A"], ["DialSim: A Dialogue Simulator for Evaluating Long-Term Multi-Party Dialogue Understanding of Conversational Agents", "ICLR 2026", "Evaluation (multi-party)", "A"], ["MedAlign: A Clinician-Generated Dataset for Instruction Following with Electronic Medical Records", "AAAI 2024", "Dataset", "A"], ["MedAgentBench: A Virtual EHR Environment to Benchmark Medical LLM Agents", "NEJM AI 2025", "Evaluation (clinical)", "A"], ["GAM: Hierarchical Graph-based Agentic Memory for LLM Agents", "ACL 2026", "Compare against", "A"], ["Towards Doctor-Like Reasoning: Medical RAG Fusing Knowledge with Patient Analogy (DoctorRAG)", "NeurIPS 2025", "Compare against (medical)", "A"], ["From Recall to Forgetting: Benchmarking Long-Term Memory for Personalized Agents (Memora / FAMA)", "ACL 2026 Findings", "Evaluation (FAMA metric only)", "A−"], ["Large Language Models with Temporal Reasoning for Longitudinal Clinical Summarization and Prediction", "EMNLP 2025 Findings", "Dataset source + evidence", "A−"], ["AMemGym: Interactive Memory Benchmarking for Assistants in Long-Horizon Conversations", "ICLR 2026", "Evaluation (diagnosis framing)", "A−"], ["MemoryArena: Benchmarking Agent Memory in Interdependent Multi-Session Agentic Tasks", "ICML 2026", "Evaluation", "A−"], ["RealMem: Benchmarking LLMs in Real-World Memory-Driven Interaction", "ACL 2026 Findings", "Evaluation", "A−"], ["MemBench: Towards More Comprehensive Evaluation on the Memory of LLM-based Agents", "ACL 2025 Findings", "Evaluation", "A−"], ["Evaluating Very Long-Term Conversational Memory of LLM Agents (LoCoMo)", "ACL 2024", "Evaluation (comparability)", "A−"], ["TIMER: Temporal Instruction Modeling and Evaluation for Longitudinal Clinical Records", "npj Digital Medicine 2025", "Dataset (clinical, time)", "A−"], ["In Prospect and Retrospect: Reflective Memory Management for Long-term Personalized Dialogue Agents", "ACL 2025", "Compare against", "A−"], ["LiCoMemory: Lightweight and Cognitive Agentic Memory", "ACL 2026 Findings", "Compare against", "A−"], ["Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory", "ECAI 2025", "Compare against", "A−"], ["Memory OS of AI Agent (MemoryOS)", "EMNLP 2025", "Compare against", "A−"], ["Agentic Memory: Unified Long-Term and Short-Term Memory Management (AgeMem)", "ACL 2026", "Compare against", "A−"], ["TReMu: Towards Neuro-Symbolic Temporal Reasoning for LLM-Agents with Memory in Multi-Session Dialogues", "ACL 2025 Findings", "Background (event time)", "B+"], ["GOAt: Explaining Graph Neural Networks via Graph Output Attribution", "ICLR 2024", "Background (GNN read)", "B+"], ["EiG-Search: Generating Edge-Induced Subgraphs for GNN Explanation in Linear Time", "ICML 2024", "Background (GNN read)", "B+"], ["Text2Mem: A Unified Memory Operation Language for Memory Operating System", "ACL 2026 Findings", "Background (memory ops)", "B+"], ["EHRSHOT: An EHR Benchmark for Few-Shot Evaluation of Foundation Models", "NeurIPS 2023 D&B", "Background (clinical data)", "B+"], ["Common Ground Tracking in Multimodal Dialogue", "LREC-COLING 2024", "Motivation (shared state)", "B+"], ["Why Do Multi-Agent LLM Systems Fail? (MAST)", "NeurIPS 2025 D&B", "Motivation (the problem)", "B+"], ["Cognitive Architectures for Language Agents (CoALA)", "TMLR", "Background (vocabulary)", "B+"], ["TOD-Flow: Modeling the Structure of Task-Oriented Dialogues", "EMNLP 2023", "Background (dialogue graphs)", "B"], ["MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework", "ICLR 2024", "Background (multi-agent)", "B"], ["CAMEL: Communicative Agents for 'Mind' Exploration of Large Language Model Society", "NeurIPS 2023", "Background (multi-agent)", "B"]];
+const SRC={
+  reading:{t:"My reading list",s:"CSC 595 A2 and A3 · 38 peer-reviewed papers, rated by how I will use them (S = use directly, A = useful with a gap, B = background)",wide:true,table:true},
+  cihi:{t:"Emergency department wait times on the rise across Canada",s:"CIHI, NACRS emergency department data for 2024–25 · reported July 2026",
+    q:"<mark>1.5 million patients (10%) waited more than 14 hours in the ED</mark>, a 28% increase from 2018–19. One in 10 admitted patients spent more than two days in the ED, and 7.7% left before seeing a physician. Two-thirds of visits were triaged as high-acuity.",
+    u:"https://www.canhealth.com/2026/07/08/ed-wait-times-on-the-rise-across-canada/"},
+  cfib:{t:"Patients Before Paperwork (2024 update)",s:"Canadian Federation of Independent Business · figures from the 2023 report",
+    q:"Canadian doctors spend about <mark>18.5 million hours a year on unnecessary administrative work</mark>, equal to about 55.6 million patient visits.",
+    u:"https://www.cfib-fcei.ca/hubfs/research/reports/2024/2024-02-Patients-before-paperwork-Update.pdf"},
+  mast:{t:"Why Do Multi-Agent LLM Systems Fail? (MAST)",s:"Cemri et al. · NeurIPS 2025 Datasets and Benchmarks",
+    q:"A failure taxonomy for multi-agent LLM systems, built from annotated traces. It includes <mark>agents falling out of sync with each other</mark>, which is the doctor, nurse and MOA agent case.",
+    u:"https://arxiv.org/abs/2503.13657"},
+  liu:{t:"Lost in the Middle: How Language Models Use Long Contexts",s:"Liu et al. · TACL 2024",
+    q:"Models use information best when it sits at the start or end of the input, and <mark>performance drops when the relevant fact is in the middle</mark> of a long context, even for models built for long inputs.",
+    u:"https://aclanthology.org/2024.tacl-1.9/"},
+  mab:{t:"MemoryAgentBench",s:"Hu, Wang & McAuley · ICLR 2026 · page 8",
+    img:"assets/mab_28.png",cap:"Finding (3): selective forgetting. The yellow on this sentence was added for this slide.",
+    u:"https://openreview.net/forum?id=DT7JyQC3MR"},
+  mabtable:{t:"MemoryAgentBench, Table 3",s:"Hu, Wang & McAuley · ICLR 2026 · my highlights",wide:true,
+    img:"assets/mab_table3.png",cap:"Table 3: overall performance comparison.",
+    u:"https://openreview.net/forum?id=DT7JyQC3MR"},
+  h2:{t:"HippoRAG 2: From RAG to Memory",s:"Gutiérrez et al. · ICML 2025 · my highlights",
+    img:"assets/h2_schema.png",cap:"Page 4, offline indexing.",
+    img2:"assets/h2_abstract.png",cap2:"Page 1, abstract.",
+    u:"https://proceedings.mlr.press/v267/gutierrez25a.html"},
+  figure:{t:"How GRAFT works",s:"Writing extends a ready-made guide graph; reading uses a GNN",wide:true,fig:true,
+    u:"https://github.com/MohamedKhalidmk/GRAFT"},
+  graft:{t:"GRAFT results",s:"GRAFT repository · test 10 (Qwen, run-02) and README (Claude Haiku)",
+    q:"Qwen, multi-hop FactConsolidation, 100 questions, 3 runs: <mark>GRAFT 56, 55, 59 (mean 56.7)</mark>; BM25 over the same passages 17, 20, 18 (mean 18.3). Claude Haiku: GRAFT 45.7, HippoRAG 2 15 (one run), BM25 4.",
+    u:"https://github.com/MohamedKhalidmk/GRAFT"}
+};
+const scrim=$("#scrim"),modal=$("#modal"),mbody=$("#mbody");let lastFocus=null;
+function openSrc(k){const d=SRC[k];if(!d)return;
+  let h=`<h4 id="mtitle">${esc(d.t)}</h4><p class="src">${esc(d.s)}</p>`;
+  if(d.q)h+=`<p class="quote">${d.q}</p>`;
+  if(d.table)h+=`<div class="rlw"><table class="rl"><tr><th>Paper</th><th>Venue</th><th>I use it for</th><th>Rating</th></tr>${READING.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1]||"")}</td><td>${esc(r[2]||"")}</td><td class="r">${esc(r[3]||"")}</td></tr>`).join("")}</table></div>`;
+  if(d.fig)h+=`<figure><div class="fig">${sgarFig("m")}</div></figure>`;
+  if(d.img)h+=`<figure><img src="${d.img}" alt="${esc(d.cap)}"><figcaption>${esc(d.cap)}</figcaption></figure>`;
+  if(d.img2)h+=`<figure><img src="${d.img2}" alt="${esc(d.cap2)}"><figcaption>${esc(d.cap2)}</figcaption></figure>`;
+  if(d.u)h+=`<a class="open" href="${d.u}" target="_blank" rel="noopener">Open the source <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`;
+  mbody.innerHTML=h;modal.classList.toggle("wide",!!d.wide);modal.scrollTop=0;
+  lastFocus=document.activeElement;scrim.classList.add("open");scrim.setAttribute("aria-hidden","false");$("#mx").focus();}
+function closeSrc(){scrim.classList.remove("open");scrim.setAttribute("aria-hidden","true");if(lastFocus)lastFocus.focus();}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-src]");if(b)openSrc(b.dataset.src);});
+$("#mx").addEventListener("click",closeSrc);scrim.addEventListener("click",e=>{if(e.target===scrim)closeSrc();});
+
+function countUp(root){root.querySelectorAll("[data-count]").forEach(el=>{const to=+el.dataset.count,dec=+el.dataset.dec||0,suf=el.dataset.suffix||"";
+  if(RM){el.textContent=to.toFixed(dec)+suf;return;}const t0=performance.now(),D=1000;
+  const tick=t=>{const p=Math.min(1,(t-t0)/D),e=1-Math.pow(1-p,3);el.textContent=(to*e).toFixed(dec)+suf;if(p<1)requestAnimationFrame(tick);};requestAnimationFrame(tick);});}
+
+/* figures */
+$("#figSol").innerHTML=sgarFig("s");
+$("#figHow").insertAdjacentHTML("afterbegin",sgarFig("h"));
+
+/* how it works: click a step, the ring moves on the figure */
+const HS=[
+ {w:1,t:"Start from the guided graph",r:["guide"],d:"Writing starts from a small, ready-made guided graph. Its relations and its SUPERSEDES rules are already built, so the LLM never has to invent the structure.",
+  ex:`rule: same subject and relation, larger serial
+      → <span class="h">SUPERSEDES</span> the older fact, which is kept`},
+ {w:1,t:"Chunks, in the guide’s pattern",r:["llm"],d:"Chunks arrive in order. The LLM writes each fact with the guided graph’s relations and supersede rules, the way the guide already does it.",
+  ex:`2608.  Pee Wee King is a citizen of United States of America.
+<span class="h">8543.  Pee Wee King is a citizen of France.</span>
+3361.  The official language of France is French.
+<span class="h">16085. The official language of France is Hebrew.</span>`},
+ {w:1,t:"Full graph",r:["graph"],d:"The full graph is the guide plus the grafted facts. Older facts stay, linked to the newer ones by SUPERSEDES edges, so the answer can show its history.",
+  ex:`<span class="o">Pee Wee King → USA</span>     superseded
+Pee Wee King → <span class="h">France</span>
+<span class="o">France → French</span>         superseded
+France → <span class="h">Hebrew</span>`},
+ {w:0,t:"Question and entities",r:["query","linked"],d:"The question’s names are linked to graph nodes, using the guide graph’s relations.",
+  ex:`What is the official language of the country
+Pee Wee King is a citizen of?   → Pee Wee King`},
+ {w:0,t:"PageRank region",r:["reg"],d:"A Personalized PageRank walk from those entities keeps the 400 most relevant nodes.",ex:`seed: Pee Wee King · keep 400 nodes`},
+ {w:0,t:"GNN + GOAt",r:["gnn","goat"],d:"A graph convolutional network scores the nodes, and GOAt shows which edges drove the score, so every pick has a reason.",
+  ex:`key edges: Pee Wee King —citizenship→ France
+           France —official language→ …`},
+ {w:0,t:"Short PageRank",r:["exp"],d:"A second, short walk from GOAt’s picks pulls in close neighbours.",ex:`expand from the picked nodes`},
+ {w:0,t:"Newest facts, then the answer",r:["nf","ans"],d:"Supersede links lead to the newest version of each fact, and the LLM answers only from those facts.",
+  ex:`<span class="o">USA</span> → France,  <span class="o">French</span> → Hebrew
+answer: <span class="gr">Hebrew</span>`}];
+let hi=0;
+function place(keys){["hl1","hl2"].forEach((id,i)=>{const el=$("#"+id),k=keys[i];if(!k){el.style.opacity=0;return;}const [x,y,w,h]=SREG[k];
+  el.style.opacity=1;el.style.left=((x-6)/20)+"%";el.style.top=((y-6)/7.26)+"%";el.style.width=((w+12)/20)+"%";el.style.height=((h+12)/7.26)+"%";});}
+function showH(i){hi=i;const s=HS[i];
+  let h=`<span class="sec">WRITE</span>`;HS.forEach((x,j)=>{if(j===3)h+=`<span class="sec">READ</span>`;h+=`<button class="st ${j===i?"on":""}" data-h="${j}" aria-label="Step ${j+1}: ${esc(x.t)}">${j+1}</button>`;});
+  $("#steps").innerHTML=h;
+  $("#stepd").innerHTML=`<div class="swap"><h3>${esc(s.t)}</h3><p>${s.d}</p></div><pre class="swap">${s.ex}</pre>`;
+  place(s.r);}
+$("#steps").addEventListener("click",e=>{const b=e.target.closest("[data-h]");if(b)showH(+b.dataset.h);});
+showH(0);
+
+/* deck */
+const slides=$$(".slide"),count=$("#count"),prog=$("#prog");
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!e.target.classList.contains("on")){e.target.classList.add("on");countUp(e.target);}}),{threshold:.35});
+slides.forEach(s=>io.observe(s));
+function cur(){let i=0,best=1e9;slides.forEach((s,j)=>{const d=Math.abs(s.getBoundingClientRect().top);if(d<best){best=d;i=j;}});return i;}
+function go(i){i=Math.max(0,Math.min(slides.length-1,i));slides[i].scrollIntoView({behavior:RM?"auto":"smooth"});}
+function upd(){const i=cur();count.textContent=`${i+1} / ${slides.length}`;prog.style.width=`${(i+1)/slides.length*100}%`;}
+$("#prev").addEventListener("click",()=>go(cur()-1));$("#next").addEventListener("click",()=>go(cur()+1));
+addEventListener("scroll",()=>requestAnimationFrame(upd),{passive:true});
+addEventListener("keydown",e=>{if(scrim.classList.contains("open")){if(e.key==="Escape")closeSrc();return;}
+  if(slides[cur()].id==="methods"&&(e.key==="ArrowRight"||e.key==="ArrowLeft")){e.preventDefault();showH((hi+(e.key==="ArrowRight"?1:HS.length-1))%HS.length);return;}
+  if(["ArrowDown","PageDown"].includes(e.key)){e.preventDefault();go(cur()+1);}else if(["ArrowUp","PageUp"].includes(e.key)){e.preventDefault();go(cur()-1);}});
+upd();
+</script>
